@@ -1,11 +1,11 @@
 package com.pomodoro.model;
 
 public class User {
-    private String firstName,secondName,email,token;
+    private String firstName, lastName,email,token;
 
-    public User(String firstName, String secondName, String email, String token) {
+    public User(String firstName, String lastName, String email, String token) {
         this.firstName = firstName;
-        this.secondName = secondName;
+        this.lastName = lastName;
         this.email = email;
         this.token = token;
     }
@@ -18,12 +18,12 @@ public class User {
         this.firstName = firstName;
     }
 
-    public String getSecondName() {
-        return secondName;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setSecondName(String secondName) {
-        this.secondName = secondName;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getEmail() {
