@@ -1,13 +1,36 @@
 package com.pomodoro.model;
 
-public class User {
-    private String firstName, lastName,email,token;
 
-    public User(String firstName, String lastName, String email, String token) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.token = token;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+import static javax.persistence.GenerationType.IDENTITY;
+
+@Entity
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    private Integer id;
+
+    private String firstName, lastName,password,email,token;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getFirstName() {
