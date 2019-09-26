@@ -8,7 +8,7 @@ import javax.persistence.Id;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-@Entity
+@Entity(name = "USER")
 public class User {
 
     @Id

@@ -4,20 +4,20 @@ import com.pomodoro.model.User;
 import com.pomodoro.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Controller
 public class AuthenticationController {
     @Autowired
     UserRepository userRepository;
 
-    @RequestMapping(value = "/users/authenticate", method = RequestMethod.GET)
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @RequestMapping(value = "/users/authenticate", method = RequestMethod.POST)
     @ResponseBody
-    public User authenticate(@RequestParam("email") String email, @RequestParam("password") String password) {
-        User user = userRepository.findUserByEmailAndPassword(email, password);
+    public User authenticate(@RequestBody Map<String, Object> body) {
+        User user = userRepository.findUserByEmailAndPassword(body.get("username").toString(), body.get("password").toString());
         return user;
     }
 
