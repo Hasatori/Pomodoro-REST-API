@@ -8,8 +8,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthenticationService {
 
+    private final UserRepository userRepository;
+
     @Autowired
-    private UserRepository userRepository;
+    public AuthenticationService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public User authenticate(String email, String password) {
         User user = userRepository.findUserByEmailAndPassword(email, password);
