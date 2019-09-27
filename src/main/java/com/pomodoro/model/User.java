@@ -1,21 +1,27 @@
 package com.pomodoro.model;
 
 
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+
+import java.util.List;
+import java.util.Set;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity(name = "USER")
+@Transactional
 public class User {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Integer id;
 
-    private String firstName, lastName,password,email,token;
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "userObject")
+    private Set<Pomodoro> pomodoros;
+    private String firstName, lastName, password, email, token;
 
     public String getPassword() {
         return password;
@@ -63,5 +69,13 @@ public class User {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public Set<Pomodoro> getPomodoros() {
+        return pomodoros;
+    }
+
+    public void setPomodoros(Set<Pomodoro> pomodoros) {
+        this.pomodoros = pomodoros;
     }
 }
