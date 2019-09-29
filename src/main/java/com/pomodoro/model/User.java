@@ -1,10 +1,14 @@
 package com.pomodoro.model;
 
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -12,7 +16,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity(name = "USER")
 @Transactional
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -21,10 +25,77 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, mappedBy = "userObject")
     private Set<Pomodoro> pomodoros;
-    private String firstName, lastName, password, email, token;
+    private String username, firstName, lastName, password, email, token;
+    private Boolean accountExpired, locked, credentialsExpired, enabled;
+
+    public void setUsername(String userName) {
+        this.username = userName;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return new ArrayList<>();
+    }
 
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return !accountExpired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return !locked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return !credentialsExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public Boolean getAccountExpired() {
+        return accountExpired;
+    }
+
+    public void setAccountExpired(Boolean accountExpired) {
+        this.accountExpired = accountExpired;
+    }
+
+    public Boolean getLocked() {
+        return locked;
+    }
+
+    public void setLocked(Boolean locked) {
+        this.locked = locked;
+    }
+
+    public Boolean getCredentialsExpired() {
+        return credentialsExpired;
+    }
+
+    public void setCredentialsExpired(Boolean credentialsExpired) {
+        this.credentialsExpired = credentialsExpired;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     public void setPassword(String password) {
