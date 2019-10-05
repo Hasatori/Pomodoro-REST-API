@@ -1,5 +1,6 @@
 package com.pomodoro.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jdk.nashorn.internal.objects.annotations.Property;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ public class Pomodoro {
     @GeneratedValue(strategy = IDENTITY)
     private Integer id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER", nullable = false,insertable = false,updatable = false)
     private User userObject;

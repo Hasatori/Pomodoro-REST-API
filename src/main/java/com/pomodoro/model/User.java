@@ -1,6 +1,7 @@
 package com.pomodoro.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,15 +18,20 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity(name = "USER")
 @Transactional
 public class User implements UserDetails {
-
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Integer id;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, mappedBy = "userObject")
-    private Set<Pomodoro> pomodoros;
-    private String username, firstName, lastName, password, email, token;
+    private List<Pomodoro> pomodoros;
+
+    private String username, firstName, lastName, email;
+    @JsonIgnore
+    private String password, token;
+    @JsonIgnore
     private Boolean accountExpired, locked, credentialsExpired, enabled;
 
     public void setUsername(String userName) {
@@ -142,11 +148,11 @@ public class User implements UserDetails {
         this.token = token;
     }
 
-    public Set<Pomodoro> getPomodoros() {
+    public List<Pomodoro> getPomodoros() {
         return pomodoros;
     }
 
-    public void setPomodoros(Set<Pomodoro> pomodoros) {
+    public void setPomodoros(List<Pomodoro> pomodoros) {
         this.pomodoros = pomodoros;
     }
 }

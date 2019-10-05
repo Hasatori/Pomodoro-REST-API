@@ -1,10 +1,13 @@
 package com.pomodoro.controller;
 
+import java.util.List;
 import java.util.Objects;
 
 import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.model.JwtRequest;
 import com.pomodoro.model.JwtResponse;
+import com.pomodoro.model.Pomodoro;
+import com.pomodoro.model.User;
 import com.pomodoro.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,12 +15,13 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -63,4 +67,20 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "/userDetails", method = RequestMethod.POST)
+    public User getUserDetails(HttpServletRequest req) {
+        return userService.getUserFromToken(userService.getTokenFromRequest(req));
+    }
+
+    @RequestMapping(value = "/updateDetails", method = RequestMethod.POST)
+    public void updateUser(HttpServletRequest req, @RequestBody User updatedUser) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        userService.updateUser(user, updatedUser);
+    }
+
+    @RequestMapping(value = "/userPomodoros", method = RequestMethod.POST)
+    public List<Pomodoro> updateUser(HttpServletRequest req) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        return user.getPomodoros();
+    }
 }
