@@ -1,9 +1,11 @@
 package com.pomodoro.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import com.pomodoro.config.JwtTokenUtil;
+import com.pomodoro.config.WebSecurityConfig;
 import com.pomodoro.model.JwtRequest;
 import com.pomodoro.model.JwtResponse;
 import com.pomodoro.model.Pomodoro;
@@ -32,6 +34,7 @@ public class UserController {
     private final JwtTokenUtil jwtTokenUtil;
 
     private final UserService userService;
+
 
     public UserController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService) {
         this.authenticationManager = authenticationManager;
@@ -82,5 +85,13 @@ public class UserController {
     public List<Pomodoro> updateUser(HttpServletRequest req) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
         return user.getPomodoros();
+    }
+
+    @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
+    public void changePassword(HttpServletRequest req, @RequestBody Map<String, String> body) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        String oldPassword = body.get("oldPassword");
+        String newPassword = body.get("newPassword");
+        userService.changePassword(user, oldPassword, newPassword);
     }
 }

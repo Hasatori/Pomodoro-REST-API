@@ -1,6 +1,7 @@
 package com.pomodoro.service;
 
 import com.pomodoro.config.JwtTokenUtil;
+import com.pomodoro.config.WebSecurityConfig;
 import com.pomodoro.model.User;
 import com.pomodoro.repository.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -8,11 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -30,6 +31,7 @@ public class UserService implements UserDetailsService {
     public UserService(UserRepository userRepository, JwtTokenUtil jwtTokenUtil) {
         this.userRepository = userRepository;
         this.jwtTokenUtil = jwtTokenUtil;
+
     }
 
     @Override
@@ -66,5 +68,15 @@ public class UserService implements UserDetailsService {
 
     public void updateUser(User currentUser, User updatedUser) {
         userRepository.updateUserDetails(currentUser.getId(), updatedUser.getUsername(), updatedUser.getFirstName(), updatedUser.getLastName(), updatedUser.getEmail());
+    }
+
+    public void changePassword(User user, String oldPassword, String newPassoword) {
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        if (encoder.matches(oldPassword, user.getPassword())) {
+            userRepository.updatePassword(user.getId(), encoder.encode(newPassoword));
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
     }
 }
