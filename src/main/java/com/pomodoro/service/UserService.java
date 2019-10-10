@@ -47,9 +47,13 @@ public class UserService implements UserDetailsService {
     public String getTokenFromRequest(HttpServletRequest req) {
         String jwtToken = null;
         final String requestTokenHeader = req.getHeader("Authorization");
+        final String socketHeader = req.getHeader("Sec-WebSocket-Key");
+        final String socketToken = req.getParameter("token");
         // JWT Token is in the form "Bearer token". Remove Bearer word and get only the Token
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
+        } else if (socketHeader != null && socketToken != null) {
+            jwtToken = socketToken.substring(7);
         }
         return jwtToken;
     }

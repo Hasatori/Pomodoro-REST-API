@@ -14,6 +14,10 @@
     </parent>
     <dependencies>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
         <!-- spring mvc, rest -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -78,7 +82,6 @@
             <artifactId>jjwt</artifactId>
             <version>0.9.1</version>
         </dependency>
-
     </dependencies>
 
     <build>
