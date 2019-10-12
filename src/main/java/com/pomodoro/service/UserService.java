@@ -1,8 +1,9 @@
 package com.pomodoro.service;
 
 import com.pomodoro.config.JwtTokenUtil;
-import com.pomodoro.config.WebSecurityConfig;
+import com.pomodoro.model.Pomodoro;
 import com.pomodoro.model.User;
+import com.pomodoro.repository.PomodoroRepository;
 import com.pomodoro.repository.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
@@ -18,18 +19,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final PomodoroRepository pomodoroRepository;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
     private final JwtTokenUtil jwtTokenUtil;
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
-    public UserService(UserRepository userRepository, JwtTokenUtil jwtTokenUtil) {
+    public UserService(UserRepository userRepository, PomodoroRepository pomodoroRepository, JwtTokenUtil jwtTokenUtil) {
         this.userRepository = userRepository;
+        this.pomodoroRepository = pomodoroRepository;
         this.jwtTokenUtil = jwtTokenUtil;
 
     }
@@ -82,5 +89,20 @@ public class UserService implements UserDetailsService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    public Pomodoro createPomodoroAndReturn(User user) {
+        pomodoroRepository.insertNewPomodoro(user.getId(), LocalDateTime.now(), 10, 300, false);
+        Pomodoro pomodoro = Collections.max(user.getPomodoros(), Comparator.comparing(Pomodoro::getCreationTimestamp));
+        return pomodoro;
+    }
+
+    public Pomodoro getLastPomodoro(User user) {
+        Pomodoro pomodoro = Collections.max(user.getPomodoros(), Comparator.comparing(Pomodoro::getCreationTimestamp));
+        return pomodoro;
+    }
+
+    public void stopPomodoro(User user, Pomodoro pomodoro) {
+        pomodoroRepository.stopPomodoro(user.getId(), pomodoro.getCreationTimestamp());
     }
 }

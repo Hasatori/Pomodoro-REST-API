@@ -94,4 +94,9 @@ public class UserController {
         String newPassword = body.get("newPassword");
         userService.changePassword(user, oldPassword, newPassword);
     }
+    @RequestMapping(value = "/pomodoro/update", method = RequestMethod.POST)
+    public Pomodoro getLastPomodoro(HttpServletRequest req) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        return userService.getLastPomodoro(user);
+    }
 }

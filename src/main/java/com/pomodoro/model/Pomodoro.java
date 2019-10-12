@@ -1,14 +1,13 @@
 package com.pomodoro.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jdk.nashorn.internal.objects.annotations.Property;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.*;
 
+import javax.persistence.*;
 import java.sql.Date;
-import java.sql.Time;
-import java.time.Duration;
+import java.time.LocalDateTime;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -25,11 +24,13 @@ public class Pomodoro {
     private User userObject;
 
     private int user;
-    private Date date;
-    private int workTimeRemaining;
-    private int breakTimeRemaining;
+
+    @CreationTimestamp
+    private LocalDateTime creationTimestamp;
+    private int workTime;
+    private int breakTime;
     private boolean interrupted;
-    private int numberOfInterruptions;
+
 
     public Integer getId() {
         return id;
@@ -55,28 +56,28 @@ public class Pomodoro {
         this.user = user;
     }
 
-    public Date getDate() {
-        return date;
+    public LocalDateTime getCreationTimestamp() {
+        return creationTimestamp;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setCreationTimestamp(LocalDateTime creationTimestamp) {
+        this.creationTimestamp = creationTimestamp;
     }
 
-    public int getWorkTimeRemaining() {
-        return workTimeRemaining;
+    public int getWorkTime() {
+        return workTime;
     }
 
-    public void setWorkTimeRemaining(int workTimeRemaining) {
-        this.workTimeRemaining = workTimeRemaining;
+    public void setWorkTime(int workTime) {
+        this.workTime = workTime;
     }
 
-    public int getBreakTimeRemaining() {
-        return breakTimeRemaining;
+    public int getBreakTime() {
+        return breakTime;
     }
 
-    public void setBreakTimeRemaining(int breakTimeRemaining) {
-        this.breakTimeRemaining = breakTimeRemaining;
+    public void setBreakTime(int breakTime) {
+        this.breakTime = breakTime;
     }
 
     public boolean isInterrupted() {
@@ -87,11 +88,4 @@ public class Pomodoro {
         this.interrupted = interrupted;
     }
 
-    public int getNumberOfInterruptions() {
-        return numberOfInterruptions;
-    }
-
-    public void setNumberOfInterruptions(int numberOfInterruptions) {
-        this.numberOfInterruptions = numberOfInterruptions;
-    }
 }
