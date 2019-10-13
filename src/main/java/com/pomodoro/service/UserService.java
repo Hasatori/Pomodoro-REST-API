@@ -1,6 +1,7 @@
 package com.pomodoro.service;
 
 import com.pomodoro.config.JwtTokenUtil;
+import com.pomodoro.model.Group;
 import com.pomodoro.model.Pomodoro;
 import com.pomodoro.model.User;
 import com.pomodoro.repository.PomodoroRepository;
@@ -20,9 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -105,4 +104,5 @@ public class UserService implements UserDetailsService {
     public void stopPomodoro(User user, Pomodoro pomodoro) {
         pomodoroRepository.stopPomodoro(user.getId(), pomodoro.getCreationTimestamp());
     }
+
 }

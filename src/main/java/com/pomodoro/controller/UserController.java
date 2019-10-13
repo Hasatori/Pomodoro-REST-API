@@ -3,13 +3,11 @@ package com.pomodoro.controller;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.config.WebSecurityConfig;
-import com.pomodoro.model.JwtRequest;
-import com.pomodoro.model.JwtResponse;
-import com.pomodoro.model.Pomodoro;
-import com.pomodoro.model.User;
+import com.pomodoro.model.*;
 import com.pomodoro.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -94,9 +92,16 @@ public class UserController {
         String newPassword = body.get("newPassword");
         userService.changePassword(user, oldPassword, newPassword);
     }
+
     @RequestMapping(value = "/pomodoro/update", method = RequestMethod.POST)
     public Pomodoro getLastPomodoro(HttpServletRequest req) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
         return userService.getLastPomodoro(user);
+    }
+
+    @RequestMapping(value = "/groups", method = RequestMethod.POST)
+    public Set<Group> getGroups(HttpServletRequest req) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        return user.getGroups();
     }
 }

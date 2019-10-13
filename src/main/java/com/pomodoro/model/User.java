@@ -34,6 +34,14 @@ public class User implements UserDetails {
     @JsonIgnore
     private Boolean accountExpired, locked, credentialsExpired, enabled;
 
+    @ManyToMany(mappedBy = "users")
+    Set<Group> groups;
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "ownerObject")
+    private List<Group> ownedGroups;
+
     public void setUsername(String userName) {
         this.username = userName;
     }
@@ -154,5 +162,21 @@ public class User implements UserDetails {
 
     public void setPomodoros(List<Pomodoro> pomodoros) {
         this.pomodoros = pomodoros;
+    }
+
+    public Set<Group> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Set<Group> groups) {
+        this.groups = groups;
+    }
+
+    public List<Group> getOwnedGroups() {
+        return ownedGroups;
+    }
+
+    public void setOwnedGroups(List<Group> ownedGroups) {
+        this.ownedGroups = ownedGroups;
     }
 }
