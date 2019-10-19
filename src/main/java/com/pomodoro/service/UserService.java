@@ -4,6 +4,7 @@ import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.model.Group;
 import com.pomodoro.model.Pomodoro;
 import com.pomodoro.model.User;
+import com.pomodoro.repository.GroupRepository;
 import com.pomodoro.repository.PomodoroRepository;
 import com.pomodoro.repository.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -22,20 +23,23 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PomodoroRepository pomodoroRepository;
+    private final GroupRepository groupRepository;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
     private final JwtTokenUtil jwtTokenUtil;
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
-    public UserService(UserRepository userRepository, PomodoroRepository pomodoroRepository, JwtTokenUtil jwtTokenUtil) {
+    public UserService(UserRepository userRepository, PomodoroRepository pomodoroRepository, GroupRepository groupRepository, JwtTokenUtil jwtTokenUtil) {
         this.userRepository = userRepository;
         this.pomodoroRepository = pomodoroRepository;
+        this.groupRepository = groupRepository;
         this.jwtTokenUtil = jwtTokenUtil;
 
     }
@@ -97,12 +101,34 @@ public class UserService implements UserDetailsService {
     }
 
     public Pomodoro getLastPomodoro(User user) {
-        Pomodoro pomodoro = Collections.max(user.getPomodoros(), Comparator.comparing(Pomodoro::getCreationTimestamp));
-        return pomodoro;
+        List<Pomodoro>pomodoros=user.getPomodoros();
+        if (!pomodoros.isEmpty()){
+            Pomodoro pomodoro = Collections.max(user.getPomodoros(), Comparator.comparing(Pomodoro::getCreationTimestamp));
+            return pomodoro;
+        }
+       return null;
     }
 
     public void stopPomodoro(User user, Pomodoro pomodoro) {
         pomodoroRepository.stopPomodoro(user.getId(), pomodoro.getCreationTimestamp());
     }
 
+    public Set<User> getUsersForGroup(String groupName, User user) {
+        Set<Group> groups = groupRepository.findPomodoroGroupByName(groupName);
+        Optional<Group> groupWithUsers = groups.stream().filter(group -> group.getUsers().stream().anyMatch(user1 -> user1.getUsername().equals(user.getUsername()))).findFirst();
+        if (groupWithUsers.isPresent()) {
+            return groupWithUsers.get().getUsers();
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+    }
+    public Pomodoro getLastPomodoroForUser(String username) {
+        User user=userRepository.findUserByUsername(username);
+        List<Pomodoro>pomodoros=user.getPomodoros();
+        if (!pomodoros.isEmpty()){
+            Pomodoro pomodoro = Collections.max(user.getPomodoros(), Comparator.comparing(Pomodoro::getCreationTimestamp));
+            return pomodoro;
+        }
+        return null;
+    }
 }

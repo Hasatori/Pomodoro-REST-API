@@ -2,6 +2,7 @@ package com.pomodoro.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import java.util.Set;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity(name = "USER")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Transactional
 public class User implements UserDetails {
     @JsonIgnore
@@ -32,8 +34,14 @@ public class User implements UserDetails {
     @JsonIgnore
     private String password, token;
     @JsonIgnore
-    private Boolean accountExpired, locked, credentialsExpired, enabled;
-
+    private Boolean accountExpired;
+    @JsonIgnore
+    private Boolean locked;
+    @JsonIgnore
+    private Boolean credentialsExpired;
+    @JsonIgnore
+    private Boolean enabled;
+    @JsonIgnore
     @ManyToMany(mappedBy = "users")
     Set<Group> groups;
 
