@@ -17,6 +17,7 @@ public class Group {
     private Integer id;
 
     private String name;
+    private boolean isPublic;
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OWNER", nullable = false,insertable = false,updatable = false)
@@ -69,5 +70,13 @@ public class Group {
 
     public void setOwner(int owner) {
         this.owner = owner;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 }

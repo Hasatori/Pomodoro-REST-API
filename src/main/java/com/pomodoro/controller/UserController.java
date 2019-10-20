@@ -114,5 +114,12 @@ public class UserController {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
         return userService.getLastPomodoroForUser(userName);
     }
+
+    @RequestMapping(value = "/group/create", method = RequestMethod.POST)
+    public void createGroup(HttpServletRequest req, @RequestBody Group group) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        userService.createGroup(user,group.getName(), group.isPublic());
+    }
+
 }
 

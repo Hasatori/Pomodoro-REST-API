@@ -101,12 +101,12 @@ public class UserService implements UserDetailsService {
     }
 
     public Pomodoro getLastPomodoro(User user) {
-        List<Pomodoro>pomodoros=user.getPomodoros();
-        if (!pomodoros.isEmpty()){
+        List<Pomodoro> pomodoros = user.getPomodoros();
+        if (!pomodoros.isEmpty()) {
             Pomodoro pomodoro = Collections.max(user.getPomodoros(), Comparator.comparing(Pomodoro::getCreationTimestamp));
             return pomodoro;
         }
-       return null;
+        return null;
     }
 
     public void stopPomodoro(User user, Pomodoro pomodoro) {
@@ -122,13 +122,21 @@ public class UserService implements UserDetailsService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
     }
+
     public Pomodoro getLastPomodoroForUser(String username) {
-        User user=userRepository.findUserByUsername(username);
-        List<Pomodoro>pomodoros=user.getPomodoros();
-        if (!pomodoros.isEmpty()){
+        User user = userRepository.findUserByUsername(username);
+        List<Pomodoro> pomodoros = user.getPomodoros();
+        if (!pomodoros.isEmpty()) {
             Pomodoro pomodoro = Collections.max(user.getPomodoros(), Comparator.comparing(Pomodoro::getCreationTimestamp));
             return pomodoro;
         }
         return null;
+    }
+
+    public void createGroup(User user, String name, boolean isPublic) {
+        groupRepository.insertGroup(name, user.getId(), isPublic);
+        Group group = groupRepository.findPomodoroGroupByNameAndOwner(name, user.getId());
+        group.getUsers().add(user);
+        groupRepository.save(group);
     }
 }
