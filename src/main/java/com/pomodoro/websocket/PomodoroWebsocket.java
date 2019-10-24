@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Controller
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PomodoroWebsocket extends AbstractSocket{
-    
+
     PomodoroWebsocket(UserService userService, SimpMessagingTemplate simpMessagingTemplate, UserRepository userRepository) {
         super(userService, simpMessagingTemplate, userRepository);
     }

@@ -139,4 +139,26 @@ public class UserService implements UserDetailsService {
         group.getUsers().add(user);
         groupRepository.save(group);
     }
+
+    public void addUserToGroup(User owner, String groupName, String userToAddName) {
+        Group group = groupRepository.findPomodoroGroupByNameAndOwner(groupName, owner.getId());
+        User userToAdd = userRepository.findUserByUsername(userToAddName);
+        group.getUsers().add(userToAdd);
+        groupRepository.save(group);
+    }
+
+    public void deleteUserFromGroup(User owner, String groupName, String userToDeleteName) {
+        Group group = groupRepository.findPomodoroGroupByNameAndOwner(groupName, owner.getId());
+        Optional<User> userToDeleteOptional = group
+                .getUsers()
+                .stream()
+                .filter(user -> userToDeleteName.equals(user.getUsername()))
+                .findFirst();
+        if (userToDeleteOptional.isPresent()) {
+            group.getUsers().remove(userToDeleteOptional.get());
+            groupRepository.save(group);
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+    }
 }

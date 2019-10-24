@@ -19,6 +19,7 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
 
 
     Set<Group> findPomodoroGroupByName(String groupName);
+
     Group findPomodoroGroupByNameAndOwner(String groupName,Integer owner);
     @Modifying
     @Query(value = "INSERT INTO POMODORO_GROUP( NAME, OWNER,IS_PUBLIC) VALUES (:name,:owner,:isPublic)",nativeQuery = true)
