@@ -23,21 +23,11 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-public class UserController {
+public class UserController extends AbstractController{
 
-    private final AuthenticationManager authenticationManager;
-
-    private final JwtTokenUtil jwtTokenUtil;
-
-    private final UserService userService;
-
-
-    public UserController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService) {
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.userService = userService;
+    UserController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService) {
+        super(authenticationManager, jwtTokenUtil, userService);
     }
-
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest)
@@ -91,35 +81,6 @@ public class UserController {
         userService.changePassword(user, oldPassword, newPassword);
     }
 
-    @RequestMapping(value = "/pomodoro/update", method = RequestMethod.POST)
-    public Pomodoro getLastPomodoro(HttpServletRequest req) {
-        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
-        return userService.getLastPomodoro(user);
-    }
-
-    @RequestMapping(value = "/groups", method = RequestMethod.POST)
-    public Set<Group> getGroups(HttpServletRequest req) {
-        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
-        return user.getGroups();
-    }
-
-    @RequestMapping(value = "/groups/{groupName}", method = RequestMethod.POST)
-    public Set<User> getUsersForGroup(HttpServletRequest req, @PathVariable(required = true) String groupName) {
-        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
-        return userService.getUsersForGroup(groupName, user);
-    }
-
-    @RequestMapping(value = "/groups/update/{userName}", method = RequestMethod.POST)
-    public Pomodoro getLastPomodoroForUser(HttpServletRequest req, @PathVariable("userName") String userName) {
-        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
-        return userService.getLastPomodoroForUser(userName);
-    }
-
-    @RequestMapping(value = "/group/create", method = RequestMethod.POST)
-    public void createGroup(HttpServletRequest req, @RequestBody Group group) {
-        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
-        userService.createGroup(user,group.getName(), group.isPublic());
-    }
 
 }
 

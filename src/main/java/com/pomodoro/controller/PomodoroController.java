@@ -1,53 +1,31 @@
 package com.pomodoro.controller;
 
+import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.model.Pomodoro;
 import com.pomodoro.model.User;
-import com.pomodoro.repository.UserRepository;
 import com.pomodoro.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-@Controller
+@RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-public class PomodoroController {
+public class PomodoroController extends AbstractController{
 
-    private final SimpMessagingTemplate simpMessagingTemplate;
-
-    private final UserService userService;
-    private final UserRepository userRepository;
-
-    @Autowired
-    public PomodoroController(SimpMessagingTemplate simpMessagingTemplate, UserService userService, UserRepository userRepository) {
-        this.simpMessagingTemplate = simpMessagingTemplate;
-        this.userService = userService;
-        this.userRepository = userRepository;
+    PomodoroController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService) {
+        super(authenticationManager, jwtTokenUtil, userService);
     }
 
-    @MessageMapping("/start/{username}")
-    @SendTo("/pomodoro/start/{username}")
-    public Pomodoro pomodoroStarted(@DestinationVariable String username) throws Exception {
-        User user = userRepository.findUserByUsername(username);
-        return userService.createPomodoroAndReturn(user);
-
+    @RequestMapping(value = "/pomodoro/update", method = RequestMethod.POST)
+    public Pomodoro getLastPomodoro(HttpServletRequest req) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        return userService.getLastPomodoro(user);
     }
-
-    @MessageMapping("/stop/{username}")
-    @SendTo("/pomodoro/stop/{username}")
-    public String pomodoroStopped(@DestinationVariable String username, @RequestBody Pomodoro pomodoro) throws Exception {
-        User user = userRepository.findUserByUsername(username);
-        userService.stopPomodoro(user,pomodoro);
-        return "STOP";
+    @RequestMapping(value = "/groups/update/{userName}", method = RequestMethod.POST)
+    public Pomodoro getLastPomodoroForUser(HttpServletRequest req, @PathVariable("userName") String userName) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        return userService.getLastPomodoroForUser(userName);
     }
-
 
 }
