@@ -11,6 +11,7 @@ public class Settings {
     @Id
     @Column(name = "USER_ID")
     private Long id;
+    @JsonIgnore
     @OneToOne
     @MapsId
     private User user;

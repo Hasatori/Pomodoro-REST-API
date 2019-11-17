@@ -95,7 +95,7 @@ public class UserService implements UserDetailsService {
     }
 
     public Pomodoro createPomodoroAndReturn(User user) {
-        pomodoroRepository.insertNewPomodoro(user.getId(), LocalDateTime.now(), 10, 10, false);
+        pomodoroRepository.insertNewPomodoro(user.getId(), LocalDateTime.now(), user.getSettings().getWorkTime(), user.getSettings().getPauseTime(), false);
         Pomodoro pomodoro = Collections.max(user.getPomodoros(), Comparator.comparing(Pomodoro::getCreationTimestamp));
         return pomodoro;
     }
