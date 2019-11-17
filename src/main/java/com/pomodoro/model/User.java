@@ -41,8 +41,11 @@ public class User implements UserDetails {
     private Boolean credentialsExpired;
     @JsonIgnore
     private Boolean enabled;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Settings settings;
     @JsonIgnore
     @ManyToMany(mappedBy = "users")
+    private
     Set<Group> groups;
 
     @JsonIgnore
@@ -186,5 +189,13 @@ public class User implements UserDetails {
 
     public void setOwnedGroups(List<Group> ownedGroups) {
         this.ownedGroups = ownedGroups;
+    }
+
+    public Settings getSettings() {
+        return settings;
+    }
+
+    public void setSettings(Settings settings) {
+        this.settings = settings;
     }
 }
