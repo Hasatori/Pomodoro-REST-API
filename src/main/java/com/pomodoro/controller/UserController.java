@@ -66,7 +66,11 @@ public class UserController extends AbstractController{
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
         userService.updateUser(user, updatedUser);
     }
-
+    @RequestMapping(value = "/updateSettings", method = RequestMethod.POST)
+    public void updateUserSettings(HttpServletRequest req, @RequestBody Settings updatedSettings) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        userService.updateUserSettings(user,updatedSettings);
+    }
     @RequestMapping(value = "/userPomodoros", method = RequestMethod.POST)
     public List<Pomodoro> updateUser(HttpServletRequest req) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));

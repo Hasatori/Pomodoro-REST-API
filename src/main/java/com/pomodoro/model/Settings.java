@@ -1,6 +1,7 @@
 package com.pomodoro.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 
@@ -17,8 +18,11 @@ public class Settings {
     private User user;
     private Integer workTime;
     private Integer pauseTime;
+    @Nullable
     private String phaseChangedSound;
+    @Nullable
     private String workSound;
+    @Nullable
     private String pauseSound;
 
     public User getUser() {

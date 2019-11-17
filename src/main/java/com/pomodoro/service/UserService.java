@@ -3,9 +3,11 @@ package com.pomodoro.service;
 import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.model.Group;
 import com.pomodoro.model.Pomodoro;
+import com.pomodoro.model.Settings;
 import com.pomodoro.model.User;
 import com.pomodoro.repository.GroupRepository;
 import com.pomodoro.repository.PomodoroRepository;
+import com.pomodoro.repository.SettingsRepository;
 import com.pomodoro.repository.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final SettingsRepository settingsRepository;
     private final PomodoroRepository pomodoroRepository;
     private final GroupRepository groupRepository;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -36,8 +39,9 @@ public class UserService implements UserDetailsService {
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
-    public UserService(UserRepository userRepository, PomodoroRepository pomodoroRepository, GroupRepository groupRepository, JwtTokenUtil jwtTokenUtil) {
+    public UserService(UserRepository userRepository, SettingsRepository settingsRepository, PomodoroRepository pomodoroRepository, GroupRepository groupRepository, JwtTokenUtil jwtTokenUtil) {
         this.userRepository = userRepository;
+        this.settingsRepository = settingsRepository;
         this.pomodoroRepository = pomodoroRepository;
         this.groupRepository = groupRepository;
         this.jwtTokenUtil = jwtTokenUtil;
@@ -82,6 +86,10 @@ public class UserService implements UserDetailsService {
 
     public void updateUser(User currentUser, User updatedUser) {
         userRepository.updateUserDetails(currentUser.getId(), updatedUser.getUsername(), updatedUser.getFirstName(), updatedUser.getLastName(), updatedUser.getEmail());
+    }
+
+    public void updateUserSettings(User currentUser, Settings updatedSettings) {
+        settingsRepository.updateUserSettings(currentUser.getId(), updatedSettings.getWorkTime(), updatedSettings.getPauseTime(), updatedSettings.getPhaseChangedSound(), updatedSettings.getWorkSound(), updatedSettings.getPauseSound());
     }
 
     public void changePassword(User user, String oldPassword, String newPassoword) {
