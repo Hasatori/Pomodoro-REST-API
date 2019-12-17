@@ -3,21 +3,24 @@ package com.pomodoro.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import static java.lang.Enum.valueOf;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity(name = "USER")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Transactional
 public class User implements UserDetails {
     @JsonIgnore
@@ -30,9 +33,22 @@ public class User implements UserDetails {
             fetch = FetchType.LAZY, mappedBy = "userObject")
     private List<Pomodoro> pomodoros;
 
-    private String username, firstName, lastName, email;
+    @NotBlank(message = "Name is mandatory")
+    private String username;
+
+    private String firstName, lastName;
+    @NotBlank(message = "Email is mandatory")
+    private String email;
+
+    @NotBlank(message = "Password is mandatory")
     @JsonIgnore
-    private String password, token;
+    @Pattern(regexp = "((?=.*[a-z])(?=.*\\d)(?=.*[A-Z]).{8,40})"
+            , message = "Password must be between 8 to 40 characters long, must contain at least one digit, one upper case character and one lower case character ")
+
+    private String password;
+
+    @JsonIgnore
+    private String token;
     @JsonIgnore
     private Boolean accountExpired;
     @JsonIgnore
@@ -57,11 +73,13 @@ public class User implements UserDetails {
         this.username = userName;
     }
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return new ArrayList<>();
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
@@ -71,26 +89,31 @@ public class User implements UserDetails {
         return username;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return !accountExpired;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return !locked;
     }
 
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
         return !credentialsExpired;
     }
 
+    @JsonIgnore
     @Override
     public boolean isEnabled() {
         return enabled;
     }
 
+    @JsonIgnore
     public Boolean getAccountExpired() {
         return accountExpired;
     }
@@ -99,16 +122,13 @@ public class User implements UserDetails {
         this.accountExpired = accountExpired;
     }
 
+    @JsonIgnore
     public Boolean getLocked() {
         return locked;
     }
 
     public void setLocked(Boolean locked) {
         this.locked = locked;
-    }
-
-    public Boolean getCredentialsExpired() {
-        return credentialsExpired;
     }
 
     public void setCredentialsExpired(Boolean credentialsExpired) {
@@ -123,6 +143,7 @@ public class User implements UserDetails {
         this.enabled = enabled;
     }
 
+    @JsonProperty
     public void setPassword(String password) {
         this.password = password;
     }

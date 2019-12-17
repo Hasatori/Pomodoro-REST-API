@@ -169,4 +169,16 @@ public class UserService implements UserDetailsService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
     }
+
+    public boolean usernameUnique(String username) {
+        User foundUser = userRepository.findUserByUsername(username);
+        return foundUser == null;
+    }
+
+    public void registerNewUser(User newUser) {
+        newUser.setPassword(new BCryptPasswordEncoder().encode(newUser.getPassword()));
+        userRepository.insertNewUser(newUser.getId(), newUser.getUsername(), newUser.getEmail(), newUser.getFirstName(), newUser.getLastName(), newUser.getPassword(), false, false, false, true);
+        settingsRepository.insertNewSettings(userRepository.findUserByUsername(newUser.getUsername()).getId(),1500,300,"Simple-alert-bells-tone.mp3",null,null);
+    }
+
 }

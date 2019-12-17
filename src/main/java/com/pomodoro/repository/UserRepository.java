@@ -4,10 +4,13 @@ import com.pomodoro.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Entity;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -23,4 +26,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Modifying
     @Query("update USER u set u.password=?2 where u.id = ?1")
     void updatePassword(Integer id, String password);
+
+    @Modifying
+    @Query(value = "INSERT INTO USER(ID, USERNAME, EMAIL, FIRST_NAME, LAST_NAME, PASSWORD, ACCOUNT_EXPIRED, LOCKED, CREDENTIALS_EXPIRED,ENABLED) VALUES (:userId,:username,:email,:firstName,:lastName,:password,:accountExpired,:locked,:credentialsExpiredEnabled,:enabled)",nativeQuery = true)
+    void insertNewUser(@Param("userId") Integer userId, @Param("username")String username, @Param("email")String email, @Param("firstName")String firstname,@Param("lastName")String lastName,@Param("password")String password,@Param("accountExpired")Boolean accountExpired,@Param("locked")Boolean locked,@Param("credentialsExpiredEnabled")Boolean credentialsExpiredEnabled,@Param("enabled")Boolean enabled);
+
 }
