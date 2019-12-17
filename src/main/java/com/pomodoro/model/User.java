@@ -38,6 +38,7 @@ public class User implements UserDetails {
 
     private String firstName, lastName;
     @NotBlank(message = "Email is mandatory")
+    @Pattern(regexp = "^[A-Za-z0-9+_.-]+@(.+)$",message = "Invalid email format")
     private String email;
 
     @NotBlank(message = "Password is mandatory")
