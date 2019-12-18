@@ -15,6 +15,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Transactional
 public class Pomodoro {
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = IDENTITY)
     private Integer id;
 
@@ -22,7 +23,7 @@ public class Pomodoro {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER", nullable = false,insertable = false,updatable = false)
     private User userObject;
-
+    @JsonIgnore
     private int user;
 
     @CreationTimestamp

@@ -5,8 +5,8 @@ import javax.validation.constraints.NotNull;
 
 public class FacebookUser {
 
-    @NotNull(message = "Id is mandatory")
-    private Integer id;
+    @NotBlank(message = "Id is mandatory")
+    private String id;
     @NotBlank(message = "Authentication token is mandatory")
     private String authToken;
     @NotBlank(message = "Email is mandatory")
@@ -16,11 +16,11 @@ public class FacebookUser {
     @NotBlank(message = "Name is mandatory")
     private String name;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

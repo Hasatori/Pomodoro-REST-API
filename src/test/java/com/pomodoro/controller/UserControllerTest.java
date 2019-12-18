@@ -1,7 +1,9 @@
 package com.pomodoro.controller;
 
+import com.google.gson.Gson;
 import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.model.User;
+import com.pomodoro.model.o2auth.FacebookUser;
 import com.pomodoro.repository.UserRepository;
 import com.pomodoro.service.UserService;
 import org.hamcrest.core.Is;
@@ -45,9 +47,16 @@ public class UserControllerTest {
     @Autowired
     WebApplicationContext webApplicationContext;
 
+    private Gson gson;
+    private FacebookUser testFacebookUser;
+    private User testUser;
+
     @Before
     public void setUp() {
-        mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        this.gson = new Gson();
+        this.testFacebookUser = new FacebookUser();
+        this.testUser = new User();
+        this.mvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
     @Test
@@ -93,21 +102,22 @@ public class UserControllerTest {
 
     @Test
     public void facebookLogin_validAuthToken_ShouldReturnJwtAccessToken() throws Exception {
-        User user = new User();
-        user.setEmail("test");
-        when(userService.facebookAccessTokenValid("test")).thenReturn(true);
-        when(userRepository.findUserByEmail("test")).thenReturn(user);
-        when(jwtTokenUtil.generateToken(user)).thenReturn("test");
+        String jwtToken = "test";
+        testFacebookUser.setEmail("test");
+        testFacebookUser.setId("123");
+        testFacebookUser.setName("test");
+        testFacebookUser.setAuthToken("test");
+        testUser.setEmail(testFacebookUser.getEmail());
 
-        String stringUser = "{\"id\" :123" +
-                ", \"authToken\":\"test\"" +
-                ", \"email\":\"test\"" +
-                ", \"name\":\"test\"}";
+        when(userService.facebookAccessTokenValid(testFacebookUser.getAuthToken(), testFacebookUser.getId())).thenReturn(true);
+        when(userRepository.findUserByEmail(testFacebookUser.getEmail())).thenReturn(testUser);
+        when(jwtTokenUtil.generateToken(testUser)).thenReturn(jwtToken);
+        String userJson = gson.toJson(testFacebookUser);
         mvc.perform(MockMvcRequestBuilders.post("/facebookLogin")
-                .content(stringUser)
+                .content(userJson)
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.token", Is.is("test")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.token", Is.is(jwtToken)))
                 .andExpect(MockMvcResultMatchers.content()
                         .contentType(MediaType.APPLICATION_JSON_UTF8));
     }

@@ -179,32 +179,39 @@ public class UserService implements UserDetailsService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
     }
+
     public void registerNewUser(User newUser) {
         newUser.setPassword(new BCryptPasswordEncoder().encode(newUser.getPassword()));
         userRepository.insertNewUser(newUser.getUsername(), newUser.getEmail(), newUser.getFirstName(), newUser.getLastName(), newUser.getPassword(), false, false, false, true);
-        settingsRepository.insertNewSettings(userRepository.findUserByUsername(newUser.getUsername()).getId(),1500,300,"Simple-alert-bells-tone.mp3",null,null);
+        settingsRepository.insertNewSettings(userRepository.findUserByUsername(newUser.getUsername()).getId(), 1500, 300, "Simple-alert-bells-tone.mp3", null, null);
     }
 
-    public boolean facebookAccessTokenValid(String inputToken) throws IOException {
+    public boolean facebookAccessTokenValid(String inputToken, String userId) throws IOException {
         HttpHeaders headers = new HttpHeaders();
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://graph.facebook.com/debug_token")
-                .queryParam("input_token",inputToken )
+                .queryParam("input_token", inputToken)
                 .queryParam("access_token", SecretStore.FACEBOOK_SECRET);
-    RestTemplate restTemplate = new RestTemplate();
-    HttpEntity<?> entity = new HttpEntity<>(headers);
-    HttpEntity<String> response = restTemplate.exchange(
-            builder.toUriString(),
-            HttpMethod.GET,
-            entity,
-            String.class);
-    if (response.getBody()!=null){
-        ObjectMapper mapper = new ObjectMapper();
-        JsonFactory factory = mapper.getFactory();
-        JsonParser parser = factory.createParser(response.getBody());
-        JsonNode actualObj = mapper.readTree(parser);
-        JsonNode code=actualObj.get("data").get("error");
-        return code==null;
-    }
-    return false;
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+        HttpEntity<String> response = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity,
+                String.class);
+        if (response.getBody() != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonFactory factory = mapper.getFactory();
+            JsonParser parser = factory.createParser(response.getBody());
+            JsonNode actualObj = mapper.readTree(parser);
+            JsonNode data = actualObj.get("data");
+            if (data != null) {
+                JsonNode responsesUserId = data.get("user_id");
+                if (responsesUserId != null) {
+                    return responsesUserId.asText().equals(userId);
+                }
+            }
+            return false;
+        }
+        return false;
     }
 }

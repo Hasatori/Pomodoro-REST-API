@@ -13,6 +13,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Transactional
 public class Group {
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = IDENTITY)
     private Integer id;
 
@@ -23,6 +24,7 @@ public class Group {
     @JoinColumn(name = "OWNER", nullable = false,insertable = false,updatable = false)
     private User ownerObject;
 
+    @JsonIgnore
     private int owner;
 
     @JsonIgnore

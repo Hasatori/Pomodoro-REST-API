@@ -51,7 +51,7 @@ public class UserController extends AbstractController {
     public ResponseEntity<?> facebookLogin(@Valid @RequestBody FacebookUser facebookUser) {
         Map<String, String> responseEntity = new HashMap<>();
         try {
-            if (userService.facebookAccessTokenValid(facebookUser.getAuthToken())) {
+            if (userService.facebookAccessTokenValid(facebookUser.getAuthToken(),facebookUser.getId())) {
                 User user = userRepository.findUserByEmail(facebookUser.getEmail());
                 if (user == null) {
                     log.debug("User with email {} was not found registering as new user",facebookUser.getEmail());
