@@ -13,7 +13,6 @@
         <version>2.1.0.RELEASE</version>
     </parent>
     <dependencies>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
@@ -90,6 +89,11 @@
             <groupId>org.passay</groupId>
             <artifactId>passay</artifactId>
             <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
         </dependency>
     </dependencies>
 

@@ -19,6 +19,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     User findUserByUsername(String username);
 
+    User findUserByEmail(String email);
+
     @Modifying
     @Query("update USER u set u.username=?2, u.firstName = ?3, u.lastName = ?4,u.email=?5 where u.id = ?1")
     void updateUserDetails(Integer id, String username, String firstName, String lastName, String email);
@@ -28,7 +30,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     void updatePassword(Integer id, String password);
 
     @Modifying
-    @Query(value = "INSERT INTO USER(ID, USERNAME, EMAIL, FIRST_NAME, LAST_NAME, PASSWORD, ACCOUNT_EXPIRED, LOCKED, CREDENTIALS_EXPIRED,ENABLED) VALUES (:userId,:username,:email,:firstName,:lastName,:password,:accountExpired,:locked,:credentialsExpiredEnabled,:enabled)",nativeQuery = true)
-    void insertNewUser(@Param("userId") Integer userId, @Param("username")String username, @Param("email")String email, @Param("firstName")String firstname,@Param("lastName")String lastName,@Param("password")String password,@Param("accountExpired")Boolean accountExpired,@Param("locked")Boolean locked,@Param("credentialsExpiredEnabled")Boolean credentialsExpiredEnabled,@Param("enabled")Boolean enabled);
+    @Query(value = "INSERT INTO USER( USERNAME, EMAIL, FIRST_NAME, LAST_NAME, PASSWORD, ACCOUNT_EXPIRED, LOCKED, CREDENTIALS_EXPIRED,ENABLED) VALUES (:username,:email,:firstName,:lastName,:password,:accountExpired,:locked,:credentialsExpiredEnabled,:enabled)", nativeQuery = true)
+    void insertNewUser( @Param("username") String username, @Param("email") String email, @Param("firstName") String firstname, @Param("lastName") String lastName, @Param("password") String password, @Param("accountExpired") Boolean accountExpired, @Param("locked") Boolean locked, @Param("credentialsExpiredEnabled") Boolean credentialsExpiredEnabled, @Param("enabled") Boolean enabled);
 
 }

@@ -3,6 +3,7 @@ package com.pomodoro.controller;
 import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.model.Pomodoro;
 import com.pomodoro.model.User;
+import com.pomodoro.repository.UserRepository;
 import com.pomodoro.service.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PomodoroController extends AbstractController{
 
-    PomodoroController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService) {
-        super(authenticationManager, jwtTokenUtil, userService);
+    PomodoroController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService, UserRepository userRepository) {
+        super(authenticationManager, jwtTokenUtil, userService,userRepository);
     }
 
     @RequestMapping(value = "/pomodoro/update", method = RequestMethod.POST)

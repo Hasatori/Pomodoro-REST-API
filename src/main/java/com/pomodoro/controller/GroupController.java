@@ -3,6 +3,7 @@ package com.pomodoro.controller;
 import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.model.Group;
 import com.pomodoro.model.User;
+import com.pomodoro.repository.UserRepository;
 import com.pomodoro.service.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +15,8 @@ import java.util.Set;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class GroupController extends AbstractController {
 
-    GroupController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService) {
-        super(authenticationManager, jwtTokenUtil, userService);
+    GroupController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService, UserRepository userRepository) {
+        super(authenticationManager, jwtTokenUtil, userService,userRepository);
     }
 
     @RequestMapping(value = "/groups", method = RequestMethod.POST)

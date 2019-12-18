@@ -1,6 +1,7 @@
 package com.pomodoro.controller;
 
 import com.pomodoro.config.JwtTokenUtil;
+import com.pomodoro.repository.UserRepository;
 import com.pomodoro.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,11 +21,13 @@ public class AbstractController {
 
     final UserService userService;
 
+    final UserRepository userRepository;
 
-    AbstractController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService) {
+    AbstractController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService,UserRepository userRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

@@ -1,10 +1,15 @@
 package com.pomodoro.service;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.model.Group;
 import com.pomodoro.model.Pomodoro;
 import com.pomodoro.model.Settings;
 import com.pomodoro.model.User;
+import com.pomodoro.model.o2auth.SecretStore;
 import com.pomodoro.repository.GroupRepository;
 import com.pomodoro.repository.PomodoroRepository;
 import com.pomodoro.repository.SettingsRepository;
@@ -13,16 +18,21 @@ import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.AssertTrue;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -169,16 +179,32 @@ public class UserService implements UserDetailsService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
     }
-
-    public boolean usernameUnique(String username) {
-        User foundUser = userRepository.findUserByUsername(username);
-        return foundUser == null;
-    }
-
     public void registerNewUser(User newUser) {
         newUser.setPassword(new BCryptPasswordEncoder().encode(newUser.getPassword()));
-        userRepository.insertNewUser(newUser.getId(), newUser.getUsername(), newUser.getEmail(), newUser.getFirstName(), newUser.getLastName(), newUser.getPassword(), false, false, false, true);
+        userRepository.insertNewUser(newUser.getUsername(), newUser.getEmail(), newUser.getFirstName(), newUser.getLastName(), newUser.getPassword(), false, false, false, true);
         settingsRepository.insertNewSettings(userRepository.findUserByUsername(newUser.getUsername()).getId(),1500,300,"Simple-alert-bells-tone.mp3",null,null);
     }
 
+    public boolean facebookAccessTokenValid(String inputToken) throws IOException {
+        HttpHeaders headers = new HttpHeaders();
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://graph.facebook.com/debug_token")
+                .queryParam("input_token",inputToken )
+                .queryParam("access_token", SecretStore.FACEBOOK_SECRET);
+    RestTemplate restTemplate = new RestTemplate();
+    HttpEntity<?> entity = new HttpEntity<>(headers);
+    HttpEntity<String> response = restTemplate.exchange(
+            builder.toUriString(),
+            HttpMethod.GET,
+            entity,
+            String.class);
+    if (response.getBody()!=null){
+        ObjectMapper mapper = new ObjectMapper();
+        JsonFactory factory = mapper.getFactory();
+        JsonParser parser = factory.createParser(response.getBody());
+        JsonNode actualObj = mapper.readTree(parser);
+        JsonNode code=actualObj.get("data").get("error");
+        return code==null;
+    }
+    return false;
+    }
 }
