@@ -102,14 +102,17 @@ public class UserService implements UserDetailsService {
         settingsRepository.updateUserSettings(currentUser.getId(), updatedSettings.getWorkTime(), updatedSettings.getPauseTime(), updatedSettings.getPhaseChangedSound(), updatedSettings.getWorkSound(), updatedSettings.getPauseSound());
     }
 
-    public void changePassword(User user, String oldPassword, String newPassoword) {
+    public boolean passwordBelongsToTheUser(User user,String password){
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.matches(password, user.getPassword());
+    }
+    public void changePassword(User user, String oldPassword, String newPassword) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         if (encoder.matches(oldPassword, user.getPassword())) {
-            userRepository.updatePassword(user.getId(), encoder.encode(newPassoword));
+            userRepository.updatePassword(user.getId(), encoder.encode(newPassword));
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-
     }
 
     public Pomodoro createPomodoroAndReturn(User user) {

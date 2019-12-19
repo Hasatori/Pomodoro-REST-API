@@ -65,11 +65,11 @@ public class UserController extends AbstractController {
                 String token = jwtTokenUtil.generateToken(user);
                 return ResponseEntity.ok(new JwtResponse(token));
             } else {
-                responseEntity.put("Error", "Invalid access token");
+                responseEntity.put("error", "Invalid access token");
             }
         } catch (IOException e) {
             log.error("Error while validating facebook access token {}", facebookUser.getAuthToken());
-            responseEntity.put("Error", "Error while validating access token ");
+            responseEntity.put("error", "Error while validating access token ");
         }
             return ResponseEntity.ok().body(responseEntity);
     }
@@ -85,7 +85,7 @@ public class UserController extends AbstractController {
         } else {
             userService.registerNewUser(newUser);
             status = 200;
-            responseEntity.put("Success", "You were successfully registered!");
+            responseEntity.put("success", "You were successfully registered!");
         }
         return ResponseEntity.status(status).body(responseEntity);
     }
@@ -114,11 +114,22 @@ public class UserController extends AbstractController {
     }
 
     @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
-    public void changePassword(HttpServletRequest req, @RequestBody Map<String, String> body) {
+    public ResponseEntity<?> changePassword(HttpServletRequest req,@Valid @RequestBody ChangePassword changePassword) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
-        String oldPassword = body.get("oldPassword");
-        String newPassword = body.get("newPassword");
-        userService.changePassword(user, oldPassword, newPassword);
+        Map<String, String> responseEntity = new HashMap<>();
+        int status = 400;
+        if (changePassword.getOldPassword().equals(changePassword.getNewPassword())){
+           responseEntity.put("newPasswordConfirm","Passwords match");
+        }
+        if(!userService.passwordBelongsToTheUser(user,changePassword.getOldPassword())){
+            responseEntity.put("oldPassword","Incorrect password");
+        }
+        if (responseEntity.size()==0){
+            status = 200;
+            responseEntity.put("success","Password was successfully changed");
+            userService.changePassword(user, changePassword.getOldPassword(),changePassword.getNewPassword());
+        }
+      return ResponseEntity.status(status).body(responseEntity);
     }
 
     private void authenticate(String username, String password) throws Exception {
