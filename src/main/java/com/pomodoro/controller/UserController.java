@@ -51,10 +51,10 @@ public class UserController extends AbstractController {
     public ResponseEntity<?> facebookLogin(@Valid @RequestBody FacebookUser facebookUser) {
         Map<String, String> responseEntity = new HashMap<>();
         try {
-            if (userService.facebookAccessTokenValid(facebookUser.getAuthToken(),facebookUser.getId())) {
+            if (userService.facebookAccessTokenValid(facebookUser.getAuthToken(), facebookUser.getId())) {
                 User user = userRepository.findUserByEmail(facebookUser.getEmail());
                 if (user == null) {
-                    log.debug("User with email {} was not found registering as new user",facebookUser.getEmail());
+                    log.debug("User with email {} was not found registering as new user", facebookUser.getEmail());
                     user = new User();
                     user.setUsername(facebookUser.getName());
                     user.setFirstName(facebookUser.getFirstName());
@@ -71,7 +71,7 @@ public class UserController extends AbstractController {
             log.error("Error while validating facebook access token {}", facebookUser.getAuthToken());
             responseEntity.put("error", "Error while validating access token ");
         }
-            return ResponseEntity.ok().body(responseEntity);
+        return ResponseEntity.ok().body(responseEntity);
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -80,9 +80,11 @@ public class UserController extends AbstractController {
         int status = 400;
         if (userRepository.findUserByUsername(newUser.getUsername()) != null) {
             responseEntity.put("username", String.format("user with name %s already exists", newUser.getUsername()));
-        } else if (userRepository.findUserByEmail(newUser.getEmail()) != null) {
+        }
+        if (userRepository.findUserByEmail(newUser.getEmail()) != null) {
             responseEntity.put("email", String.format("user with email %s already exists", newUser.getEmail()));
-        } else {
+        }
+        if (responseEntity.size() == 0) {
             userService.registerNewUser(newUser);
             status = 200;
             responseEntity.put("success", "You were successfully registered!");
@@ -96,9 +98,33 @@ public class UserController extends AbstractController {
     }
 
     @RequestMapping(value = "/updateDetails", method = RequestMethod.POST)
-    public void updateUser(HttpServletRequest req, @RequestBody User updatedUser) {
+    public ResponseEntity<?> updateUser(HttpServletRequest req, @RequestBody @Valid UpdateUserDetails updatedUser) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
-        userService.updateUser(user, updatedUser);
+        Map<String, String> responseEntity = new HashMap<>();
+        int status = 400;
+        if (userRepository.findUserByUsername(updatedUser.getUsername()) != null && !userRepository.findUserByUsername(updatedUser.getUsername()).getEmail().equals(user.getEmail())) {
+            responseEntity.put("username", String.format("user with name %s already exists", updatedUser.getUsername()));
+        }
+        if (userRepository.findUserByEmail(updatedUser.getEmail()) != null && !userRepository.findUserByEmail(updatedUser.getEmail()).getUsername().equals(user.getUsername())) {
+            responseEntity.put("email", String.format("user with email %s already exists", updatedUser.getEmail()));
+        }
+        String firstName = updatedUser.getFirstName();
+        String lastName = updatedUser.getLastName();
+        if (
+                (firstName != null && firstName.equals(updatedUser.getFirstName()))
+                        && (lastName != null && lastName.equals(updatedUser.getLastName()))
+                        && user.getUsername().equals(updatedUser.getUsername())
+                        && user.getEmail().equals(updatedUser.getEmail())
+                ) {
+            responseEntity.put("error", "No value was updated");
+        }
+        if (responseEntity.size() == 0) {
+            userService.updateUser(user, updatedUser);
+            status = 200;
+            responseEntity.put("success", "Personal information were successfully updated");
+        }
+        return ResponseEntity.status(status).body(responseEntity);
+
     }
 
     @RequestMapping(value = "/updateSettings", method = RequestMethod.POST)
@@ -114,22 +140,23 @@ public class UserController extends AbstractController {
     }
 
     @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
-    public ResponseEntity<?> changePassword(HttpServletRequest req,@Valid @RequestBody ChangePassword changePassword) {
+    public ResponseEntity<?> changePassword(HttpServletRequest req, @Valid @RequestBody ChangePassword
+            changePassword) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
         Map<String, String> responseEntity = new HashMap<>();
         int status = 400;
-        if (changePassword.getOldPassword().equals(changePassword.getNewPassword())){
-           responseEntity.put("newPasswordConfirm","Passwords match");
+        if (changePassword.getOldPassword().equals(changePassword.getNewPassword())) {
+            responseEntity.put("newPasswordConfirm", "Passwords match");
         }
-        if(!userService.passwordBelongsToTheUser(user,changePassword.getOldPassword())){
-            responseEntity.put("oldPassword","Incorrect password");
+        if (!userService.passwordBelongsToTheUser(user, changePassword.getOldPassword())) {
+            responseEntity.put("oldPassword", "Incorrect password");
         }
-        if (responseEntity.size()==0){
+        if (responseEntity.size() == 0) {
             status = 200;
-            responseEntity.put("success","Password was successfully changed");
-            userService.changePassword(user, changePassword.getOldPassword(),changePassword.getNewPassword());
+            responseEntity.put("success", "Password was successfully changed");
+            userService.changePassword(user, changePassword.getOldPassword(), changePassword.getNewPassword());
         }
-      return ResponseEntity.status(status).body(responseEntity);
+        return ResponseEntity.status(status).body(responseEntity);
     }
 
     private void authenticate(String username, String password) throws Exception {

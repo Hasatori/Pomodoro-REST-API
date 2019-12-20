@@ -2,10 +2,12 @@ package com.pomodoro.controller;
 
 import com.google.gson.Gson;
 import com.pomodoro.config.JwtTokenUtil;
+import com.pomodoro.model.UpdateUserDetails;
 import com.pomodoro.model.User;
 import com.pomodoro.model.o2auth.FacebookUser;
 import com.pomodoro.repository.UserRepository;
 import com.pomodoro.service.UserService;
+import org.assertj.core.condition.DoesNotHave;
 import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +29,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import sun.invoke.empty.Empty;
 
 import static org.mockito.Mockito.*;
 
@@ -122,6 +125,134 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_UTF8));
     }
 
+    @Test
+    public void updateUser_allValuesAreBlank_ShouldReturnErrorMessages() throws Exception {
+        UpdateUserDetails updateUserDetails = new UpdateUserDetails();
+        String userJson = gson.toJson(updateUserDetails);
+        mvc.perform(MockMvcRequestBuilders.post("/updateDetails")
+                .content(userJson)
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.username", Is.is("Name is mandatory")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email", Is.is("Email is mandatory")))
+                .andExpect(MockMvcResultMatchers.content()
+                        .contentType(MediaType.APPLICATION_JSON_UTF8));
+    }
+
+    @Test
+    public void updateUser_onlyUsernameIsMissing_ShouldReturnErrorMessages() throws Exception {
+        UpdateUserDetails updateUserDetails = new UpdateUserDetails();
+        updateUserDetails.setEmail("test@email.cz");
+        String userJson = gson.toJson(updateUserDetails);
+        mvc.perform(MockMvcRequestBuilders.post("/updateDetails")
+                .content(userJson)
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.username", Is.is("Name is mandatory")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email").doesNotExist())
+                .andExpect(MockMvcResultMatchers.content()
+                        .contentType(MediaType.APPLICATION_JSON_UTF8));
+    }
+
+    @Test
+    public void updateUser_onlyEmailIsMissing_ShouldReturnErrorMessages() throws Exception {
+        UpdateUserDetails updateUserDetails = new UpdateUserDetails();
+        updateUserDetails.setUsername("test");
+        String userJson = gson.toJson(updateUserDetails);
+        mvc.perform(MockMvcRequestBuilders.post("/updateDetails")
+                .content(userJson)
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email", Is.is("Email is mandatory")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.username").doesNotExist())
+                .andExpect(MockMvcResultMatchers.content()
+                        .contentType(MediaType.APPLICATION_JSON_UTF8));
+    }
+
+    @Test
+    public void updateUser_userWithSameUsernameAlreadyExists_ShouldReturnUsernameError() throws Exception {
+        String jwtToken = "test";
+        String userName = "test";
+        String email="test@email.cz";
+        testUser.setEmail(email);
+        User duplicateNameUser = new User();
+        duplicateNameUser.setUsername(userName);
+        duplicateNameUser.setEmail("test2@email.cz");
+        when(userService.getTokenFromRequest(any())).thenReturn(jwtToken);
+        when(userService.getUserFromToken(jwtToken)).thenReturn(testUser);
+        when(userRepository.findUserByUsername(userName)).thenReturn(duplicateNameUser);
+        UpdateUserDetails updateUserDetails = new UpdateUserDetails();
+        updateUserDetails.setUsername(userName);
+        updateUserDetails.setEmail(email);
+        String userJson = gson.toJson(updateUserDetails);
+        mvc.perform(MockMvcRequestBuilders.post("/updateDetails")
+                .content(userJson)
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.username", Is.is(String.format("user with name %s already exists", userName))))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error").doesNotExist())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email").doesNotExist())
+                .andExpect(MockMvcResultMatchers.content()
+                        .contentType(MediaType.APPLICATION_JSON_UTF8));
+    }
+
+    @Test
+    public void updateUser_userWithSameEmailAlreadyExists_ShouldReturnEmailError() throws Exception {
+        String jwtToken = "test";
+        String email = "test@email.cz";
+        User duplicateEmailUser = new User();
+        duplicateEmailUser.setUsername("test2");
+        duplicateEmailUser.setEmail(email);
+        when(userService.getTokenFromRequest(any())).thenReturn(jwtToken);
+        when(userService.getUserFromToken(jwtToken)).thenReturn(testUser);
+        when(userRepository.findUserByEmail(email)).thenReturn(duplicateEmailUser);
+        UpdateUserDetails updateUserDetails = new UpdateUserDetails();
+        updateUserDetails.setUsername("test");
+        updateUserDetails.setEmail(email);
+        String userJson = gson.toJson(updateUserDetails);
+        mvc.perform(MockMvcRequestBuilders.post("/updateDetails")
+                .content(userJson)
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email", Is.is(String.format("user with email %s already exists", email))))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error").doesNotExist())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.username").doesNotExist())
+                .andExpect(MockMvcResultMatchers.content()
+                        .contentType(MediaType.APPLICATION_JSON_UTF8));
+    }
+
+    @Test
+    public void updateUser_noValueWasUpdated_ShouldReturnErrorMessage() throws Exception {
+        String jwtToken = "test";
+        String firstName = "test";
+        String lastName = "test";
+        String username = "test";
+        String email = "test@email.cz";
+        testUser.setFirstName(firstName);
+        testUser.setLastName(lastName);
+        testUser.setEmail(email);
+        testUser.setUsername(username);
+
+        UpdateUserDetails updateUserDetails = new UpdateUserDetails();
+        updateUserDetails.setUsername(username);
+        updateUserDetails.setFirstName(firstName);
+        updateUserDetails.setLastName(lastName);
+        updateUserDetails.setEmail(email);
+
+        when(userService.getTokenFromRequest(any())).thenReturn(jwtToken);
+        when(userService.getUserFromToken(jwtToken)).thenReturn(testUser);
+        when(userRepository.findUserByEmail(updateUserDetails.getEmail())).thenReturn(testUser);
+        when(userRepository.findUserByUsername(updateUserDetails.getUsername())).thenReturn(testUser);
+
+        String userJson = gson.toJson(updateUserDetails);
+        mvc.perform(MockMvcRequestBuilders.post("/updateDetails")
+                .content(userJson)
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("No value was updated")))
+                .andExpect(MockMvcResultMatchers.content()
+                        .contentType(MediaType.APPLICATION_JSON_UTF8));
+    }
 }
 
 

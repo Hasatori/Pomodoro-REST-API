@@ -5,10 +5,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pomodoro.config.JwtTokenUtil;
-import com.pomodoro.model.Group;
-import com.pomodoro.model.Pomodoro;
-import com.pomodoro.model.Settings;
-import com.pomodoro.model.User;
+import com.pomodoro.model.*;
 import com.pomodoro.model.o2auth.SecretStore;
 import com.pomodoro.repository.GroupRepository;
 import com.pomodoro.repository.PomodoroRepository;
@@ -94,7 +91,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findUserByUsername(username);
     }
 
-    public void updateUser(User currentUser, User updatedUser) {
+    public void updateUser(User currentUser, UpdateUserDetails updatedUser) {
         userRepository.updateUserDetails(currentUser.getId(), updatedUser.getUsername(), updatedUser.getFirstName(), updatedUser.getLastName(), updatedUser.getEmail());
     }
 
