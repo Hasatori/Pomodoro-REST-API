@@ -92,17 +92,22 @@ public class UserService implements UserDetailsService {
     }
 
     public void updateUser(User currentUser, UpdateUserDetails updatedUser) {
-        userRepository.updateUserDetails(currentUser.getId(), updatedUser.getUsername(), updatedUser.getFirstName(), updatedUser.getLastName(), updatedUser.getEmail());
+        currentUser.setUsername(updatedUser.getUsername());
+        currentUser.setFirstName(updatedUser.getFirstName());
+        currentUser.setLastName(updatedUser.getLastName());
+        currentUser.setEmail(updatedUser.getEmail());
+        userRepository.save(currentUser);
     }
 
     public void updateUserSettings(User currentUser, Settings updatedSettings) {
         settingsRepository.updateUserSettings(currentUser.getId(), updatedSettings.getWorkTime(), updatedSettings.getPauseTime(), updatedSettings.getPhaseChangedSound(), updatedSettings.getWorkSound(), updatedSettings.getPauseSound());
     }
 
-    public boolean passwordBelongsToTheUser(User user,String password){
+    public boolean passwordBelongsToTheUser(User user, String password) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.matches(password, user.getPassword());
     }
+
     public void changePassword(User user, String oldPassword, String newPassword) {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         if (encoder.matches(oldPassword, user.getPassword())) {
@@ -180,7 +185,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public void registerNewUser(User newUser) {
+    public void registerNewUser(RegisterUser newUser) {
         newUser.setPassword(new BCryptPasswordEncoder().encode(newUser.getPassword()));
         userRepository.insertNewUser(newUser.getUsername(), newUser.getEmail(), newUser.getFirstName(), newUser.getLastName(), newUser.getPassword(), false, false, false, true);
         settingsRepository.insertNewSettings(userRepository.findUserByUsername(newUser.getUsername()).getId(), 1500, 300, "Simple-alert-bells-tone.mp3", null, null);

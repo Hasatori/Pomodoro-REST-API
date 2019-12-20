@@ -7,7 +7,6 @@ import com.pomodoro.repository.UserRepository;
 import com.pomodoro.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.PropertyAccessorUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -55,12 +54,12 @@ public class UserController extends AbstractController {
                 User user = userRepository.findUserByEmail(facebookUser.getEmail());
                 if (user == null) {
                     log.debug("User with email {} was not found registering as new user", facebookUser.getEmail());
-                    user = new User();
-                    user.setUsername(facebookUser.getName());
-                    user.setFirstName(facebookUser.getFirstName());
-                    user.setLastName(facebookUser.getLastName());
-                    user.setEmail(facebookUser.getEmail());
-                    userService.registerNewUser(user);
+                    RegisterUser newUser = new RegisterUser();
+                    newUser.setUsername(facebookUser.getName());
+                    newUser.setFirstName(facebookUser.getFirstName());
+                    newUser.setLastName(facebookUser.getLastName());
+                    newUser.setEmail(facebookUser.getEmail());
+                    userService.registerNewUser(newUser);
                 }
                 String token = jwtTokenUtil.generateToken(user);
                 return ResponseEntity.ok(new JwtResponse(token));
@@ -75,7 +74,7 @@ public class UserController extends AbstractController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ResponseEntity<?> registerNewUser(@Valid @RequestBody User newUser) throws NoSuchFieldException {
+    public ResponseEntity<?> registerNewUser(@Valid @RequestBody RegisterUser newUser) throws NoSuchFieldException {
         Map<String, String> responseEntity = new HashMap<>();
         int status = 400;
         if (userRepository.findUserByUsername(newUser.getUsername()) != null) {
@@ -119,9 +118,17 @@ public class UserController extends AbstractController {
             responseEntity.put("error", "No value was updated");
         }
         if (responseEntity.size() == 0) {
-            userService.updateUser(user, updatedUser);
-            status = 200;
-            responseEntity.put("success", "Personal information were successfully updated");
+            try {
+                userService.updateUser(user, updatedUser);
+                User newUser = userRepository.findUserByUsername(updatedUser.getUsername());
+                status = 200;
+                String token = jwtTokenUtil.generateToken(newUser);
+                responseEntity.put("success", "Personal information were successfully updated");
+                responseEntity.put("newToken", token);
+            } catch (Exception e) {
+                log.error("Error while authenticating user {} {}", updatedUser.getUsername(), e);
+                responseEntity.put("error", "Unexpected error has occured");
+            }
         }
         return ResponseEntity.status(status).body(responseEntity);
 

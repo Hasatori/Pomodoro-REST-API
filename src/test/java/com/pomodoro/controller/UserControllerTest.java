@@ -64,7 +64,7 @@ public class UserControllerTest {
 
     @Test
     public void registerNewUser_usernameAndEmailAndPasswordAreBlank_ShouldReturnErrorMessages() throws Exception {
-        String user = "{\"username\": \"\", \"email\" : \"\", \"password\" : \"\"}";
+        String user = "{\"username\": \"\", \"email\" : \"\", \"password\" : \"d\"}";
         mvc.perform(MockMvcRequestBuilders.post("/register")
                 .content(user)
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
