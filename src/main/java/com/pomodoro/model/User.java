@@ -23,6 +23,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity(name = "USER")
 @Transactional
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User implements UserDetails {
     @JsonIgnore
     @Id
@@ -72,7 +73,7 @@ public class User implements UserDetails {
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY, mappedBy = "ownerObject")
+            fetch = FetchType.LAZY, mappedBy = "owner")
     private List<Group> ownedGroups;
 
     public void setUsername(String userName) {

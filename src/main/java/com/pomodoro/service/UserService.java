@@ -15,24 +15,24 @@ import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.AssertTrue;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -158,20 +158,22 @@ public class UserService implements UserDetailsService {
 
     public void createGroup(User user, String name, boolean isPublic) {
         groupRepository.insertGroup(name, user.getId(), isPublic);
-        Group group = groupRepository.findPomodoroGroupByNameAndOwner(name, user.getId());
+        Group group = groupRepository.findPomodoroGroupByNameAndOwnerId(name, user.getId());
         group.getUsers().add(user);
         groupRepository.save(group);
     }
 
-    public void addUserToGroup(User owner, String groupName, String userToAddName) {
-        Group group = groupRepository.findPomodoroGroupByNameAndOwner(groupName, owner.getId());
-        User userToAdd = userRepository.findUserByUsername(userToAddName);
+    public void addUserToGroup(Group group, User userToAdd) {
         group.getUsers().add(userToAdd);
+        groupRepository.save(group);
+    }
+    public void removeUserFromGroup(Group group,User userToRemove){
+        group.getUsers().removeIf(user -> user.getUsername().equals(userToRemove.getUsername()));
         groupRepository.save(group);
     }
 
     public void deleteUserFromGroup(User owner, String groupName, String userToDeleteName) {
-        Group group = groupRepository.findPomodoroGroupByNameAndOwner(groupName, owner.getId());
+        Group group = groupRepository.findPomodoroGroupByNameAndOwnerId(groupName, owner.getId());
         Optional<User> userToDeleteOptional = group
                 .getUsers()
                 .stream()
@@ -184,7 +186,6 @@ public class UserService implements UserDetailsService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
     }
-
     public void registerNewUser(RegisterUser newUser) {
         newUser.setPassword(new BCryptPasswordEncoder().encode(newUser.getPassword()));
         userRepository.insertNewUser(newUser.getUsername(), newUser.getEmail(), newUser.getFirstName(), newUser.getLastName(), newUser.getPassword(), false, false, false, true);

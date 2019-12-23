@@ -20,10 +20,11 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
 
     Set<Group> findPomodoroGroupByName(String groupName);
 
-    Group findPomodoroGroupByNameAndOwner(String groupName,Integer owner);
+    Group findPomodoroGroupByNameAndOwnerId(String groupName,Integer ownerId);
+
     @Modifying
-    @Query(value = "INSERT INTO POMODORO_GROUP( NAME, OWNER,IS_PUBLIC) VALUES (:name,:owner,:isPublic)",nativeQuery = true)
-    void insertGroup(@Param("name") String name, @Param("owner") Integer owner, @Param("isPublic")boolean isPublic);
+    @Query(value = "INSERT INTO POMODORO_GROUP( NAME, OWNER_ID,IS_PUBLIC) VALUES (:name,:ownerId,:isPublic)",nativeQuery = true)
+    void insertGroup(@Param("name") String name, @Param("ownerId") Integer ownerId, @Param("isPublic")boolean isPublic);
 
 
 }

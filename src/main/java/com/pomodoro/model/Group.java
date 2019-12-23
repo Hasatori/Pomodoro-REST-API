@@ -19,13 +19,14 @@ public class Group {
 
     private String name;
     private boolean isPublic;
-    @JsonIgnore
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OWNER", nullable = false,insertable = false,updatable = false)
-    private User ownerObject;
+    @JoinColumn(name = "OWNER_ID",insertable = false,updatable = false)
+    private User owner;
 
     @JsonIgnore
-    private int owner;
+    @Column(name = "OWNER_ID")
+    private int ownerId;
 
     @JsonIgnore
     @ManyToMany
@@ -58,20 +59,20 @@ public class Group {
         this.users = users;
     }
 
-    public User getOwnerObject() {
-        return ownerObject;
-    }
-
-    public void setOwnerObject(User ownerObject) {
-        this.ownerObject = ownerObject;
-    }
-
-    public int getOwner() {
+    public User getOwner() {
         return owner;
     }
 
-    public void setOwner(int owner) {
+    public void setOwner(User owner) {
         this.owner = owner;
+    }
+
+    public int getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(int ownerId) {
+        this.ownerId = ownerId;
     }
 
     public boolean isPublic() {
