@@ -137,7 +137,7 @@ public class UserService implements UserDetailsService {
     }
 
     public Set<User> getUsersForGroup(String groupName, User user) {
-        Set<Group> groups = groupRepository.findPomodoroGroupByName(groupName);
+       List<Group> groups = groupRepository.findPomodoroGroupByName(groupName);
         Optional<Group> groupWithUsers = groups.stream().filter(group -> group.getUsers().stream().anyMatch(user1 -> user1.getUsername().equals(user.getUsername()))).findFirst();
         if (groupWithUsers.isPresent()) {
             return groupWithUsers.get().getUsers();

@@ -78,6 +78,11 @@ public class User implements UserDetails, Principal {
             fetch = FetchType.LAZY, mappedBy = "owner")
     private List<Group> ownedGroups;
 
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "author")
+    private List<GroupMessage> groupMessages;
+
     public void setUsername(String userName) {
         this.username = userName;
     }
@@ -239,6 +244,14 @@ public class User implements UserDetails, Principal {
 
     public void setFacebookId(Integer facebookId) {
         this.facebookId = facebookId;
+    }
+
+    public List<GroupMessage> getGroupMessages() {
+        return groupMessages;
+    }
+
+    public void setGroupMessages(List<GroupMessage> groupMessages) {
+        this.groupMessages = groupMessages;
     }
 
     @Override

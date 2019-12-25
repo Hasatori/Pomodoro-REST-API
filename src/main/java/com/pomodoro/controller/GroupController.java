@@ -1,9 +1,8 @@
 package com.pomodoro.controller;
 
 import com.pomodoro.config.JwtTokenUtil;
-import com.pomodoro.model.Group;
-import com.pomodoro.model.GroupRequest;
-import com.pomodoro.model.User;
+import com.pomodoro.model.*;
+import com.pomodoro.repository.GroupMessageRepository;
 import com.pomodoro.repository.GroupRepository;
 import com.pomodoro.repository.UserRepository;
 import com.pomodoro.service.UserService;
@@ -15,24 +14,21 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class GroupController extends AbstractController {
     private static final Logger log = LoggerFactory.getLogger(GroupController.class);
 
-    GroupController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService, UserRepository userRepository, GroupRepository groupRepository) {
-        super(authenticationManager, jwtTokenUtil, userService, userRepository, groupRepository);
+    GroupController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService, UserRepository userRepository, GroupRepository groupRepository, GroupMessageRepository groupMessageRepository) {
+        super(authenticationManager, jwtTokenUtil, userService, userRepository, groupRepository, groupMessageRepository);
     }
 
     @RequestMapping(value = "/groups", method = RequestMethod.POST)
     public ResponseEntity<?> getGroups(HttpServletRequest req) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
-        Set<Group>userGroups=user.getGroups();
+        Set<Group> userGroups = user.getGroups();
         return ResponseEntity.ok().body(userGroups);
     }
 
@@ -42,6 +38,15 @@ public class GroupController extends AbstractController {
         return userService.getUsersForGroup(groupName, user);
     }
 
+    @RequestMapping(value = "/groups/{groupName}/fetch-chat-messages", method = RequestMethod.POST)
+    public ResponseEntity<?> fetchChatMessages(HttpServletRequest req,
+                                               @RequestBody GroupMessagesRequest groupMessagesRequest) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        Group group = groupRepository.findPomodoroGroupByName(groupMessagesRequest.getGroupName()).get(0);
+        Integer limit = groupMessagesRequest.getStop() - groupMessagesRequest.getStart();
+        List<GroupMessage> groupMessages = groupMessageRepository.findLastMessagesByGroupIdWithinLimitAndOffset(group.getId(), limit, groupMessagesRequest.getStart());
+        return ResponseEntity.ok(groupMessages);
+    }
 
     @RequestMapping(value = "/group/create", method = RequestMethod.POST)
     public void createGroup(HttpServletRequest req, @RequestBody Group group) {
@@ -57,7 +62,7 @@ public class GroupController extends AbstractController {
         Group originalGroup = groupRepository.findPomodoroGroupByNameAndOwnerId(groupRequest.getGroupName(), user.getId());
         User userToAdd = userRepository.findUserByUsername(groupRequest.getUsername());
         basicGroupChecks(originalGroup, responseEntity, userToAdd);
-         if(originalGroup!=null&&userToAdd!=null &&originalGroup.getUsers().stream().anyMatch(user1 -> user1.getUsername().equals(userToAdd.getUsername()))){
+        if (originalGroup != null && userToAdd != null && originalGroup.getUsers().stream().anyMatch(user1 -> user1.getUsername().equals(userToAdd.getUsername()))) {
             responseEntity.put("group", "User already is part of the group");
         }
         if (responseEntity.size() == 0) {
@@ -73,7 +78,7 @@ public class GroupController extends AbstractController {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
         Map<String, String> responseEntity = new HashMap<>();
         int status = 400;
-        Group originalGroup =  groupRepository.findPomodoroGroupByNameAndOwnerId(groupRequest.getGroupName(), user.getId());
+        Group originalGroup = groupRepository.findPomodoroGroupByNameAndOwnerId(groupRequest.getGroupName(), user.getId());
 
         User userToRemove = userRepository.findUserByUsername(groupRequest.getUsername());
         basicGroupChecks(originalGroup, responseEntity, userToRemove);

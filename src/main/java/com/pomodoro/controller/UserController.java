@@ -3,6 +3,7 @@ package com.pomodoro.controller;
 import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.model.*;
 import com.pomodoro.model.o2auth.FacebookUser;
+import com.pomodoro.repository.GroupMessageRepository;
 import com.pomodoro.repository.GroupRepository;
 import com.pomodoro.repository.UserRepository;
 import com.pomodoro.service.UserService;
@@ -29,8 +30,8 @@ import java.util.Objects;
 public class UserController extends AbstractController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    UserController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService, UserRepository userRepository, GroupRepository groupRepository) {
-        super(authenticationManager, jwtTokenUtil, userService, userRepository, groupRepository);
+    UserController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService, UserRepository userRepository, GroupRepository groupRepository, GroupMessageRepository groupMessageRepository) {
+        super(authenticationManager, jwtTokenUtil, userService, userRepository, groupRepository, groupMessageRepository);
     }
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)

@@ -1,0 +1,93 @@
+package com.pomodoro.model;
+
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.*;
+import java.util.Date;
+
+import static javax.persistence.GenerationType.IDENTITY;
+
+@Entity(name = "GROUP_MESSAGE")
+@Transactional
+public class GroupMessage {
+    @Id
+    @JsonIgnore
+    @GeneratedValue(strategy = IDENTITY)
+    private Integer id;
+
+    private String value;
+    private Date timestamp;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "AUTHOR_ID",insertable = false,updatable = false)
+    private User author;
+
+    @JsonIgnore
+    @Column(name = "AUTHOR_ID")
+    private int authorId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "GROUP_ID",insertable = false,updatable = false)
+    private Group group ;
+
+    @JsonIgnore
+    @Column(name = "GROUP_ID")
+    private int groupId;
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public int getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(int authorId) {
+        this.authorId = authorId;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
+    public int getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
+    }
+}

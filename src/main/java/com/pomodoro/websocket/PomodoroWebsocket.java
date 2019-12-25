@@ -2,6 +2,8 @@ package com.pomodoro.websocket;
 
 import com.pomodoro.model.Pomodoro;
 import com.pomodoro.model.User;
+import com.pomodoro.repository.GroupMessageRepository;
+import com.pomodoro.repository.GroupRepository;
 import com.pomodoro.repository.UserRepository;
 import com.pomodoro.service.UserService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -16,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PomodoroWebsocket extends AbstractSocket{
 
-    PomodoroWebsocket(UserService userService, SimpMessagingTemplate simpMessagingTemplate, UserRepository userRepository) {
-        super(userService, simpMessagingTemplate, userRepository);
+    PomodoroWebsocket(UserService userService, SimpMessagingTemplate simpMessagingTemplate, UserRepository userRepository, GroupMessageRepository groupMessageRepository, GroupRepository groupRepository) {
+        super(userService, simpMessagingTemplate, userRepository, groupMessageRepository, groupRepository);
     }
 
     @MessageMapping("/start/{username}")

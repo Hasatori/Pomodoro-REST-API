@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Repository
@@ -18,7 +19,7 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
 
 
 
-    Set<Group> findPomodoroGroupByName(String groupName);
+    List<Group> findPomodoroGroupByName(String groupName);
 
     Group findPomodoroGroupByNameAndOwnerId(String groupName,Integer ownerId);
 
