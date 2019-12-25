@@ -15,6 +15,7 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -38,7 +39,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.setApplicationDestinationPrefixes("/app")
-                .enableSimpleBroker("/pomodoro");
+                .enableSimpleBroker("/pomodoro", "/group");
+
 
     }
 
@@ -55,17 +57,23 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 StompHeaderAccessor accessor =
                         MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-                String token = null;
-                User user = null;
-                if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                    token = ((Map<String, List<String>>) message.getHeaders().get("nativeHeaders")).get("Authorization").get(0);
-                    user = userService.getUserFromToken(token);
-                } else {
+                List<String> authorization = ((Map<String, List<String>>) message.getHeaders().get("nativeHeaders")).get("Authorization");
+                boolean authorized = false;
+                if (authorization != null) {
+                    String token = authorization.get(0);
+                    if (token != null) {
+                        User user = userService.getUserFromToken(token);
+                        // if token is valid configure Spring Security to manually set authentication
+                        if (tokenUtil.validateToken(token, user) && accessor != null) {
+                            authorized = true;
+                            accessor.setUser(user);
+                        }
+                    }
                 }
-                if (user == null || token == null || tokenUtil.validateToken(token, user)){
-                 //   throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+                if (!authorized) {
+                    throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
                 }
-                    return message;
+                return message;
             }
         });
     }

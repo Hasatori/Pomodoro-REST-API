@@ -10,9 +10,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import javax.security.auth.Subject;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,7 +26,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity(name = "USER")
 @Transactional
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class User implements UserDetails {
+public class User implements UserDetails, Principal {
     @JsonIgnore
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -237,5 +239,15 @@ public class User implements UserDetails {
 
     public void setFacebookId(Integer facebookId) {
         this.facebookId = facebookId;
+    }
+
+    @Override
+    public String getName() {
+        return username;
+    }
+
+    @Override
+    public boolean implies(Subject subject) {
+        return false;
     }
 }
