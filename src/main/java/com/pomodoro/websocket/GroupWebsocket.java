@@ -3,6 +3,7 @@ package com.pomodoro.websocket;
 import com.pomodoro.model.Group;
 import com.pomodoro.model.GroupMessage;
 import com.pomodoro.model.User;
+import com.pomodoro.model.UserGroupMessage;
 import com.pomodoro.repository.GroupMessageRepository;
 import com.pomodoro.repository.GroupRepository;
 import com.pomodoro.repository.UserRepository;
@@ -14,9 +15,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Date;
 
 @Controller
@@ -30,17 +31,31 @@ public class GroupWebsocket extends AbstractSocket {
     @MessageMapping("/group/{groupName}/chat")
     @SendTo("/group/{groupName}/chat")
     public GroupMessage readAndWriteMessage(Principal principal, @DestinationVariable String groupName, @RequestBody String message) throws Exception {
-        User user = (User) principal;
-        Group group=groupRepository.findPomodoroGroupByName(groupName).get(0);
+        User author = (User) principal;
+        Group group = groupRepository.findPomodoroGroupByName(groupName).get(0);
         GroupMessage groupMessage = new GroupMessage();
-        groupMessage.setAuthor(user);
-        groupMessage.setAuthorId(user.getId());
+        groupMessage.setAuthor(author);
+        groupMessage.setAuthorId(author.getId());
         groupMessage.setValue(message);
         groupMessage.setTimestamp(new Date());
         groupMessage.setGroup(group);
         groupMessage.setGroupId(group.getId());
-       // groupMessageRepository.insertGroupMessage(groupMessage.getValue(),groupMessage.getTimestamp(),user.getId(),.getId());
-        groupMessageRepository.save(groupMessage);
+        groupMessage.setRelatedGroupMessages(new ArrayList<>());
+        groupMessage = groupMessageRepository.save(groupMessage);
+        for (User user : groupMessage.getGroup().getUsers()) {
+            UserGroupMessage userGroupMessage = new UserGroupMessage();
+            userGroupMessage.setUser(user);
+            if (user.getUsername().equals(author.getUsername())) {
+                userGroupMessage.setRead(true);
+            } else {
+                userGroupMessage.setRead(false);
+            }
+
+            userGroupMessage.setGroupMessage(groupMessage);
+
+            groupMessage.getRelatedGroupMessages().add(userGroupMessage);
+        }
+        groupMessage = groupMessageRepository.save(groupMessage);
         return groupMessage;
     }
 }

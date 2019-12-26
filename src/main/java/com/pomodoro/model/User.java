@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static java.lang.Enum.valueOf;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity(name = "USER")
@@ -81,7 +80,12 @@ public class User implements UserDetails, Principal {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, mappedBy = "author")
-    private List<GroupMessage> groupMessages;
+    private List<GroupMessage> createdGroupMessages;
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "user")
+    private List<UserGroupMessage> relatedGroupMessages;
 
     public void setUsername(String userName) {
         this.username = userName;
@@ -246,12 +250,12 @@ public class User implements UserDetails, Principal {
         this.facebookId = facebookId;
     }
 
-    public List<GroupMessage> getGroupMessages() {
-        return groupMessages;
+    public List<GroupMessage> getCreatedGroupMessages() {
+        return createdGroupMessages;
     }
 
-    public void setGroupMessages(List<GroupMessage> groupMessages) {
-        this.groupMessages = groupMessages;
+    public void setCreatedGroupMessages(List<GroupMessage> createdGroupMessages) {
+        this.createdGroupMessages = createdGroupMessages;
     }
 
     @Override
@@ -262,5 +266,13 @@ public class User implements UserDetails, Principal {
     @Override
     public boolean implies(Subject subject) {
         return false;
+    }
+
+    public List<UserGroupMessage> getRelatedGroupMessages() {
+        return relatedGroupMessages;
+    }
+
+    public void setRelatedGroupMessages(List<UserGroupMessage> relatedGroupMessages) {
+        this.relatedGroupMessages = relatedGroupMessages;
     }
 }

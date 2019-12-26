@@ -46,6 +46,14 @@ public class Group {
         return id;
     }
 
+    public List<GroupMessage> getGroupMessages() {
+        return groupMessages;
+    }
+
+    public void setGroupMessages(List<GroupMessage> groupMessages) {
+        this.groupMessages = groupMessages;
+    }
+
     public void setId(Integer id) {
         this.id = id;
     }

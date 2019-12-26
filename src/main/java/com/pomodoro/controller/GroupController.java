@@ -4,25 +4,28 @@ import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.model.*;
 import com.pomodoro.repository.GroupMessageRepository;
 import com.pomodoro.repository.GroupRepository;
+import com.pomodoro.repository.UserGroupMessageRepository;
 import com.pomodoro.repository.UserRepository;
 import com.pomodoro.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class GroupController extends AbstractController {
     private static final Logger log = LoggerFactory.getLogger(GroupController.class);
 
-    GroupController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService, UserRepository userRepository, GroupRepository groupRepository, GroupMessageRepository groupMessageRepository) {
-        super(authenticationManager, jwtTokenUtil, userService, userRepository, groupRepository, groupMessageRepository);
+    GroupController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService, UserRepository userRepository, GroupRepository groupRepository, GroupMessageRepository groupMessageRepository, UserGroupMessageRepository userGroupMessageRepository) {
+        super(authenticationManager, jwtTokenUtil, userService, userRepository, groupRepository, groupMessageRepository, userGroupMessageRepository);
     }
 
     @RequestMapping(value = "/groups", method = RequestMethod.POST)
@@ -46,6 +49,23 @@ public class GroupController extends AbstractController {
         Integer limit = groupMessagesRequest.getStop() - groupMessagesRequest.getStart();
         List<GroupMessage> groupMessages = groupMessageRepository.findLastMessagesByGroupIdWithinLimitAndOffset(group.getId(), limit, groupMessagesRequest.getStart());
         return ResponseEntity.ok(groupMessages);
+    }
+
+    @RequestMapping(value = "/groups/{groupName}/fetch-unread-messages", method = RequestMethod.POST)
+    public ResponseEntity<?> fetchUnreadMessages(HttpServletRequest req,
+                                                 @RequestBody GroupMessagesRequest groupMessagesRequest) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        Group group = groupRepository.findPomodoroGroupByName(groupMessagesRequest.getGroupName()).get(0);
+        List<GroupMessage> groupMessages = groupMessageRepository.findAllUnreadMessages(user.getId(), group.getId());
+        return ResponseEntity.ok(groupMessages);
+    }
+
+    @RequestMapping(value = "/groups/{groupName}/mark-all-as-read", method = RequestMethod.POST)
+    public ResponseEntity<?> markAllAsRead(HttpServletRequest req, @PathVariable String groupName) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        Group group = groupRepository.findPomodoroGroupByName(groupName).get(0);
+        userGroupMessageRepository.markAllUserMessagesFromGroupAsRead(user.getId(),group.getGroupMessages().stream().map(GroupMessage::getId).collect(Collectors.toList()));
+        return ResponseEntity.ok("Done");
     }
 
     @RequestMapping(value = "/group/create", method = RequestMethod.POST)

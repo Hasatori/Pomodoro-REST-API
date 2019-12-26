@@ -2,15 +2,18 @@ package com.pomodoro.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity(name = "GROUP_MESSAGE")
 @Transactional
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class GroupMessage {
     @Id
     @JsonIgnore
@@ -34,6 +37,10 @@ public class GroupMessage {
     @JsonIgnore
     @Column(name = "GROUP_ID")
     private int groupId;
+
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "groupMessage")
+    private List<UserGroupMessage> relatedGroupMessages;
 
     public User getAuthor() {
         return author;
@@ -89,5 +96,13 @@ public class GroupMessage {
 
     public void setGroupId(int groupId) {
         this.groupId = groupId;
+    }
+
+    public List<UserGroupMessage> getRelatedGroupMessages() {
+        return relatedGroupMessages;
+    }
+
+    public void setRelatedGroupMessages(List<UserGroupMessage> relatedGroupMessages) {
+        this.relatedGroupMessages = relatedGroupMessages;
     }
 }

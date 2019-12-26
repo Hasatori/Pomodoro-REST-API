@@ -16,6 +16,8 @@ public class AbstractSocket {
     final GroupMessageRepository groupMessageRepository;
     final GroupRepository groupRepository;
 
+
+
     AbstractSocket(UserService userService, SimpMessagingTemplate simpMessagingTemplate, UserRepository userRepository, GroupMessageRepository groupMessageRepository, GroupRepository groupRepository) {
         this.userService = userService;
         this.simpMessagingTemplate = simpMessagingTemplate;
