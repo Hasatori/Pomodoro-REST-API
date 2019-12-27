@@ -64,8 +64,9 @@ public class GroupController extends AbstractController {
     public ResponseEntity<?> markAllAsRead(HttpServletRequest req, @PathVariable String groupName) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
         Group group = groupRepository.findPomodoroGroupByName(groupName).get(0);
-        userGroupMessageRepository.markAllUserMessagesFromGroupAsRead(user.getId(),group.getGroupMessages().stream().map(GroupMessage::getId).collect(Collectors.toList()));
-        return ResponseEntity.ok("Done");
+        userGroupMessageRepository.markAllUserMessagesFromGroupAsRead(new Date(), user.getId(), group.getGroupMessages().stream().map(GroupMessage::getId).collect(Collectors.toList()));
+
+        return ResponseEntity.ok(groupMessageRepository.findNewestGroupMessageByGroupId(group.getId()));
     }
 
     @RequestMapping(value = "/group/create", method = RequestMethod.POST)

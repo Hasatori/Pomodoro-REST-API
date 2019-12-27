@@ -2,10 +2,12 @@ package com.pomodoro.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 
 
@@ -29,7 +31,8 @@ public class UserGroupMessage  implements Serializable {
     private GroupMessage groupMessage;
 
 
-    private Boolean read;
+
+    private Date readTimestamp;
 
     public User getUser() {
         return user;
@@ -47,16 +50,17 @@ public class UserGroupMessage  implements Serializable {
         this.groupMessage = groupMessage;
     }
 
-    public Boolean getRead() {
-        return read;
+    public Date getReadTimestamp() {
+        return readTimestamp;
     }
 
-    public void setRead(Boolean read) {
-        this.read = read;
+    public void setReadTimestamp(Date readTimestamp) {
+        this.readTimestamp = readTimestamp;
     }
+
     @Override
     public int hashCode() {
-        return Objects.hash(user.getId(),groupMessage.getId(), read);
+        return Objects.hash(user.getId(),groupMessage.getId(), readTimestamp);
     }
 
 }

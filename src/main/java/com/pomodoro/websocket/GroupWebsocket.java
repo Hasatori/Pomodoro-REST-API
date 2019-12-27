@@ -46,9 +46,7 @@ public class GroupWebsocket extends AbstractSocket {
             UserGroupMessage userGroupMessage = new UserGroupMessage();
             userGroupMessage.setUser(user);
             if (user.getUsername().equals(author.getUsername())) {
-                userGroupMessage.setRead(true);
-            } else {
-                userGroupMessage.setRead(false);
+                userGroupMessage.setReadTimestamp(new Date());
             }
 
             userGroupMessage.setGroupMessage(groupMessage);

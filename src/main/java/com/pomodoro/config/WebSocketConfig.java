@@ -9,6 +9,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -58,6 +59,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 StompHeaderAccessor accessor =
                         MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
                 List<String> authorization = ((Map<String, List<String>>) message.getHeaders().get("nativeHeaders")).get("Authorization");
+                String messageType = ((SimpMessageType) message.getHeaders().get("simpMessageType")).name();
+
                 boolean authorized = false;
                 if (authorization != null) {
                     String token = authorization.get(0);
@@ -70,7 +73,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         }
                     }
                 }
-                if (!authorized) {
+                if (!authorized && !"UNSUBSCRIBE".equals(messageType) && !"DISCONNECT".equals(messageType)) {
                     throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
                 }
                 return message;

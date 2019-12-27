@@ -32,10 +32,13 @@ public interface GroupMessageRepository extends JpaRepository<GroupMessage, Inte
 
 
     @Modifying
-    @Query(value = "SELECT * FROM GROUP_MESSAGE gm LEFT JOIN USER_GROUP_MESSAGE ugm ON (gm.ID=ugm.GROUP_MESSAGE_ID ) WHERE USER_ID=:userId and GROUP_ID=:groupId and READ=false", nativeQuery = true)
+    @Query(value = "SELECT * FROM GROUP_MESSAGE gm LEFT JOIN USER_GROUP_MESSAGE ugm ON (gm.ID=ugm.GROUP_MESSAGE_ID ) WHERE USER_ID=:userId and GROUP_ID=:groupId and READ_TIMESTAMP IS NULL", nativeQuery = true)
     List<GroupMessage> findAllUnreadMessages(@Param("userId") Integer userId, @Param("groupId")Integer groupId);
 
 
+
+    @Query(value = "SELECT * FROM GROUP_MESSAGE WHERE GROUP_ID=:groupId ORDER BY TIMESTAMP DESC LIMIT 1 ", nativeQuery = true)
+    GroupMessage findNewestGroupMessageByGroupId( @Param("groupId")Integer groupId);
 
 
 }
