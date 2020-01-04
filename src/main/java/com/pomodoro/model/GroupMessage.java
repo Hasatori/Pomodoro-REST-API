@@ -41,6 +41,10 @@ public class GroupMessage {
             fetch = FetchType.LAZY, mappedBy = "groupMessage")
     private List<UserGroupMessage> relatedGroupMessages;
 
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "groupMessage")
+    private List<GroupMessageChange> changes;
+
     public User getAuthor() {
         return author;
     }
@@ -103,5 +107,13 @@ public class GroupMessage {
 
     public void setRelatedGroupMessages(List<UserGroupMessage> relatedGroupMessages) {
         this.relatedGroupMessages = relatedGroupMessages;
+    }
+
+    public List<GroupMessageChange> getChanges() {
+        return changes;
+    }
+
+    public void setChanges(List<GroupMessageChange> changes) {
+        this.changes = changes;
     }
 }
