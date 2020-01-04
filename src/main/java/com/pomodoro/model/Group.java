@@ -42,6 +42,11 @@ public class Group {
             fetch = FetchType.LAZY, mappedBy = "group")
     private List<GroupMessage> groupMessages;
 
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "group")
+    private List<GroupInvitation> groupInvitations;
+
     public Integer getId() {
         return id;
     }
@@ -96,5 +101,13 @@ public class Group {
 
     public void setPublic(boolean aPublic) {
         isPublic = aPublic;
+    }
+
+    public List<GroupInvitation> getGroupInvitations() {
+        return groupInvitations;
+    }
+
+    public void setGroupInvitations(List<GroupInvitation> groupInvitations) {
+        this.groupInvitations = groupInvitations;
     }
 }

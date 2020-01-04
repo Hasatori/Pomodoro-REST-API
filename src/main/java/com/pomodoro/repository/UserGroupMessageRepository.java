@@ -22,4 +22,8 @@ public interface UserGroupMessageRepository extends JpaRepository<UserGroupMessa
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE USER_GROUP_MESSAGE SET READ_TIMESTAMP=:readTimestamp WHERE USER_ID=:userId AND GROUP_MESSAGE_ID IN (:groupMessageIds) ", nativeQuery = true)
     void markAllUserMessagesFromGroupAsRead(@Param("readTimestamp")Date readTimestamp,@Param("userId") Integer userId, @Param("groupMessageIds") List<Integer> groupMessageIds);
+
+    @Modifying(clearAutomatically = true)
+    @Query(value = "UPDATE USER_GROUP_MESSAGE SET REACTION=:reaction WHERE USER_ID=:userId AND GROUP_MESSAGE_ID =:groupMessageId", nativeQuery = true)
+    void setReaction(@Param("reaction")String reaction,@Param("userId") Integer userId, @Param("groupMessageId") Integer groupMessageId);
 }

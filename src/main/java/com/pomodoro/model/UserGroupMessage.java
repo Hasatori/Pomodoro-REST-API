@@ -34,6 +34,9 @@ public class UserGroupMessage  implements Serializable {
 
     private Date readTimestamp;
 
+    @Nullable
+    private String reaction;
+
     public User getUser() {
         return user;
     }
@@ -56,6 +59,15 @@ public class UserGroupMessage  implements Serializable {
 
     public void setReadTimestamp(Date readTimestamp) {
         this.readTimestamp = readTimestamp;
+    }
+
+    @Nullable
+    public String getReaction() {
+        return reaction;
+    }
+
+    public void setReaction(@Nullable String reaction) {
+        this.reaction = reaction;
     }
 
     @Override

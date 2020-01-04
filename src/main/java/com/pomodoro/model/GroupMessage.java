@@ -16,7 +16,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class GroupMessage {
     @Id
-    @JsonIgnore
     @GeneratedValue(strategy = IDENTITY)
     private Integer id;
 

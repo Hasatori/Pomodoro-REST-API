@@ -117,7 +117,7 @@ public class UserController extends AbstractController {
                         && (lastName != null && lastName.equals(updatedUser.getLastName()))
                         && user.getUsername().equals(updatedUser.getUsername())
                         && user.getEmail().equals(updatedUser.getEmail())
-                ) {
+        ) {
             responseEntity.put("error", "No value was updated");
         }
         if (responseEntity.size() == 0) {
@@ -168,6 +168,13 @@ public class UserController extends AbstractController {
         }
         return ResponseEntity.status(status).body(responseEntity);
     }
+
+    @RequestMapping(value = "/not-accepted-group-invitations", method = RequestMethod.POST)
+    public ResponseEntity<?> getGroupInitations(HttpServletRequest req) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        return ResponseEntity.ok(user.getGroupInvitations().stream().filter(groupInvitation -> !groupInvitation.getAccepted()));
+    }
+
 
     private void authenticate(String username, String password) throws Exception {
         Objects.requireNonNull(username);

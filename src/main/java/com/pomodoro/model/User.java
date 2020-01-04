@@ -84,6 +84,12 @@ public class User implements UserDetails, Principal {
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "invitedUser")
+    private List<GroupInvitation> groupInvitations;
+
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, mappedBy = "user")
     private List<UserGroupMessage> relatedGroupMessages;
 
@@ -256,6 +262,14 @@ public class User implements UserDetails, Principal {
 
     public void setCreatedGroupMessages(List<GroupMessage> createdGroupMessages) {
         this.createdGroupMessages = createdGroupMessages;
+    }
+
+    public List<GroupInvitation> getGroupInvitations() {
+        return groupInvitations;
+    }
+
+    public void setGroupInvitations(List<GroupInvitation> groupInvitations) {
+        this.groupInvitations = groupInvitations;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.pomodoro.model;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 public class GroupMessagesRequest {
@@ -8,9 +9,9 @@ public class GroupMessagesRequest {
 
     @NotBlank(message = "Group name must be filled")
     private String groupName;
-    @NotBlank(message = "From must be filled")
+    @NotNull(message = "From must be filled")
     private Integer start;
-    @NotBlank(message = "To must be filled")
+    @NotNull(message = "To must be filled")
     private Integer stop;
 
 
