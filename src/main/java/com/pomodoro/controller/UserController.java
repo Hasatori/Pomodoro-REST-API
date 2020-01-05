@@ -3,10 +3,7 @@ package com.pomodoro.controller;
 import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.model.*;
 import com.pomodoro.model.o2auth.FacebookUser;
-import com.pomodoro.repository.GroupMessageRepository;
-import com.pomodoro.repository.GroupRepository;
-import com.pomodoro.repository.UserGroupMessageRepository;
-import com.pomodoro.repository.UserRepository;
+import com.pomodoro.repository.*;
 import com.pomodoro.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +28,8 @@ import java.util.Objects;
 public class UserController extends AbstractController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    UserController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService, UserRepository userRepository, GroupRepository groupRepository, GroupMessageRepository groupMessageRepository, UserGroupMessageRepository userGroupMessageRepository) {
-        super(authenticationManager, jwtTokenUtil, userService, userRepository, groupRepository, groupMessageRepository, userGroupMessageRepository);
+    UserController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService, UserRepository userRepository, GroupRepository groupRepository, GroupInvitationRepository groupInvitationRepository, GroupMessageRepository groupMessageRepository, UserGroupMessageRepository userGroupMessageRepository) {
+        super(authenticationManager, jwtTokenUtil, userService, userRepository, groupRepository, groupInvitationRepository, groupMessageRepository, userGroupMessageRepository);
     }
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
@@ -175,6 +172,19 @@ public class UserController extends AbstractController {
         return ResponseEntity.ok(user.getGroupInvitations().stream().filter(groupInvitation -> !groupInvitation.getAccepted()));
     }
 
+    @RequestMapping(value = "/accept-invitation", method = RequestMethod.POST)
+    public ResponseEntity<?> acceptGroupInvitation(HttpServletRequest req, @Valid @RequestBody GroupInvitation groupInvitation) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        Map<String, String> responseEntity = new HashMap<>();
+        int status = 200;
+        Group group = groupRepository.findPomodoroGroupByName(groupInvitation.getGroup().getName()).get(0);
+        userService.addUserToGroup(group, user);
+        groupInvitation = groupInvitationRepository.findGroupInvitationById(groupInvitation.getId());
+        groupInvitation.setAccepted(true);
+        groupInvitationRepository.save(groupInvitation);
+        responseEntity.put("success", "invitation accepted");
+        return ResponseEntity.status(status).body(responseEntity);
+    }
 
     private void authenticate(String username, String password) throws Exception {
         Objects.requireNonNull(username);

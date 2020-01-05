@@ -2,16 +2,12 @@ package com.pomodoro.controller;
 
 import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.model.*;
-import com.pomodoro.repository.GroupMessageRepository;
-import com.pomodoro.repository.GroupRepository;
-import com.pomodoro.repository.UserGroupMessageRepository;
-import com.pomodoro.repository.UserRepository;
+import com.pomodoro.repository.*;
 import com.pomodoro.service.UserService;
 import com.pomodoro.utils.CheckUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,8 +21,8 @@ import java.util.stream.Collectors;
 public class GroupController extends AbstractController {
     private static final Logger log = LoggerFactory.getLogger(GroupController.class);
 
-    GroupController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService, UserRepository userRepository, GroupRepository groupRepository, GroupMessageRepository groupMessageRepository, UserGroupMessageRepository userGroupMessageRepository) {
-        super(authenticationManager, jwtTokenUtil, userService, userRepository, groupRepository, groupMessageRepository, userGroupMessageRepository);
+    GroupController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService, UserRepository userRepository, GroupRepository groupRepository, GroupInvitationRepository groupInvitationRepository, GroupMessageRepository groupMessageRepository, UserGroupMessageRepository userGroupMessageRepository) {
+        super(authenticationManager, jwtTokenUtil, userService, userRepository, groupRepository, groupInvitationRepository, groupMessageRepository, userGroupMessageRepository);
     }
 
     @RequestMapping(value = "/groups", method = RequestMethod.POST)

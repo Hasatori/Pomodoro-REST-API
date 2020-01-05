@@ -15,7 +15,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class GroupInvitation {
 
     @Id
-    @JsonIgnore
     @GeneratedValue(strategy = IDENTITY)
     private Integer id;
 

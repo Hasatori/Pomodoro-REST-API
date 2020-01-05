@@ -1,10 +1,7 @@
 package com.pomodoro.controller;
 
 import com.pomodoro.config.JwtTokenUtil;
-import com.pomodoro.repository.GroupMessageRepository;
-import com.pomodoro.repository.GroupRepository;
-import com.pomodoro.repository.UserGroupMessageRepository;
-import com.pomodoro.repository.UserRepository;
+import com.pomodoro.repository.*;
 import com.pomodoro.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,15 +24,17 @@ public class AbstractController {
     final UserRepository userRepository;
 
     final GroupRepository groupRepository;
-
+    final GroupInvitationRepository groupInvitationRepository;
     final GroupMessageRepository groupMessageRepository;
     final UserGroupMessageRepository userGroupMessageRepository;
-    AbstractController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService, UserRepository userRepository, GroupRepository groupRepository, GroupMessageRepository groupMessageRepository, UserGroupMessageRepository userGroupMessageRepository) {
+
+    AbstractController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService, UserRepository userRepository, GroupRepository groupRepository, GroupInvitationRepository groupInvitationRepository, GroupMessageRepository groupMessageRepository, UserGroupMessageRepository userGroupMessageRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.userService = userService;
         this.userRepository = userRepository;
         this.groupRepository = groupRepository;
+        this.groupInvitationRepository = groupInvitationRepository;
         this.groupMessageRepository = groupMessageRepository;
         this.userGroupMessageRepository = userGroupMessageRepository;
     }
