@@ -21,10 +21,6 @@ import java.util.stream.Collectors;
 public class GroupController extends AbstractController {
     private static final Logger log = LoggerFactory.getLogger(GroupController.class);
 
-    GroupController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService, UserRepository userRepository, GroupRepository groupRepository, GroupInvitationRepository groupInvitationRepository, GroupMessageRepository groupMessageRepository, UserGroupMessageRepository userGroupMessageRepository) {
-        super(authenticationManager, jwtTokenUtil, userService, userRepository, groupRepository, groupInvitationRepository, groupMessageRepository, userGroupMessageRepository);
-    }
-
     @RequestMapping(value = "/groups", method = RequestMethod.POST)
     public ResponseEntity<?> getGroups(HttpServletRequest req) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
@@ -64,6 +60,14 @@ public class GroupController extends AbstractController {
         userGroupMessageRepository.markAllUserMessagesFromGroupAsRead(new Date(), user.getId(), group.getGroupMessages().stream().map(GroupMessage::getId).collect(Collectors.toList()));
 
         return ResponseEntity.ok(groupMessageRepository.findNewestGroupMessageByGroupId(group.getId()));
+    }
+
+    @RequestMapping(value = "/groups/{groupName}/fetch-changes", method = RequestMethod.POST)
+    public ResponseEntity<?> fetchGroupChanges(HttpServletRequest req, @PathVariable String groupName) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        Group group = groupRepository.findPomodoroGroupByName(groupName).get(0);
+
+        return ResponseEntity.ok(group.getGroupChanges());
     }
 
 

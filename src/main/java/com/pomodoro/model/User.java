@@ -87,6 +87,10 @@ public class User implements UserDetails, Principal {
             fetch = FetchType.LAZY, mappedBy = "invitedUser")
     private List<GroupInvitation> groupInvitations;
 
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "changeAuthor")
+    private List<GroupChange> groupChanges;
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,

@@ -14,9 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PomodoroController extends AbstractController{
 
-    PomodoroController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService, UserRepository userRepository, GroupInvitationRepository groupInvitationRepository, GroupRepository groupRepository, GroupMessageRepository groupMessageRepository, UserGroupMessageRepository userGroupMessageRepository) {
-        super(authenticationManager, jwtTokenUtil, userService,userRepository, groupRepository, groupInvitationRepository, groupMessageRepository, userGroupMessageRepository);
-    }
 
     @RequestMapping(value = "/pomodoro/update", method = RequestMethod.POST)
     public Pomodoro getLastPomodoro(HttpServletRequest req) {

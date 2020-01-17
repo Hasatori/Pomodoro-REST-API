@@ -47,6 +47,19 @@ public class Group {
             fetch = FetchType.LAZY, mappedBy = "group")
     private List<GroupInvitation> groupInvitations;
 
+    public List<GroupChange> getGroupChanges() {
+        return groupChanges;
+    }
+
+    public void setGroupChanges(List<GroupChange> groupChanges) {
+        this.groupChanges = groupChanges;
+    }
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "group")
+    private List<GroupChange> groupChanges;
+
     public Integer getId() {
         return id;
     }

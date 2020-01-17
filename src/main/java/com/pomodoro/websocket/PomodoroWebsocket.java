@@ -17,11 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-public class PomodoroWebsocket extends AbstractSocket{
+public class PomodoroWebsocket extends AbstractSocket {
 
-    PomodoroWebsocket(UserService userService, SimpMessagingTemplate simpMessagingTemplate, UserRepository userRepository, GroupMessageRepository groupMessageRepository, GroupRepository groupRepository, UserGroupMessageRepository userGroupMessageRepository) {
-        super(userService, simpMessagingTemplate, userRepository, groupMessageRepository, groupRepository, userGroupMessageRepository);
-    }
 
     @MessageMapping("/start/{username}")
     @SendTo("/pomodoro/start/{username}")
@@ -35,7 +32,7 @@ public class PomodoroWebsocket extends AbstractSocket{
     @SendTo("/pomodoro/stop/{username}")
     public String pomodoroStopped(@DestinationVariable String username, @RequestBody Pomodoro pomodoro) throws Exception {
         User user = userRepository.findUserByUsername(username);
-        userService.stopPomodoro(user,pomodoro);
+        userService.stopPomodoro(user, pomodoro);
         return "STOP";
     }
 

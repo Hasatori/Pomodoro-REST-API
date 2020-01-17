@@ -5,26 +5,25 @@ import com.pomodoro.repository.GroupRepository;
 import com.pomodoro.repository.UserGroupMessageRepository;
 import com.pomodoro.repository.UserRepository;
 import com.pomodoro.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 public class AbstractSocket {
 
-    final UserService userService;
+    @Autowired
+    protected UserService userService;
 
-    final SimpMessagingTemplate simpMessagingTemplate;
+    @Autowired
+    protected SimpMessagingTemplate simpMessagingTemplate;
 
-    final UserRepository userRepository;
-    final GroupMessageRepository groupMessageRepository;
-    final GroupRepository groupRepository;
-final UserGroupMessageRepository userGroupMessageRepository;
+    @Autowired
+    protected UserRepository userRepository;
+    @Autowired
+    protected GroupMessageRepository groupMessageRepository;
+    @Autowired
+    protected GroupRepository groupRepository;
+    @Autowired
+    protected UserGroupMessageRepository userGroupMessageRepository;
 
 
-    AbstractSocket(UserService userService, SimpMessagingTemplate simpMessagingTemplate, UserRepository userRepository, GroupMessageRepository groupMessageRepository, GroupRepository groupRepository, UserGroupMessageRepository userGroupMessageRepository) {
-        this.userService = userService;
-        this.simpMessagingTemplate = simpMessagingTemplate;
-        this.userRepository = userRepository;
-        this.groupMessageRepository = groupMessageRepository;
-        this.groupRepository = groupRepository;
-        this.userGroupMessageRepository = userGroupMessageRepository;
-    }
 }

@@ -28,10 +28,6 @@ import java.util.Objects;
 public class UserController extends AbstractController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-    UserController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService, UserRepository userRepository, GroupRepository groupRepository, GroupInvitationRepository groupInvitationRepository, GroupMessageRepository groupMessageRepository, UserGroupMessageRepository userGroupMessageRepository) {
-        super(authenticationManager, jwtTokenUtil, userService, userRepository, groupRepository, groupInvitationRepository, groupMessageRepository, userGroupMessageRepository);
-    }
-
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest)
             throws Exception {

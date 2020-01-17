@@ -22,10 +22,6 @@ import java.util.*;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class GroupWebsocket extends AbstractSocket {
 
-    GroupWebsocket(UserService userService, SimpMessagingTemplate simpMessagingTemplate, UserRepository userRepository, GroupMessageRepository groupMessageRepository, GroupRepository groupRepository, UserGroupMessageRepository userGroupMessageRepository) {
-        super(userService, simpMessagingTemplate, userRepository, groupMessageRepository, groupRepository, userGroupMessageRepository);
-    }
-
     @MessageMapping("/group/{groupName}/chat")
     @SendTo("/group/{groupName}/chat")
     public GroupMessage readAndWriteMessage(Principal principal, @DestinationVariable String groupName, @RequestBody String message) throws Exception {

@@ -3,6 +3,7 @@ package com.pomodoro.controller;
 import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.repository.*;
 import com.pomodoro.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.validation.FieldError;
@@ -15,29 +16,25 @@ import java.util.Map;
 
 public class AbstractController {
 
-    final AuthenticationManager authenticationManager;
+    @Autowired
+    protected AuthenticationManager authenticationManager;
+    @Autowired
+    protected JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    protected UserService userService;
+    @Autowired
+    protected UserRepository userRepository;
+    @Autowired
+    protected GroupRepository groupRepository;
+    @Autowired
+    protected GroupInvitationRepository groupInvitationRepository;
+    @Autowired
+    protected GroupMessageRepository groupMessageRepository;
+    @Autowired
+    protected UserGroupMessageRepository userGroupMessageRepository;
+    @Autowired
+    protected GroupChangeRepository groupChangeRepository;
 
-    final JwtTokenUtil jwtTokenUtil;
-
-    final UserService userService;
-
-    final UserRepository userRepository;
-
-    final GroupRepository groupRepository;
-    final GroupInvitationRepository groupInvitationRepository;
-    final GroupMessageRepository groupMessageRepository;
-    final UserGroupMessageRepository userGroupMessageRepository;
-
-    AbstractController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserService userService, UserRepository userRepository, GroupRepository groupRepository, GroupInvitationRepository groupInvitationRepository, GroupMessageRepository groupMessageRepository, UserGroupMessageRepository userGroupMessageRepository) {
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.userService = userService;
-        this.userRepository = userRepository;
-        this.groupRepository = groupRepository;
-        this.groupInvitationRepository = groupInvitationRepository;
-        this.groupMessageRepository = groupMessageRepository;
-        this.userGroupMessageRepository = userGroupMessageRepository;
-    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
