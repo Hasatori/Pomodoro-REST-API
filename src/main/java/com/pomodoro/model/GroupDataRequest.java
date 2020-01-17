@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class GroupMessagesRequest {
+public class GroupDataRequest {
 
 
     @NotBlank(message = "Group name must be filled")

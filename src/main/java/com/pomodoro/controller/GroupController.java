@@ -1,14 +1,10 @@
 package com.pomodoro.controller;
 
-import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.model.*;
-import com.pomodoro.repository.*;
-import com.pomodoro.service.UserService;
 import com.pomodoro.utils.CheckUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,19 +32,19 @@ public class GroupController extends AbstractController {
 
     @RequestMapping(value = "/groups/{groupName}/fetch-chat-messages", method = RequestMethod.POST)
     public ResponseEntity<?> fetchChatMessages(HttpServletRequest req,
-                                               @RequestBody GroupMessagesRequest groupMessagesRequest) {
+                                               @RequestBody GroupDataRequest groupDataRequest) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
-        Group group = groupRepository.findPomodoroGroupByName(groupMessagesRequest.getGroupName()).get(0);
-        Integer limit = groupMessagesRequest.getStop() - groupMessagesRequest.getStart();
-        List<GroupMessage> groupMessages = groupMessageRepository.findLastMessagesByGroupIdWithinLimitAndOffset(group.getId(), limit, groupMessagesRequest.getStart());
+        Group group = groupRepository.findPomodoroGroupByName(groupDataRequest.getGroupName()).get(0);
+        Integer limit = groupDataRequest.getStop() - groupDataRequest.getStart();
+        List<GroupMessage> groupMessages = groupMessageRepository.findLastMessagesByGroupIdWithinLimitAndOffset(group.getId(), limit, groupDataRequest.getStart());
         return ResponseEntity.ok(groupMessages);
     }
 
     @RequestMapping(value = "/groups/{groupName}/fetch-unread-messages", method = RequestMethod.POST)
     public ResponseEntity<?> fetchUnreadMessages(HttpServletRequest req,
-                                                 @RequestBody GroupMessagesRequest groupMessagesRequest) {
+                                                 @RequestBody GroupDataRequest groupDataRequest) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
-        Group group = groupRepository.findPomodoroGroupByName(groupMessagesRequest.getGroupName()).get(0);
+        Group group = groupRepository.findPomodoroGroupByName(groupDataRequest.getGroupName()).get(0);
         List<GroupMessage> groupMessages = groupMessageRepository.findAllUnreadMessages(user.getId(), group.getId());
         return ResponseEntity.ok(groupMessages);
     }
@@ -63,11 +59,12 @@ public class GroupController extends AbstractController {
     }
 
     @RequestMapping(value = "/groups/{groupName}/fetch-changes", method = RequestMethod.POST)
-    public ResponseEntity<?> fetchGroupChanges(HttpServletRequest req, @PathVariable String groupName) {
+    public ResponseEntity<?> fetchGroupChanges(HttpServletRequest req, @RequestBody GroupDataRequest groupDataRequest) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
-        Group group = groupRepository.findPomodoroGroupByName(groupName).get(0);
-
-        return ResponseEntity.ok(group.getGroupChanges());
+        Group group = groupRepository.findPomodoroGroupByName(groupDataRequest.getGroupName()).get(0);
+        Integer limit = groupDataRequest.getStop() - groupDataRequest.getStart();
+        return ResponseEntity.ok(groupChangeRepository.findLastChangesByGroupIdWithinLimitAndOffset(group.getId(), limit, groupDataRequest.getStart()))
+        ;
     }
 
 
