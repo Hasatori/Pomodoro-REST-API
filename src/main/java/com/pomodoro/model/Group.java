@@ -1,6 +1,8 @@
 package com.pomodoro.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
@@ -12,6 +14,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity(name = "POMODORO_GROUP")
 @Transactional
+@Getter
+@Setter
 public class Group {
     @Id
     @JsonIgnore
@@ -47,80 +51,10 @@ public class Group {
             fetch = FetchType.LAZY, mappedBy = "group")
     private List<GroupInvitation> groupInvitations;
 
-    public List<GroupChange> getGroupChanges() {
-        return groupChanges;
-    }
-
-    public void setGroupChanges(List<GroupChange> groupChanges) {
-        this.groupChanges = groupChanges;
-    }
-
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, mappedBy = "group")
     private List<GroupChange> groupChanges;
 
-    public Integer getId() {
-        return id;
-    }
 
-    public List<GroupMessage> getGroupMessages() {
-        return groupMessages;
-    }
-
-    public void setGroupMessages(List<GroupMessage> groupMessages) {
-        this.groupMessages = groupMessages;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
-
-    public User getOwner() {
-        return owner;
-    }
-
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
-
-    public int getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(int ownerId) {
-        this.ownerId = ownerId;
-    }
-
-    public boolean isPublic() {
-        return isPublic;
-    }
-
-    public void setPublic(boolean aPublic) {
-        isPublic = aPublic;
-    }
-
-    public List<GroupInvitation> getGroupInvitations() {
-        return groupInvitations;
-    }
-
-    public void setGroupInvitations(List<GroupInvitation> groupInvitations) {
-        this.groupInvitations = groupInvitations;
-    }
 }

@@ -2,6 +2,8 @@ package com.pomodoro.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +16,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity(name = "GROUP_MESSAGE_CHANGE")
 @Transactional
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Getter
+@Setter
 public class GroupMessageChange {
 
     @Id
@@ -37,51 +41,4 @@ public class GroupMessageChange {
     private String oldValue;
     private String newValue;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public GroupMessage getGroupMessage() {
-        return groupMessage;
-    }
-
-    public void setGroupMessage(GroupMessage groupMessage) {
-        this.groupMessage = groupMessage;
-    }
-
-    public int getGroupMessageId() {
-        return groupMessageId;
-    }
-
-    public void setGroupMessageId(int groupMessageId) {
-        this.groupMessageId = groupMessageId;
-    }
-
-    public Date getCreationTimestamp() {
-        return creationTimestamp;
-    }
-
-    public void setCreationTimestamp(Date creationTimestamp) {
-        this.creationTimestamp = creationTimestamp;
-    }
-
-    public String getOldValue() {
-        return oldValue;
-    }
-
-    public void setOldValue(String oldValue) {
-        this.oldValue = oldValue;
-    }
-
-    public String getNewValue() {
-        return newValue;
-    }
-
-    public void setNewValue(String newValue) {
-        this.newValue = newValue;
-    }
 }

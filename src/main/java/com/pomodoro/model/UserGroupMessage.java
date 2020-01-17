@@ -2,6 +2,8 @@ package com.pomodoro.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,13 +17,14 @@ import java.util.Objects;
 @Transactional
 @IdClass(UserGroupId.class)
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class UserGroupMessage  implements Serializable {
+@Getter
+@Setter
+public class UserGroupMessage implements Serializable {
 
     @Id
     @ManyToOne
     @JoinColumn
     private User user;
-
 
 
     @Id
@@ -30,49 +33,19 @@ public class UserGroupMessage  implements Serializable {
     @JoinColumn
     private GroupMessage groupMessage;
 
-
-
     private Date readTimestamp;
 
     @Nullable
     private String reaction;
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public GroupMessage getGroupMessage() {
-        return groupMessage;
-    }
-
-    public void setGroupMessage(GroupMessage groupMessage) {
-        this.groupMessage = groupMessage;
-    }
-
-    public Date getReadTimestamp() {
-        return readTimestamp;
-    }
-
-    public void setReadTimestamp(Date readTimestamp) {
-        this.readTimestamp = readTimestamp;
-    }
 
     @Nullable
     public String getReaction() {
         return reaction;
     }
 
-    public void setReaction(@Nullable String reaction) {
-        this.reaction = reaction;
-    }
-
     @Override
     public int hashCode() {
-        return Objects.hash(user.getId(),groupMessage.getId(), readTimestamp);
+        return Objects.hash(user.getId(), groupMessage.getId(), readTimestamp);
     }
 
 }

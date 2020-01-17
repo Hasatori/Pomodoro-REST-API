@@ -1,9 +1,14 @@
 package com.pomodoro.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
+@Getter
+@Setter
 public class UpdateUserDetails {
     @NotBlank(message = "Name is mandatory")
     @Column(unique=true)
@@ -16,35 +21,4 @@ public class UpdateUserDetails {
     @Column(unique=true)
     private String email;
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 }

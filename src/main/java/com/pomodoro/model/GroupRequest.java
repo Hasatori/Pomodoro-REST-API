@@ -1,7 +1,12 @@
 package com.pomodoro.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.validation.constraints.NotBlank;
 
+@Getter
+@Setter
 public class GroupRequest {
 
     @NotBlank(message = "Username must be filled")
@@ -9,19 +14,4 @@ public class GroupRequest {
     @NotBlank(message = "Group name must be filled")
     private String groupName;
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getGroupName() {
-        return groupName;
-    }
-
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
 }

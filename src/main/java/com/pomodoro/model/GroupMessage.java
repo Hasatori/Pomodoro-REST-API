@@ -3,6 +3,8 @@ package com.pomodoro.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
@@ -14,6 +16,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity(name = "GROUP_MESSAGE")
 @Transactional
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Getter
+@Setter
 public class GroupMessage {
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -45,75 +49,5 @@ public class GroupMessage {
             fetch = FetchType.LAZY, mappedBy = "groupMessage")
     private List<GroupMessageChange> changes;
 
-    public User getAuthor() {
-        return author;
-    }
 
-    public void setAuthor(User author) {
-        this.author = author;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public Date getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public int getAuthorId() {
-        return authorId;
-    }
-
-    public void setAuthorId(int authorId) {
-        this.authorId = authorId;
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
-    public void setGroup(Group group) {
-        this.group = group;
-    }
-
-    public int getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(int groupId) {
-        this.groupId = groupId;
-    }
-
-    public List<UserGroupMessage> getRelatedGroupMessages() {
-        return relatedGroupMessages;
-    }
-
-    public void setRelatedGroupMessages(List<UserGroupMessage> relatedGroupMessages) {
-        this.relatedGroupMessages = relatedGroupMessages;
-    }
-
-    public List<GroupMessageChange> getChanges() {
-        return changes;
-    }
-
-    public void setChanges(List<GroupMessageChange> changes) {
-        this.changes = changes;
-    }
 }
