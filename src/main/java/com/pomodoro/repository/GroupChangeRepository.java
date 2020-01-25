@@ -17,9 +17,6 @@ public interface GroupChangeRepository extends JpaRepository<GroupChange, Intege
 
 
 
-    GroupChange findGroupChangeById(Integer groupId);
-
-
     @Query(value = "select * from GROUP_CHANGE  where GROUP_ID=:groupId ORDER BY CHANGE_TIMESTAMP DESC limit :limit OFFSET :offset", nativeQuery = true)
     List<GroupChange> findLastChangesByGroupIdWithinLimitAndOffset(
             @Param("groupId") Integer groupId, @Param("limit") Integer limit, @Param("offset") Integer offset);

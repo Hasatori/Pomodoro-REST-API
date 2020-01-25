@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
-public class GroupRequest {
+public class GroupUserRequest {
 
     @NotBlank(message = "Username must be filled")
     private String username;

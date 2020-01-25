@@ -28,12 +28,12 @@ public class Pomodoro {
     @JoinColumn(name = "USER", nullable = false,insertable = false,updatable = false)
     private User userObject;
     @JsonIgnore
-    private int user;
+    private Integer user;
 
     @CreationTimestamp
     private LocalDateTime creationTimestamp;
-    private int workTime;
-    private int breakTime;
+    private Integer workTime;
+    private Integer breakTime;
     private boolean interrupted;
 
 }

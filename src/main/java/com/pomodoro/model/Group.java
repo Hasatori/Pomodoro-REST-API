@@ -18,7 +18,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Setter
 public class Group {
     @Id
-    @JsonIgnore
     @GeneratedValue(strategy = IDENTITY)
     private Integer id;
 
@@ -31,7 +30,7 @@ public class Group {
 
     @JsonIgnore
     @Column(name = "OWNER_ID")
-    private int ownerId;
+    private Integer ownerId;
 
     @JsonIgnore
     @ManyToMany
@@ -56,5 +55,9 @@ public class Group {
             fetch = FetchType.LAZY, mappedBy = "group")
     private List<GroupChange> groupChanges;
 
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "group")
+    private List<GroupToDo> groupGroupToDos;
 
 }

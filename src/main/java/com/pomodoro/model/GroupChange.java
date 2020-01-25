@@ -30,7 +30,7 @@ public class GroupChange {
 
     @JsonIgnore
     @Column(name = "GROUP_ID")
-    private int groupId;
+    private Integer groupId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CHANGE_AUTHOR",insertable = false,updatable = false)
@@ -38,6 +38,6 @@ public class GroupChange {
 
     @JsonIgnore
     @Column(name = "CHANGE_AUTHOR")
-    private int changeAuthorId;
+    private Integer changeAuthorId;
 
 }

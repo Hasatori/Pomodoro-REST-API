@@ -28,7 +28,7 @@ public class GroupInvitation {
 
     @JsonIgnore
     @Column(name = "GROUP_ID")
-    private int groupId;
+    private Integer groupId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "INVITED_USER_ID",insertable = false,updatable = false)
@@ -36,7 +36,7 @@ public class GroupInvitation {
 
     @JsonIgnore
     @Column(name = "INVITED_USER_ID")
-    private int invitedUserId;
+    private Integer invitedUserId;
 
     private Boolean accepted;
 

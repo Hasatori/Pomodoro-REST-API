@@ -31,7 +31,7 @@ public class GroupMessage {
 
     @JsonIgnore
     @Column(name = "AUTHOR_ID")
-    private int authorId;
+    private Integer authorId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GROUP_ID",insertable = false,updatable = false)
@@ -39,7 +39,7 @@ public class GroupMessage {
 
     @JsonIgnore
     @Column(name = "GROUP_ID")
-    private int groupId;
+    private Integer groupId;
 
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, mappedBy = "groupMessage")

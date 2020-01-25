@@ -33,7 +33,7 @@ public class GroupMessageChange {
 
     @JsonIgnore
     @Column(name = "GROUP_MESSAGE_ID")
-    private int groupMessageId;
+    private Integer groupMessageId;
 
     @CreationTimestamp
     private Date creationTimestamp;

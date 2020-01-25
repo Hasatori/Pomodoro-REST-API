@@ -64,9 +64,16 @@ public class GroupController extends AbstractController {
         Group group = groupRepository.findPomodoroGroupByName(groupDataRequest.getGroupName()).get(0);
         Integer limit = groupDataRequest.getStop() - groupDataRequest.getStart();
         return ResponseEntity.ok(groupChangeRepository.findLastChangesByGroupIdWithinLimitAndOffset(group.getId(), limit, groupDataRequest.getStart()))
-        ;
+                ;
     }
 
+    @RequestMapping(value = "/groups/{groupName}/fetch-todos", method = RequestMethod.POST)
+    public ResponseEntity<?> fetchGroupTodos(HttpServletRequest req, @RequestBody GroupDataRequest groupDataRequest) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        Group group = groupRepository.findPomodoroGroupByName(groupDataRequest.getGroupName()).get(0);
+        return ResponseEntity.ok(group.getGroupGroupToDos())
+                ;
+    }
 
     @RequestMapping(value = "/group/create", method = RequestMethod.POST)
     public void createGroup(HttpServletRequest req, @RequestBody Group group) {
@@ -75,7 +82,7 @@ public class GroupController extends AbstractController {
     }
 
 /*    @RequestMapping(value = "/group/addUser", method = RequestMethod.POST)
-    public ResponseEntity<?> addUserToTheGroup(HttpServletRequest req, @Valid @RequestBody GroupRequest groupRequest) {
+    public ResponseEntity<?> addUserToTheGroup(HttpServletRequest req, @Valid @RequestBody GroupUserRequest groupRequest) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
         Map<String, String> responseEntity = new HashMap<>();
         int status = 400;
@@ -94,20 +101,28 @@ public class GroupController extends AbstractController {
     }*/
 
     @RequestMapping(value = "/group/removeUser", method = RequestMethod.POST)
-    public ResponseEntity<?> deleteUserFromTheGroup(HttpServletRequest req, @Valid @RequestBody GroupRequest groupRequest) {
+    public ResponseEntity<?> deleteUserFromTheGroup(HttpServletRequest req, @Valid @RequestBody GroupUserRequest groupUserRequest) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
         Map<String, String> responseEntity = new HashMap<>();
         int status = 400;
-        Group originalGroup = groupRepository.findPomodoroGroupByNameAndOwnerId(groupRequest.getGroupName(), user.getId());
+        Group originalGroup = groupRepository.findPomodoroGroupByNameAndOwnerId(groupUserRequest.getGroupName(), user.getId());
 
-        User userToRemove = userRepository.findUserByUsername(groupRequest.getUsername());
+        User userToRemove = userRepository.findUserByUsername(groupUserRequest.getUsername());
         CheckUtils.basicGroupChecks(originalGroup, responseEntity, userToRemove);
         if (responseEntity.size() == 0) {
             status = 200;
             userService.removeUserFromGroup(originalGroup, userToRemove);
-            responseEntity.put("success", String.format("User %s was successfully removed from the group %s", groupRequest.getUsername(), originalGroup.getName()));
+            responseEntity.put("success", String.format("User %s was successfully removed from the group %s", groupUserRequest.getUsername(), originalGroup.getName()));
         }
         return ResponseEntity.status(status).body(responseEntity);
     }
 
+    @RequestMapping(value = "/group/remove-todo", method = RequestMethod.POST)
+    public ResponseEntity<?> deleteToDoFromTheGroup(HttpServletRequest req, @RequestBody List<Integer> groupIds) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        Map<String, String> responseEntity = new HashMap<>();
+        responseEntity.put("success","Successfully removed");
+        groupTodoRepository.deleteGroupTodos(groupIds);
+        return ResponseEntity.ok().body(responseEntity);
+    }
 }

@@ -1,16 +1,10 @@
 package com.pomodoro.websocket;
 
 import com.pomodoro.model.*;
-import com.pomodoro.repository.GroupMessageRepository;
-import com.pomodoro.repository.GroupRepository;
-import com.pomodoro.repository.UserGroupMessageRepository;
-import com.pomodoro.repository.UserRepository;
-import com.pomodoro.service.UserService;
 import com.pomodoro.utils.CheckUtils;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,11 +45,26 @@ public class GroupWebsocket extends AbstractSocket {
         return groupMessage;
     }
 
+    @MessageMapping("/group/{groupName}/change")
+    @SendTo("/group/{groupName}/change")
+    public GroupChange readAndWriteChange(Principal principal, @DestinationVariable String groupName, @RequestBody String message) throws Exception {
+        User author = (User) principal;
+        Group group = groupRepository.findPomodoroGroupByName(groupName).get(0);
+        GroupChange groupChange = new GroupChange();
+        groupChange.setChangeAuthor(author);
+        groupChange.setChangeAuthorId(author.getId());
+        groupChange.setGroup(group);
+        groupChange.setGroupId(group.getId());
+        groupChange.setChangeTimestamp(new Date());
+        groupChange.setChangeDescription(message);
+        return groupChangeRepository.save(groupChange);
+    }
+
     @MessageMapping("/group/{groupName}/chat/reaction")
     @SendTo("/group/{groupName}/chat/reaction")
     public GroupMessage reactToGroupMessage(Principal principal, @DestinationVariable String groupName, @RequestBody GroupMessageReaction groupMessageReaction) {
         User user = (User) principal;
-        userGroupMessageRepository.setReaction(groupMessageReaction.getReaction(),user.getId(),groupMessageReaction.getGroupMessageId());
+        userGroupMessageRepository.setReaction(groupMessageReaction.getReaction(), user.getId(), groupMessageReaction.getGroupMessageId());
         GroupMessage groupMessage = groupMessageRepository.findGroupMessageById(groupMessageReaction.getGroupMessageId());
         Optional<UserGroupMessage> optionalUserGroupMessage = groupMessage.getRelatedGroupMessages().stream().filter(userGroupMessage -> userGroupMessage.getUser().getUsername().equals(principal.getName())).findFirst();
         UserGroupMessage userGroupMessage = optionalUserGroupMessage.orElse(null);
@@ -67,11 +76,11 @@ public class GroupWebsocket extends AbstractSocket {
 
     @MessageMapping("/group/{groupName}/group-members")
     @SendTo("/group/{groupName}/group-members")
-    public Object groupMembers(Principal principal, @DestinationVariable String groupName, @Valid @RequestBody GroupRequest groupRequest) throws Exception {
+    public Object groupMembers(Principal principal, @DestinationVariable String groupName, @Valid @RequestBody GroupUserRequest groupUserRequest) throws Exception {
         User user = (User) principal;
         Map<String, String> responseEntity = new HashMap<>();
-        Group originalGroup = groupRepository.findPomodoroGroupByNameAndOwnerId(groupRequest.getGroupName(), user.getId());
-        User userToAdd = userRepository.findUserByUsername(groupRequest.getUsername());
+        Group originalGroup = groupRepository.findPomodoroGroupByNameAndOwnerId(groupUserRequest.getGroupName(), user.getId());
+        User userToAdd = userRepository.findUserByUsername(groupUserRequest.getUsername());
         CheckUtils.basicGroupChecks(originalGroup, responseEntity, userToAdd);
         if (originalGroup != null && userToAdd != null && originalGroup.getUsers().stream().anyMatch(user1 -> user1.getUsername().equals(userToAdd.getUsername()))) {
             responseEntity.put("group", "User already is part of the group");
@@ -81,5 +90,14 @@ public class GroupWebsocket extends AbstractSocket {
             return userToAdd;
         }
         return responseEntity;
+    }
+
+    @MessageMapping("/group/{groupName}/todos")
+    @SendTo("/group/{groupName}/todos")
+    public Object readAndWriteTodos(Principal principal, @DestinationVariable String groupName,  @RequestBody GroupToDo groupToDo) throws Exception {
+        User user = (User) principal;
+        groupToDo = groupTodoRepository.save(groupToDo);
+        groupToDo=groupTodoRepository.findGroupToDoById(groupToDo.getId());
+        return groupToDo;
     }
 }

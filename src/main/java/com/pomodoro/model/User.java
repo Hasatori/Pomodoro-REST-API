@@ -4,8 +4,6 @@ package com.pomodoro.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,10 +25,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity(name = "USER")
 @Transactional
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@Getter
-@Setter
 public class User implements UserDetails, Principal {
-    @JsonIgnore
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Integer id;
@@ -101,6 +97,14 @@ public class User implements UserDetails, Principal {
             fetch = FetchType.LAZY, mappedBy = "user")
     private List<UserGroupMessage> relatedGroupMessages;
 
+    public void setUsername(String userName) {
+        this.username = userName;
+    }
+    @JsonIgnore
+    @ManyToMany(mappedBy = "assignedUsers")
+    private
+    Set<GroupToDo> groupToDos;
+
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -155,9 +159,125 @@ public class User implements UserDetails, Principal {
         return locked;
     }
 
+    public void setLocked(Boolean locked) {
+        this.locked = locked;
+    }
+
+    public void setCredentialsExpired(Boolean credentialsExpired) {
+        this.credentialsExpired = credentialsExpired;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @JsonProperty
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public List<Pomodoro> getPomodoros() {
+        return pomodoros;
+    }
+
+    public void setPomodoros(List<Pomodoro> pomodoros) {
+        this.pomodoros = pomodoros;
+    }
+
+    public Set<Group> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Set<Group> groups) {
+        this.groups = groups;
+    }
+
+    public List<Group> getOwnedGroups() {
+        return ownedGroups;
+    }
+
+    public void setOwnedGroups(List<Group> ownedGroups) {
+        this.ownedGroups = ownedGroups;
+    }
+
+    public Settings getSettings() {
+        return settings;
+    }
+
+    public void setSettings(Settings settings) {
+        this.settings = settings;
+    }
+
+    public Boolean getCredentialsExpired() {
+        return credentialsExpired;
+    }
+
+    public Integer getFacebookId() {
+        return facebookId;
+    }
+
+    public void setFacebookId(Integer facebookId) {
+        this.facebookId = facebookId;
+    }
+
+    public List<GroupMessage> getCreatedGroupMessages() {
+        return createdGroupMessages;
+    }
+
+    public void setCreatedGroupMessages(List<GroupMessage> createdGroupMessages) {
+        this.createdGroupMessages = createdGroupMessages;
+    }
+
+    public List<GroupInvitation> getGroupInvitations() {
+        return groupInvitations;
+    }
+
+    public void setGroupInvitations(List<GroupInvitation> groupInvitations) {
+        this.groupInvitations = groupInvitations;
     }
 
     @Override
@@ -168,5 +288,13 @@ public class User implements UserDetails, Principal {
     @Override
     public boolean implies(Subject subject) {
         return false;
+    }
+
+    public List<UserGroupMessage> getRelatedGroupMessages() {
+        return relatedGroupMessages;
+    }
+
+    public void setRelatedGroupMessages(List<UserGroupMessage> relatedGroupMessages) {
+        this.relatedGroupMessages = relatedGroupMessages;
     }
 }

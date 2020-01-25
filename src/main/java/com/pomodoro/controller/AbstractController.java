@@ -34,7 +34,8 @@ public class AbstractController {
     protected UserGroupMessageRepository userGroupMessageRepository;
     @Autowired
     protected GroupChangeRepository groupChangeRepository;
-
+    @Autowired
+    protected GroupTodoRepository groupTodoRepository;
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
