@@ -4,8 +4,10 @@ import com.pomodoro.model.*;
 import com.pomodoro.utils.CheckUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -117,11 +119,34 @@ public class GroupController extends AbstractController {
         return ResponseEntity.status(status).body(responseEntity);
     }
 
+    @RequestMapping(value = "/group/{groupName}/invite-user", method = RequestMethod.POST)
+    public ResponseEntity<?> inviteUserToGroup(HttpServletRequest req, @Valid @RequestBody GroupInvitationRequest groupInvitationRequest) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        GroupInvitation groupInvitation = new GroupInvitation();
+        groupInvitation.setGroup(groupInvitationRequest.getGroup());
+        groupInvitation.setInvitedUser(groupInvitationRequest.getInvitedUser());
+        groupInvitation.setAccepted(false);
+        groupInvitationRepository.save(groupInvitation);
+        Map<String, String> responseEntity = new HashMap<>();
+        responseEntity.put("success", "Was invited");
+        return ResponseEntity.ok().body(responseEntity);
+    }
+
+    @RequestMapping(value = "/group/{groupName}/invitations", method = RequestMethod.POST)
+    public List<GroupInvitation> getGroupInvitations(HttpServletRequest req, @Valid @RequestBody Group group) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        Optional<Group>optionalGroup=groupRepository.findById(group.getId());
+        if (optionalGroup.isPresent()){
+            return optionalGroup.get().getGroupInvitations();
+        }
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    }
+
     @RequestMapping(value = "/group/remove-todo", method = RequestMethod.POST)
     public ResponseEntity<?> deleteToDoFromTheGroup(HttpServletRequest req, @RequestBody List<Integer> groupIds) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
         Map<String, String> responseEntity = new HashMap<>();
-        responseEntity.put("success","Successfully removed");
+        responseEntity.put("success", "Successfully removed");
         groupTodoRepository.deleteGroupTodos(groupIds);
         return ResponseEntity.ok().body(responseEntity);
     }

@@ -47,16 +47,14 @@ public class GroupWebsocket extends AbstractSocket {
 
     @MessageMapping("/group/{groupName}/change")
     @SendTo("/group/{groupName}/change")
-    public GroupChange readAndWriteChange(Principal principal, @DestinationVariable String groupName, @RequestBody String message) throws Exception {
+    public GroupChange readAndWriteChange(Principal principal, @DestinationVariable String groupName, @RequestBody GroupChange groupChange) throws Exception {
         User author = (User) principal;
         Group group = groupRepository.findPomodoroGroupByName(groupName).get(0);
-        GroupChange groupChange = new GroupChange();
         groupChange.setChangeAuthor(author);
         groupChange.setChangeAuthorId(author.getId());
         groupChange.setGroup(group);
         groupChange.setGroupId(group.getId());
         groupChange.setChangeTimestamp(new Date());
-        groupChange.setChangeDescription(message);
         return groupChangeRepository.save(groupChange);
     }
 
@@ -94,10 +92,10 @@ public class GroupWebsocket extends AbstractSocket {
 
     @MessageMapping("/group/{groupName}/todos")
     @SendTo("/group/{groupName}/todos")
-    public Object readAndWriteTodos(Principal principal, @DestinationVariable String groupName,  @RequestBody GroupToDo groupToDo) throws Exception {
+    public Object readAndWriteTodos(Principal principal, @DestinationVariable String groupName, @RequestBody GroupToDo groupToDo) throws Exception {
         User user = (User) principal;
         groupToDo = groupTodoRepository.save(groupToDo);
-        groupToDo=groupTodoRepository.findGroupToDoById(groupToDo.getId());
+        groupToDo = groupTodoRepository.findGroupToDoById(groupToDo.getId());
         return groupToDo;
     }
 }

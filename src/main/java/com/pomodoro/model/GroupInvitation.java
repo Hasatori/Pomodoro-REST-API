@@ -41,4 +41,5 @@ public class GroupInvitation {
     private Boolean accepted;
 
 
+
 }

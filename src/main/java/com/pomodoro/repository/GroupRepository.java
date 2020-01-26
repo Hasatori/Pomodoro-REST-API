@@ -21,6 +21,8 @@ public interface GroupRepository extends JpaRepository<Group, Integer> {
 
     List<Group> findPomodoroGroupByName(String groupName);
 
+    Group findPomodoroGroupById(Integer id);
+
     Group findPomodoroGroupByNameAndOwnerId(String groupName,Integer ownerId);
 
     @Modifying

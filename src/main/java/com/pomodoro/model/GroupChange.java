@@ -22,6 +22,10 @@ public class GroupChange {
     private Integer id;
 
     private String changeDescription;
+
+    @Enumerated(EnumType.STRING)
+    private ChangeType changeType;
+
     private Date changeTimestamp;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,5 +43,6 @@ public class GroupChange {
     @JsonIgnore
     @Column(name = "CHANGE_AUTHOR")
     private Integer changeAuthorId;
+
 
 }

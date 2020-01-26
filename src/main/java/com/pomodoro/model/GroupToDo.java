@@ -48,7 +48,7 @@ public class GroupToDo {
     @Column(name = "AUTHOR_ID")
     private Integer authorId;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(
             name = "USER_TO_DO",
             joinColumns = @JoinColumn(name = "TO_DO_ID"),

@@ -33,4 +33,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query(value = "INSERT INTO USER( USERNAME, EMAIL, FIRST_NAME, LAST_NAME, PASSWORD, ACCOUNT_EXPIRED, LOCKED, CREDENTIALS_EXPIRED,ENABLED) VALUES (:username,:email,:firstName,:lastName,:password,:accountExpired,:locked,:credentialsExpiredEnabled,:enabled)", nativeQuery = true)
     void insertNewUser( @Param("username") String username, @Param("email") String email, @Param("firstName") String firstname, @Param("lastName") String lastName, @Param("password") String password, @Param("accountExpired") Boolean accountExpired, @Param("locked") Boolean locked, @Param("credentialsExpiredEnabled") Boolean credentialsExpiredEnabled, @Param("enabled") Boolean enabled);
 
+
+
+
+    @Query(value="select * from User u where u.username like %:username% LIMIT 5", nativeQuery=true)
+    List<User> findUserByUsernameStartingWith( @Param("username") String username);
 }

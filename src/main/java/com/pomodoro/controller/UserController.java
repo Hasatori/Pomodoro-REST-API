@@ -1,14 +1,10 @@
 package com.pomodoro.controller;
 
-import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.model.*;
 import com.pomodoro.model.o2auth.FacebookUser;
-import com.pomodoro.repository.*;
-import com.pomodoro.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -195,6 +191,10 @@ public class UserController extends AbstractController {
         }
     }
 
-
+    @RequestMapping(value = "/users-on-hint", method = RequestMethod.POST)
+    public List<User> getGroupInitations(HttpServletRequest req, @RequestBody Hint hint) {
+        List<User>users= userRepository.findUserByUsernameStartingWith(hint.getValue());
+        return users;
+    }
 }
 
