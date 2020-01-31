@@ -97,13 +97,21 @@ public class User implements UserDetails, Principal {
             fetch = FetchType.LAZY, mappedBy = "user")
     private List<UserGroupMessage> relatedGroupMessages;
 
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "author")
+    private List<UserToDo> todos;
+
     public void setUsername(String userName) {
         this.username = userName;
     }
     @JsonIgnore
-    @ManyToMany(mappedBy = "assignedUsers")
+    @ManyToMany(mappedBy = "assignedUsers",cascade = CascadeType.REMOVE)
+
     private
     Set<GroupToDo> groupToDos;
+
+
 
     @JsonIgnore
     @Override
@@ -296,5 +304,21 @@ public class User implements UserDetails, Principal {
 
     public void setRelatedGroupMessages(List<UserGroupMessage> relatedGroupMessages) {
         this.relatedGroupMessages = relatedGroupMessages;
+    }
+
+    public List<UserToDo> getTodos() {
+        return todos;
+    }
+
+    public void setTodos(List<UserToDo> todos) {
+        this.todos = todos;
+    }
+
+    public Set<GroupToDo> getGroupToDos() {
+        return groupToDos;
+    }
+
+    public void setGroupToDos(Set<GroupToDo> groupToDos) {
+        this.groupToDos = groupToDos;
     }
 }

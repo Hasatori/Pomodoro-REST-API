@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -138,6 +135,16 @@ public class UserController extends AbstractController {
         return user.getPomodoros();
     }
 
+    @RequestMapping(value = "/userTodos", method = RequestMethod.POST)
+    public List<UserToDo> getUserTodos(HttpServletRequest req) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        return user.getTodos();
+    }
+    @RequestMapping(value = "/groupTodos", method = RequestMethod.POST)
+    public Set<GroupToDo> getGroupTodos(HttpServletRequest req) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        return user.getGroupToDos();
+    }
     @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
     public ResponseEntity<?> changePassword(HttpServletRequest req, @Valid @RequestBody ChangePassword
             changePassword) {
@@ -193,7 +200,7 @@ public class UserController extends AbstractController {
 
     @RequestMapping(value = "/users-on-hint", method = RequestMethod.POST)
     public List<User> getGroupInitations(HttpServletRequest req, @RequestBody Hint hint) {
-        List<User>users= userRepository.findUserByUsernameStartingWith(hint.getValue());
+        List<User> users = userRepository.findUserByUsernameStartingWith(hint.getValue());
         return users;
     }
 }

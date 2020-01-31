@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -23,6 +24,8 @@ public class Group {
 
     private String name;
     private boolean isPublic;
+
+    private Date created;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OWNER_ID",insertable = false,updatable = false)

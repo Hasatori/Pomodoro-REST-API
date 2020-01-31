@@ -14,28 +14,21 @@ import java.util.Set;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-@Entity(name = "GROUP_TO_DO")
+@Entity(name = "USER_TO_DO")
 @Transactional
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
 @Setter
-public class GroupToDo {
+public class UserToDo {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "GROUP_ID", insertable = false, updatable = false)
-    private Group group;
-
-    @Column(name = "GROUP_ID")
-    private Integer groupId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "PARENT_ID", insertable = false, updatable = false)
-    private GroupToDo parent;
+    private UserToDo parent;
 
     @Nullable
     @Column(name = "PARENT_ID")
@@ -47,14 +40,6 @@ public class GroupToDo {
 
     @Column(name = "AUTHOR_ID")
     private Integer authorId;
-
-    @ManyToMany(cascade = CascadeType.REMOVE)
-    @JoinTable(
-            name = "USER_GROUP_TO_DO",
-            joinColumns = @JoinColumn(name = "TO_DO_ID"),
-            inverseJoinColumns = @JoinColumn(name = "USER_ID"))
-    Set<User> assignedUsers;
-
 
     private String status;
 
