@@ -27,6 +27,8 @@ public class Group {
 
     private Date created;
 
+    private String layoutImage;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OWNER_ID",insertable = false,updatable = false)
     private User owner;

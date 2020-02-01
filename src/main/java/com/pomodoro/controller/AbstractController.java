@@ -2,6 +2,7 @@ package com.pomodoro.controller;
 
 import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.repository.*;
+import com.pomodoro.service.StorageService;
 import com.pomodoro.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,6 +40,9 @@ public class AbstractController {
 
     @Autowired
     protected UserTodoRepository userTodoRepository;
+
+    @Autowired
+    protected StorageService storageService;
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
