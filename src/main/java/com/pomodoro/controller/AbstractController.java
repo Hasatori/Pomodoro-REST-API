@@ -37,6 +37,9 @@ public class AbstractController {
     @Autowired
     protected GroupTodoRepository groupTodoRepository;
 
+    @Autowired
+    protected UserTodoRepository userTodoRepository;
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(

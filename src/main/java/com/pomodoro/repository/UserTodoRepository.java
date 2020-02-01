@@ -17,5 +17,10 @@ import java.util.Set;
 public interface UserTodoRepository extends JpaRepository<UserToDo, Integer> {
 
 
+    @Modifying
+    @Query("delete from USER_TO_DO where ID in (:ids)")
+    void deleteUserTodos(@Param("ids") List<Integer> ids);
+
+    UserToDo findUserToDoById(Integer id);
 
 }

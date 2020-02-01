@@ -140,11 +140,13 @@ public class UserController extends AbstractController {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
         return user.getTodos();
     }
+
     @RequestMapping(value = "/groupTodos", method = RequestMethod.POST)
     public Set<GroupToDo> getGroupTodos(HttpServletRequest req) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
         return user.getGroupToDos();
     }
+
     @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
     public ResponseEntity<?> changePassword(HttpServletRequest req, @Valid @RequestBody ChangePassword
             changePassword) {
@@ -202,6 +204,15 @@ public class UserController extends AbstractController {
     public List<User> getGroupInitations(HttpServletRequest req, @RequestBody Hint hint) {
         List<User> users = userRepository.findUserByUsernameStartingWith(hint.getValue());
         return users;
+    }
+
+    @RequestMapping(value = "/remove-todo", method = RequestMethod.POST)
+    public ResponseEntity<?> deleteToDoFromTheGroup(HttpServletRequest req, @RequestBody List<Integer> todoIds) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        Map<String, String> responseEntity = new HashMap<>();
+        responseEntity.put("success", "Successfully removed");
+        userTodoRepository.deleteUserTodos(todoIds);
+        return ResponseEntity.ok().body(responseEntity);
     }
 }
 

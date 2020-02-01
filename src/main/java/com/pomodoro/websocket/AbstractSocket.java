@@ -28,4 +28,7 @@ public class AbstractSocket {
 
     @Autowired
     protected GroupTodoRepository groupTodoRepository;
+
+    @Autowired
+    protected  UserTodoRepository userTodoRepository;
 }
