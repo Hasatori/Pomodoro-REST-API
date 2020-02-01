@@ -44,11 +44,11 @@ public class ResourceController extends AbstractController {
                 .body(resource);
     }
 
-    @PostMapping("/users/{id}/{id}.jpg")
+    @PostMapping("/users/{id}/profile.jpg")
     @ResponseBody
     public  ResponseEntity<Resource> getProfileImage(@PathVariable Integer id) throws IOException {
 
-        Resource resource = storageService.loadAsResource(String.format("users/%d/%d.jpg",id,id));
+        Resource resource = storageService.loadAsResource(String.format("users/%d/profile.jpg",id,id));
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=\"" + resource.getFilename() + "\"")
