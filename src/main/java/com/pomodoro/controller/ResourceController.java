@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.imageio.ImageIO;
+import javax.mail.Multipart;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.File;
@@ -36,7 +37,6 @@ public class ResourceController extends AbstractController {
     @PostMapping("/group/layout/{filename:.+}")
     @ResponseBody
     public  ResponseEntity<Resource> getLayoutImage(@PathVariable String filename) throws IOException {
-
         Resource resource = storageService.loadAsResource("group/layout/"+filename);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
@@ -53,6 +53,13 @@ public class ResourceController extends AbstractController {
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
+    }
+    @PostMapping("/upload")
+    @ResponseBody
+    public void upload(@RequestParam("file") MultipartFile file) throws IOException {
+        String message;
+        storageService.store(file);
+
     }
 }
 

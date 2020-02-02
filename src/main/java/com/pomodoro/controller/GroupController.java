@@ -123,8 +123,8 @@ public class GroupController extends AbstractController {
     public ResponseEntity<?> inviteUserToGroup(HttpServletRequest req, @Valid @RequestBody GroupInvitationRequest groupInvitationRequest) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
         GroupInvitation groupInvitation = new GroupInvitation();
-        groupInvitation.setGroup(groupInvitationRequest.getGroup());
-        groupInvitation.setInvitedUser(groupInvitationRequest.getInvitedUser());
+        groupInvitation.setGroupId(groupInvitationRequest.getGroup().getId());
+        groupInvitation.setInvitedUserId(groupInvitationRequest.getInvitedUser().getId());
         groupInvitation.setAccepted(false);
         groupInvitationRepository.save(groupInvitation);
         Map<String, String> responseEntity = new HashMap<>();

@@ -170,6 +170,7 @@ public class UserController extends AbstractController {
     @RequestMapping(value = "/not-accepted-group-invitations", method = RequestMethod.POST)
     public ResponseEntity<?> getGroupInitations(HttpServletRequest req) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        List<GroupInvitation>invitations=user.getGroupInvitations();
         return ResponseEntity.ok(user.getGroupInvitations().stream().filter(groupInvitation -> !groupInvitation.getAccepted()));
     }
 
