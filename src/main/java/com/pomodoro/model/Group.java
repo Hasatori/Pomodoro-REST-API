@@ -3,9 +3,12 @@ package com.pomodoro.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import java.util.Date;
 import java.util.List;
@@ -22,12 +25,20 @@ public class Group {
     @GeneratedValue(strategy = IDENTITY)
     private Integer id;
 
+    @NotBlank(message = "Name is mandatory")
     private String name;
-    private boolean isPublic;
 
+    @NotNull(message = "Boolean indicating if group is public must be filled")
+    private Boolean isPublic;
+
+    @NotNull(message = "Group created date must be filled")
     private Date created;
 
+    @NotBlank(message = "Layout image must be filled")
     private String layoutImage;
+
+    @Nullable
+    private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OWNER_ID",insertable = false,updatable = false)

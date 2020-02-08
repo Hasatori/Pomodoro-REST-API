@@ -78,9 +78,23 @@ public class GroupController extends AbstractController {
     }
 
     @RequestMapping(value = "/group/create", method = RequestMethod.POST)
-    public void createGroup(HttpServletRequest req, @RequestBody Group group) {
+    public ResponseEntity<?> createGroup(HttpServletRequest req, @RequestBody @Valid Group group) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
-        userService.createGroup(user, group.getName(), group.isPublic());
+
+        Map<String, String> responseEntity = new HashMap<>();
+        int status = 400;
+        group.setName(group.getName().trim());
+        if (groupRepository.findPomodoroGroupByNameAndOwnerId(group.getName(), user.getId()) != null) {
+            responseEntity.put("name", "Group with this name already exists");
+        }
+        if (responseEntity.size() == 0) {
+            group.setOwnerId(user.getId());
+            group.setUsers(new HashSet<User>(){{add(user);}});
+            group=groupRepository.save(group);
+            status = 200;
+            responseEntity.put("success", "Group was created");
+        }
+        return ResponseEntity.status(status).body(responseEntity);
     }
 
 /*    @RequestMapping(value = "/group/addUser", method = RequestMethod.POST)
@@ -135,8 +149,8 @@ public class GroupController extends AbstractController {
     @RequestMapping(value = "/group/{groupName}/invitations", method = RequestMethod.POST)
     public List<GroupInvitation> getGroupInvitations(HttpServletRequest req, @Valid @RequestBody Group group) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
-        Optional<Group>optionalGroup=groupRepository.findById(group.getId());
-        if (optionalGroup.isPresent()){
+        Optional<Group> optionalGroup = groupRepository.findById(group.getId());
+        if (optionalGroup.isPresent()) {
             return optionalGroup.get().getGroupInvitations();
         }
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
