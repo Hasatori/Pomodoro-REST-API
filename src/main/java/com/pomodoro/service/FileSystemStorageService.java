@@ -42,27 +42,30 @@ public class FileSystemStorageService implements StorageService {
 
     @Override
     public String store(MultipartFile file) {
-        String filename = StringUtils.cleanPath(file.getOriginalFilename());
+        return store(file, StringUtils.cleanPath(file.getOriginalFilename()));
+    }
+
+    @Override
+    public String store(MultipartFile file, String absolutePath) {
         try {
             if (file.isEmpty()) {
-                throw new StorageException("Failed to store empty file " + filename);
+                throw new StorageException("Failed to store empty file " + absolutePath);
             }
-            if (filename.contains("..")) {
+            if (absolutePath.contains("..")) {
                 // This is a security check
                 throw new StorageException(
                         "Cannot store file with relative path outside current directory "
-                                + filename);
+                                + absolutePath);
             }
             try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, this.rootLocation.resolve(filename),
+                Files.copy(inputStream, this.rootLocation.resolve(absolutePath),
                         StandardCopyOption.REPLACE_EXISTING);
             }
-        }
-        catch (IOException e) {
-            throw new StorageException("Failed to store file " + filename, e);
+        } catch (IOException e) {
+            throw new StorageException("Failed to store file " + absolutePath, e);
         }
 
-        return filename;
+        return absolutePath;
     }
 
     @Override
@@ -71,8 +74,7 @@ public class FileSystemStorageService implements StorageService {
             return Files.walk(this.rootLocation, 1)
                     .filter(path -> !path.equals(this.rootLocation))
                     .map(this.rootLocation::relativize);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new StorageException("Failed to read stored files", e);
         }
 
@@ -90,14 +92,12 @@ public class FileSystemStorageService implements StorageService {
             Resource resource = new UrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
                 return resource;
-            }
-            else {
+            } else {
                 throw new StorageException(
                         "Could not read file: " + filename);
             }
-        }
-        catch (MalformedURLException e) {
-            throw new StorageException("Could not find file "+filename);
+        } catch (MalformedURLException e) {
+            throw new StorageException("Could not find file " + filename);
         }
     }
 

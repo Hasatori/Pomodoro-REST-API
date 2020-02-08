@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
@@ -24,6 +25,10 @@ public class GroupMessage {
     private Integer id;
 
     private String value;
+
+    @Nullable
+    private String attachment;
+
     private Date timestamp;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AUTHOR_ID",insertable = false,updatable = false)

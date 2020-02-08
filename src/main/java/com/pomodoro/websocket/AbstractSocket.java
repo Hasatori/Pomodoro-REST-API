@@ -2,6 +2,7 @@ package com.pomodoro.websocket;
 
 import com.pomodoro.model.GroupChange;
 import com.pomodoro.repository.*;
+import com.pomodoro.service.StorageService;
 import com.pomodoro.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -31,4 +32,7 @@ public class AbstractSocket {
 
     @Autowired
     protected  UserTodoRepository userTodoRepository;
+
+    @Autowired
+    protected StorageService storageService;
 }
