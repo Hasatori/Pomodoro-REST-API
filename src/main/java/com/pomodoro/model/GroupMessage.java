@@ -24,6 +24,7 @@ public class GroupMessage {
     @GeneratedValue(strategy = IDENTITY)
     private Integer id;
 
+    @Lob
     private String value;
 
     @Nullable
@@ -31,7 +32,7 @@ public class GroupMessage {
 
     private Date timestamp;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "AUTHOR_ID",insertable = false,updatable = false)
+    @JoinColumn(name = "AUTHOR_ID", insertable = false, updatable = false)
     private User author;
 
     @JsonIgnore
@@ -39,8 +40,8 @@ public class GroupMessage {
     private Integer authorId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "GROUP_ID",insertable = false,updatable = false)
-    private Group group ;
+    @JoinColumn(name = "GROUP_ID", insertable = false, updatable = false)
+    private Group group;
 
     @JsonIgnore
     @Column(name = "GROUP_ID")
