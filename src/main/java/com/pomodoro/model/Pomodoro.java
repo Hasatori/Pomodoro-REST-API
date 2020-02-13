@@ -8,8 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import javax.persistence.*;
-import java.sql.Date;
+
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -31,7 +32,7 @@ public class Pomodoro {
     private Integer user;
 
     @CreationTimestamp
-    private LocalDateTime creationTimestamp;
+    private Date creationTimestamp;
     private Integer workTime;
     private Integer breakTime;
     private boolean interrupted;

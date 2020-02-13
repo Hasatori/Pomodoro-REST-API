@@ -11,6 +11,7 @@ import com.pomodoro.repository.GroupRepository;
 import com.pomodoro.repository.PomodoroRepository;
 import com.pomodoro.repository.SettingsRepository;
 import com.pomodoro.repository.UserRepository;
+import com.pomodoro.utils.DateUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,7 +119,7 @@ public class UserService implements UserDetailsService {
     }
 
     public Pomodoro createPomodoroAndReturn(User user) {
-        pomodoroRepository.insertNewPomodoro(user.getId(), LocalDateTime.now(), user.getSettings().getWorkTime(), user.getSettings().getPauseTime(), false);
+        pomodoroRepository.insertNewPomodoro(user.getId(), DateUtils.getCurrentDateUtc(), user.getSettings().getWorkTime(), user.getSettings().getPauseTime(), false);
         Pomodoro pomodoro = Collections.max(user.getPomodoros(), Comparator.comparing(Pomodoro::getCreationTimestamp));
         return pomodoro;
     }
