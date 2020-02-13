@@ -2,6 +2,7 @@ package com.pomodoro.controller;
 
 import com.pomodoro.model.*;
 import com.pomodoro.utils.CheckUtils;
+import com.pomodoro.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -55,7 +56,7 @@ public class GroupController extends AbstractController {
     public ResponseEntity<?> markAllAsRead(HttpServletRequest req, @PathVariable String groupName) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
         Group group = groupRepository.findPomodoroGroupByName(groupName).get(0);
-        userGroupMessageRepository.markAllUserMessagesFromGroupAsRead(new Date(), user.getId(), group.getGroupMessages().stream().map(GroupMessage::getId).collect(Collectors.toList()));
+        userGroupMessageRepository.markAllUserMessagesFromGroupAsRead(DateUtils.getCurrentDateUtc(), user.getId(), group.getGroupMessages().stream().map(GroupMessage::getId).collect(Collectors.toList()));
 
         return ResponseEntity.ok(groupMessageRepository.findNewestGroupMessageByGroupId(group.getId()));
     }

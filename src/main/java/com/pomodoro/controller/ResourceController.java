@@ -2,6 +2,7 @@ package com.pomodoro.controller;
 
 import com.pomodoro.model.*;
 import com.pomodoro.model.o2auth.FacebookUser;
+import com.pomodoro.utils.DateUtils;
 import com.sun.org.apache.regexp.internal.RE;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
@@ -134,7 +135,7 @@ public class ResourceController extends AbstractController {
         groupMessage.setAuthor(author);
         groupMessage.setAuthorId(author.getId());
         groupMessage.setValue(file.getResource().getFilename());
-        groupMessage.setTimestamp(new Date());
+        groupMessage.setTimestamp(DateUtils.getCurrentDateUtc());
         groupMessage.setGroup(group);
         groupMessage.setGroupId(group.getId());
         groupMessage.setRelatedGroupMessages(new ArrayList<>());
@@ -144,7 +145,7 @@ public class ResourceController extends AbstractController {
             UserGroupMessage userGroupMessage = new UserGroupMessage();
             userGroupMessage.setUser(user);
             if (user.getUsername().equals(author.getUsername())) {
-                userGroupMessage.setReadTimestamp(new Date());
+                userGroupMessage.setReadTimestamp(DateUtils.getCurrentDateUtc());
             }
             userGroupMessage.setGroupMessage(groupMessage);
 

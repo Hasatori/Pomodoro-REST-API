@@ -2,6 +2,7 @@ package com.pomodoro.websocket;
 
 import com.pomodoro.model.*;
 import com.pomodoro.utils.CheckUtils;
+import com.pomodoro.utils.DateUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -29,7 +30,7 @@ public class GroupWebsocket extends AbstractSocket {
         groupMessage.setAuthor(author);
         groupMessage.setAuthorId(author.getId());
         groupMessage.setValue(message);
-        groupMessage.setTimestamp(new Date());
+        groupMessage.setTimestamp(DateUtils.getCurrentDateUtc());
         groupMessage.setGroup(group);
         groupMessage.setGroupId(group.getId());
         groupMessage.setRelatedGroupMessages(new ArrayList<>());
@@ -38,7 +39,7 @@ public class GroupWebsocket extends AbstractSocket {
             UserGroupMessage userGroupMessage = new UserGroupMessage();
             userGroupMessage.setUser(user);
             if (user.getUsername().equals(author.getUsername())) {
-                userGroupMessage.setReadTimestamp(new Date());
+                userGroupMessage.setReadTimestamp(DateUtils.getCurrentDateUtc());
             }
 
             userGroupMessage.setGroupMessage(groupMessage);
@@ -64,7 +65,7 @@ public class GroupWebsocket extends AbstractSocket {
         groupChange.setChangeAuthorId(author.getId());
         groupChange.setGroup(group);
         groupChange.setGroupId(group.getId());
-        groupChange.setChangeTimestamp(new Date());
+        groupChange.setChangeTimestamp(DateUtils.getCurrentDateUtc());
         return groupChangeRepository.save(groupChange);
     }
 
