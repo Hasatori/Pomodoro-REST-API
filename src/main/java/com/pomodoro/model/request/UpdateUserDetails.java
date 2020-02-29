@@ -1,4 +1,4 @@
-package com.pomodoro.model;
+package com.pomodoro.model.request;
 
 import lombok.Getter;
 import lombok.Setter;

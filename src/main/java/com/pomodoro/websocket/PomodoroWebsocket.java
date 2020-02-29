@@ -2,15 +2,9 @@ package com.pomodoro.websocket;
 
 import com.pomodoro.model.Pomodoro;
 import com.pomodoro.model.User;
-import com.pomodoro.repository.GroupMessageRepository;
-import com.pomodoro.repository.GroupRepository;
-import com.pomodoro.repository.UserGroupMessageRepository;
-import com.pomodoro.repository.UserRepository;
-import com.pomodoro.service.UserService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;

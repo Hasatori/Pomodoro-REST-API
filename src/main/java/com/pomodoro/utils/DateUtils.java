@@ -7,11 +7,14 @@ import java.util.TimeZone;
 public class DateUtils {
 
 
-    private static final Calendar CALENDAR = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+
 
     public static Date getCurrentDateUtc() {
-        return CALENDAR.getTime();
+        return getUTCCalendarInstance().getTime();
 
     }
 
+    private static Calendar getUTCCalendarInstance(){
+   return     Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+    }
 }

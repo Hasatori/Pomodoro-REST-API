@@ -1,8 +1,6 @@
-package com.pomodoro.repository;
+package com.pomodoro.service.repository;
 
 import com.pomodoro.model.GroupChange;
-import com.pomodoro.model.GroupInvitation;
-import com.pomodoro.model.GroupMessage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

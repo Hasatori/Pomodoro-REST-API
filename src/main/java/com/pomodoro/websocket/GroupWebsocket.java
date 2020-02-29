@@ -1,21 +1,18 @@
 package com.pomodoro.websocket;
 
 import com.pomodoro.model.*;
+import com.pomodoro.model.request.GroupUserRequest;
 import com.pomodoro.utils.CheckUtils;
 import com.pomodoro.utils.DateUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.security.Principal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @CrossOrigin(origins = "*", allowedHeaders = "*")

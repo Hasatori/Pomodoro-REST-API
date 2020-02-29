@@ -1,6 +1,5 @@
-package com.pomodoro.repository;
+package com.pomodoro.service.repository;
 
-import com.pomodoro.model.Group;
 import com.pomodoro.model.GroupMessage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -9,10 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.Pattern;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Repository
 @Transactional

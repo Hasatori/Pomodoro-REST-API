@@ -1,4 +1,4 @@
-package com.pomodoro.repository;
+package com.pomodoro.service.repository;
 
 import com.pomodoro.model.GroupToDo;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,7 +17,6 @@ public interface GroupTodoRepository extends JpaRepository<GroupToDo, Integer> {
 
 
     Set<GroupToDo> findGroupToDoByGroupId(Integer groupId);
-
 
     GroupToDo findGroupToDoById(Integer id);
 

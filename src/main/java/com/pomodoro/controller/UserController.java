@@ -2,6 +2,7 @@ package com.pomodoro.controller;
 
 import com.pomodoro.model.*;
 import com.pomodoro.model.o2auth.FacebookUser;
+import com.pomodoro.model.request.UpdateUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.*;
 
 @RestController
@@ -38,26 +38,21 @@ public class UserController extends AbstractController {
     @RequestMapping(value = "/facebookLogin", method = RequestMethod.POST)
     public ResponseEntity<?> facebookLogin(@Valid @RequestBody FacebookUser facebookUser) {
         Map<String, String> responseEntity = new HashMap<>();
-        try {
-            if (userService.facebookAccessTokenValid(facebookUser.getAuthToken(), facebookUser.getId())) {
-                User user = userRepository.findUserByEmail(facebookUser.getEmail());
-                if (user == null) {
-                    log.debug("User with email {} was not found registering as new user", facebookUser.getEmail());
-                    RegisterUser newUser = new RegisterUser();
-                    newUser.setUsername(facebookUser.getName());
-                    newUser.setFirstName(facebookUser.getFirstName());
-                    newUser.setLastName(facebookUser.getLastName());
-                    newUser.setEmail(facebookUser.getEmail());
-                    userService.registerNewUser(newUser);
-                }
-                String token = jwtTokenUtil.generateToken(user);
-                return ResponseEntity.ok(new JwtResponse(token));
-            } else {
-                responseEntity.put("error", "Invalid access token");
+        if (userService.facebookAccessTokenValid(facebookUser.getAuthToken(), facebookUser.getId())) {
+            User user = userRepository.findUserByEmail(facebookUser.getEmail());
+            if (user == null) {
+                log.debug("User with email {} was not found registering as new user", facebookUser.getEmail());
+                RegisterUser newUser = new RegisterUser();
+                newUser.setUsername(facebookUser.getName());
+                newUser.setFirstName(facebookUser.getFirstName());
+                newUser.setLastName(facebookUser.getLastName());
+                newUser.setEmail(facebookUser.getEmail());
+                userService.registerNewUser(newUser);
             }
-        } catch (IOException e) {
-            log.error("Error while validating facebook access token {}", facebookUser.getAuthToken());
-            responseEntity.put("error", "Error while validating access token ");
+            String token = jwtTokenUtil.generateToken(user);
+            return ResponseEntity.ok(new JwtResponse(token));
+        } else {
+            responseEntity.put("error", "Invalid access token");
         }
         return ResponseEntity.ok().body(responseEntity);
     }

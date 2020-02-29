@@ -1,6 +1,12 @@
-package com.pomodoro.service;
+package com.pomodoro.service.serviceimplementation;
 
 
+import com.pomodoro.model.Group;
+import com.pomodoro.service.IStorageService;
+import com.pomodoro.service.StorageException;
+import com.pomodoro.service.StorageProperties;
+import com.pomodoro.utils.SizeUnit;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -11,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -21,13 +26,13 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
-@Service
-public class FileSystemStorageService implements StorageService {
+@Service("basicStorageService")
+public class FileSystemIStorageService implements IStorageService {
 
     private final Path rootLocation;
 
     @Autowired
-    public FileSystemStorageService(StorageProperties properties) {
+    public FileSystemIStorageService(StorageProperties properties) {
         this.rootLocation = Paths.get(properties.getLocation());
     }
 
@@ -106,5 +111,16 @@ public class FileSystemStorageService implements StorageService {
     @Override
     public void deleteAll() {
         FileSystemUtils.deleteRecursively(rootLocation.toFile());
+    }
+
+    @Override
+    public long getGroupAttachmentSize(Group group, SizeUnit sizeUnit) {
+        File file = rootLocation.resolve(String.format("group/%d/attachment", group.getId())).toFile();
+
+        if (file.exists() && file.isDirectory()) {
+            long sizeInBytes = FileUtils.sizeOfDirectory(file);
+            return sizeInBytes / sizeUnit.getInByte();
+        }
+        return 0;
     }
 }

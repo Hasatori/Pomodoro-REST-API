@@ -49,7 +49,7 @@ public class Group {
     private Integer ownerId;
 
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "USER_GROUP",
             joinColumns = @JoinColumn(name = "GROUP_ID"),

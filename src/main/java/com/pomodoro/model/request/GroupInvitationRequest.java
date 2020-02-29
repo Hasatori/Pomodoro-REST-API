@@ -1,5 +1,7 @@
-package com.pomodoro.model;
+package com.pomodoro.model.request;
 
+import com.pomodoro.model.Group;
+import com.pomodoro.model.User;
 import lombok.Getter;
 import lombok.Setter;
 

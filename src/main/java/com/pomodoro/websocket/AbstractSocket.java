@@ -1,13 +1,14 @@
 package com.pomodoro.websocket;
 
-import com.pomodoro.model.GroupChange;
-import com.pomodoro.repository.*;
-import com.pomodoro.service.StorageService;
-import com.pomodoro.service.UserService;
+import com.pomodoro.AbstractAccessPoint;
+import com.pomodoro.service.repository.*;
+import com.pomodoro.service.IStorageService;
+import com.pomodoro.service.serviceimplementation.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-public class AbstractSocket {
+public class AbstractSocket   extends AbstractAccessPoint {
 
     @Autowired
     protected UserService userService;
@@ -33,6 +34,7 @@ public class AbstractSocket {
     @Autowired
     protected  UserTodoRepository userTodoRepository;
 
+    @Qualifier("basicStorageService")
     @Autowired
-    protected StorageService storageService;
+    protected IStorageService IStorageService;
 }

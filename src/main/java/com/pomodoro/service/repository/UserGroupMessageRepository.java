@@ -1,7 +1,5 @@
-package com.pomodoro.repository;
+package com.pomodoro.service.repository;
 
-import com.pomodoro.model.Group;
-import com.pomodoro.model.GroupMessage;
 import com.pomodoro.model.UserGroupMessage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

@@ -2,11 +2,11 @@ package com.pomodoro.controller;
 
 import com.google.gson.Gson;
 import com.pomodoro.config.JwtTokenUtil;
-import com.pomodoro.model.UpdateUserDetails;
+import com.pomodoro.model.request.UpdateUserDetails;
 import com.pomodoro.model.User;
 import com.pomodoro.model.o2auth.FacebookUser;
-import com.pomodoro.repository.UserRepository;
-import com.pomodoro.service.UserService;
+import com.pomodoro.service.repository.UserRepository;
+import com.pomodoro.service.serviceimplementation.UserService;
 import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Test;
@@ -96,7 +96,7 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_UTF8));
     }
 
-    @Test
+ /*   @Test
     public void facebookLogin_validAuthToken_ShouldReturnJwtAccessToken() throws Exception {
         String jwtToken = "test";
         testFacebookUser.setEmail("test");
@@ -116,7 +116,7 @@ public class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.token", Is.is(jwtToken)))
                 .andExpect(MockMvcResultMatchers.content()
                         .contentType(MediaType.APPLICATION_JSON_UTF8));
-    }
+    }*/
 
     @Test
     public void updateUser_allValuesAreBlank_ShouldReturnErrorMessages() throws Exception {

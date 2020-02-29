@@ -1,21 +1,17 @@
 package com.pomodoro.controller;
 
+import com.pomodoro.AbstractAccessPoint;
 import com.pomodoro.config.JwtTokenUtil;
-import com.pomodoro.repository.*;
-import com.pomodoro.service.StorageService;
-import com.pomodoro.service.UserService;
+import com.pomodoro.service.IGroupService;
+import com.pomodoro.service.repository.*;
+import com.pomodoro.service.IStorageService;
+import com.pomodoro.service.IUserService;
+import com.pomodoro.service.serviceimplementation.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class AbstractController {
+public class AbstractController  extends AbstractAccessPoint {
 
     @Autowired
     protected AuthenticationManager authenticationManager;
@@ -41,19 +37,17 @@ public class AbstractController {
     @Autowired
     protected UserTodoRepository userTodoRepository;
 
+    @Qualifier("basicStorageService")
     @Autowired
-    protected StorageService storageService;
+    protected IStorageService storageService;
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
-    }
+    @Qualifier("limitedUserService")
+    @Autowired
+    protected IUserService userService2;
+
+    @Qualifier("limitedGroupService")
+    @Autowired
+    protected IGroupService groupService;
+    
+
 }

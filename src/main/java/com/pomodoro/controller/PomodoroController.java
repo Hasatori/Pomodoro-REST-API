@@ -1,11 +1,7 @@
 package com.pomodoro.controller;
 
-import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.model.Pomodoro;
 import com.pomodoro.model.User;
-import com.pomodoro.repository.*;
-import com.pomodoro.service.UserService;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;

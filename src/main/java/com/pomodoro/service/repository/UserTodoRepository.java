@@ -1,7 +1,6 @@
-package com.pomodoro.repository;
+package com.pomodoro.service.repository;
 
-import com.pomodoro.model.Group;
-import com.pomodoro.model.GroupInvitation;
+import com.pomodoro.model.UserToDo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -13,10 +12,13 @@ import java.util.List;
 
 @Repository
 @Transactional
-public interface GroupInvitationRepository extends JpaRepository<GroupInvitation, Integer> {
+public interface UserTodoRepository extends JpaRepository<UserToDo, Integer> {
 
 
+    @Modifying
+    @Query("delete from USER_TO_DO where ID in (:ids)")
+    void deleteUserTodos(@Param("ids") List<Integer> ids);
 
-    GroupInvitation findGroupInvitationById(Integer groupId);
+    UserToDo findUserToDoById(Integer id);
 
 }
