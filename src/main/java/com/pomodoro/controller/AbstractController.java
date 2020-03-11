@@ -13,41 +13,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 
 public class AbstractController  extends AbstractAccessPoint {
 
-    @Autowired
-    protected AuthenticationManager authenticationManager;
-    @Autowired
-    protected JwtTokenUtil jwtTokenUtil;
-    @Autowired
-    protected UserService userService;
-    @Autowired
-    protected UserRepository userRepository;
-    @Autowired
-    protected GroupRepository groupRepository;
-    @Autowired
-    protected GroupInvitationRepository groupInvitationRepository;
-    @Autowired
-    protected GroupMessageRepository groupMessageRepository;
-    @Autowired
-    protected UserGroupMessageRepository userGroupMessageRepository;
-    @Autowired
-    protected GroupChangeRepository groupChangeRepository;
-    @Autowired
-    protected GroupTodoRepository groupTodoRepository;
 
-    @Autowired
-    protected UserTodoRepository userTodoRepository;
-
-    @Qualifier("basicStorageService")
-    @Autowired
-    protected IStorageService storageService;
-
-    @Qualifier("limitedUserService")
-    @Autowired
-    protected IUserService userService2;
-
-    @Qualifier("limitedGroupService")
-    @Autowired
-    protected IGroupService groupService;
-    
 
 }

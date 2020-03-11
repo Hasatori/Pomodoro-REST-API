@@ -3,9 +3,9 @@ package com.pomodoro.utils;
 public enum SizeUnit {
 
     B(1),
-    KB((long) Math.pow(1024, 2)),
-    MB((long) Math.pow(1024, 3)),
-    GB((long) Math.pow(1024, 4));
+    KB((long) Math.pow(1024, 1)),
+    MB((long) Math.pow(1024, 2)),
+    GB((long) Math.pow(1024, 3));
 
     private final long inByte;
 

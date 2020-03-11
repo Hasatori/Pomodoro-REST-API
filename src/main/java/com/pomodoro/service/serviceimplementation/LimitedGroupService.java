@@ -24,7 +24,7 @@ class LimitedGroupService implements IGroupService {
     private static final Integer GROUP_LIMIT = 100;
     private static final Integer GROUP_TO_DO_LIMIT = 1000;
     private static final Integer GROUP_MESSAGE_LIMIT = 10000;
-    private static final Integer GROUP_ATTACHMENTS_LIMIT_MG = 1000;
+    private static final Integer GROUP_ATTACHMENTS_LIMIT_MG = 500;
 
 
     private final IGroupService groupService;
@@ -46,10 +46,10 @@ class LimitedGroupService implements IGroupService {
     }
 
     @Override
-    public void createGroup(User author, String layoutImage, String name, boolean isPublic,String description) throws RequestDataNotValidException {
+    public Group createGroup(User author, String layoutImage, String name, boolean isPublic, String description) throws RequestDataNotValidException {
         List<RequestError> errors = new ArrayList<>();
         Set<Group> groups = author.getGroups();
-        if (groups.size() == GROUP_LIMIT) {
+        if (groups.size() >= GROUP_LIMIT) {
             errors.add(new RequestError("groupCountLimit", String.format("Group count limit exceeded. Maximum number of groups per user is :[%s]", GROUP_LIMIT)));
         } else if (groups.stream().anyMatch(group -> name.equals(group.getName()))) {
             errors.add(new RequestError("groupName", "Group with this name already exists"));
@@ -57,7 +57,7 @@ class LimitedGroupService implements IGroupService {
         if (errors.size() > 0) {
             throw new RequestDataNotValidException(errors);
         }
-        groupService.createGroup(author, layoutImage, name, isPublic,description);
+        return groupService.createGroup(author, layoutImage, name, isPublic, description);
     }
 
     @Override
@@ -66,7 +66,7 @@ class LimitedGroupService implements IGroupService {
         Set<User> users = group.getUsers();
         if (group.getOwner().getId().equals(author.getId())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        } else if (users.size() == USER_GROUP_LIMIT) {
+        } else if (users.size() >= USER_GROUP_LIMIT) {
             errors.add(new RequestError("groupUsersCountLimit", String.format("User count limit for group [%s] exceeded. Maximum number of users per group is :[%s]", group.getName(), GROUP_LIMIT)));
         } else if (users.stream().anyMatch(user -> userToAdd.getId().equals(user.getId()))) {
             errors.add(new RequestError("user", "User is already in the group"));
@@ -96,7 +96,7 @@ class LimitedGroupService implements IGroupService {
     public void addToDo(User author, Group group, GroupToDo newGroupToDo) throws RequestDataNotValidException {
         List<RequestError> errors = new ArrayList<>();
         List<GroupToDo> groupToDos = group.getGroupGroupToDos();
-        if (groupToDos.size() == GROUP_TO_DO_LIMIT) {
+        if (groupToDos.size() >= GROUP_TO_DO_LIMIT) {
             errors.add(new RequestError("groupTodoCountLimit", String.format("Group to do count limit for group [%s] exceeded. Maximum number of to dos per group is :[%s]", group.getName(), GROUP_TO_DO_LIMIT)));
         } else if (groupToDos.stream().anyMatch(groupToDo -> newGroupToDo.getDescription().trim().equals(groupToDo.getDescription()))) {
             errors.add(new RequestError("groupToDo", "To do with this name is already in the group"));
@@ -138,11 +138,11 @@ class LimitedGroupService implements IGroupService {
     }
 
     @Override
-    public void addGroupMessage(User author, Group group, String value) throws RequestDataNotValidException {
+    public GroupMessage createGroupMessage(User author, Group group, String value) throws RequestDataNotValidException {
         List<RequestError> errors = new ArrayList<>();
         Set<User> users = group.getUsers();
         List<GroupMessage> groupMessages = group.getGroupMessages();
-        if (groupMessages.size() == GROUP_MESSAGE_LIMIT) {
+        if (groupMessages.size() >= GROUP_MESSAGE_LIMIT) {
             errors.add(new RequestError("group", String.format("Group messages count limit for group [%s] exceeded. Maximum number of messages per group is :[%s]", group.getName(), GROUP_MESSAGE_LIMIT)));
         } else if (users.stream().noneMatch(user -> user.getId().equals(author.getId()))) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
@@ -150,26 +150,28 @@ class LimitedGroupService implements IGroupService {
         if (errors.size() > 0) {
             throw new RequestDataNotValidException(errors);
         }
-        groupService.addGroupMessage(author, group, value);
+        return groupService.createGroupMessage(author, group, value);
     }
 
     @Override
-    public void addGroupMessageAttachment(User author, Group group, MultipartFile file) throws RequestDataNotValidException {
+    public GroupMessage createGroupMessageAttachment(User author, Group group, MultipartFile file) throws RequestDataNotValidException {
         List<RequestError> errors = new ArrayList<>();
         SizeUnit unit = SizeUnit.MB;
-        long size = storageService.getGroupAttachmentSize(group, unit);
+        long size = storageService.getGroupAttachmentsSize(group, unit);
+        size+=(file.getSize()/unit.getInByte());
+        System.out.println(String.format("%s attachments size is %s %s", group.getName(), String.valueOf(size), unit.toString()));
+        ;
         if (size > GROUP_ATTACHMENTS_LIMIT_MG) {
             errors.add(new RequestError("group", String.format("Attachments size for group [%s] exceeded. Maximum size of attachments is :[%s] MG", group.getName(), GROUP_ATTACHMENTS_LIMIT_MG)));
         }
         if (errors.size() > 0) {
             throw new RequestDataNotValidException(errors);
         }
-        groupService.addGroupMessageAttachment(author, group, file);
+        return groupService.createGroupMessageAttachment(author, group, file);
     }
 
     @Override
     public void setGroupReaction(User author, Group group, String reaction) throws RequestDataNotValidException {
-        List<RequestError> errors = new ArrayList<>();
         Set<User> users = group.getUsers();
         if (users.stream().noneMatch(user -> user.getId().equals(author.getId()))) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
@@ -179,7 +181,6 @@ class LimitedGroupService implements IGroupService {
 
     @Override
     public void updateGroupMessage(User author, GroupMessage groupMessage, GroupMessage updatedMessage) throws RequestDataNotValidException {
-        List<RequestError> errors = new ArrayList<>();
         if (groupMessage.getAuthor().getId().equals(author.getId())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }

@@ -16,7 +16,8 @@ public interface IGroupService {
 
     Group getGroup(User author, String groupName);
 
-    void createGroup(User author, String layoutImage, String name, boolean isPublic,String description) throws RequestDataNotValidException;
+
+    Group createGroup(User author, String layoutImage, String name, boolean isPublic,String description) throws RequestDataNotValidException;
 
     void addUserToGroup(User author, Group group, User userToAdd) throws RequestDataNotValidException;
 
@@ -28,9 +29,9 @@ public interface IGroupService {
 
     void inviteUserToGroup(User author, Group group, User userToInvite) throws RequestDataNotValidException;
 
-    void addGroupMessage(User author, Group group, String value) throws RequestDataNotValidException;
+    GroupMessage createGroupMessage(User author, Group group, String value) throws RequestDataNotValidException;
 
-    void addGroupMessageAttachment(User author, Group group, MultipartFile file) throws RequestDataNotValidException;
+    GroupMessage createGroupMessageAttachment(User author, Group group, MultipartFile file) throws RequestDataNotValidException;
 
     void setGroupReaction(User author, Group group, String reaction) throws RequestDataNotValidException;
 

@@ -114,7 +114,7 @@ public class FileSystemIStorageService implements IStorageService {
     }
 
     @Override
-    public long getGroupAttachmentSize(Group group, SizeUnit sizeUnit) {
+    public long getGroupAttachmentsSize(Group group, SizeUnit sizeUnit) {
         File file = rootLocation.resolve(String.format("group/%d/attachment", group.getId())).toFile();
 
         if (file.exists() && file.isDirectory()) {

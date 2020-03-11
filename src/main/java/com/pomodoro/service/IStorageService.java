@@ -25,5 +25,5 @@ public interface IStorageService {
 
     void deleteAll();
 
-    long getGroupAttachmentSize(Group group, SizeUnit sizeUnit);
+    long getGroupAttachmentsSize(Group group, SizeUnit sizeUnit);
 }

@@ -5,6 +5,7 @@ import com.pomodoro.model.GroupMessage;
 import com.pomodoro.model.User;
 import com.pomodoro.model.UserGroupMessage;
 import com.pomodoro.utils.DateUtils;
+import com.pomodoro.utils.RequestDataNotValidException;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,39 +108,10 @@ public class ResourceController extends AbstractController {
     }
 
     @PostMapping("/group/{groupName}/chat/attachment")
-    public ResponseEntity<GroupMessage> attachFileToChat(HttpServletRequest req, @PathVariable String groupName, @RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<GroupMessage> attachFileToChat(HttpServletRequest req, @PathVariable String groupName, @RequestParam("file") MultipartFile file) throws IOException, RequestDataNotValidException {
         User author = userService.getUserFromToken(userService.getTokenFromRequest(req));
-        Group group = groupRepository.findPomodoroGroupByName(groupName).get(0);
-        GroupMessage groupMessage = new GroupMessage();
-        List<String> groupAttachments = group.getGroupMessages().stream().map(GroupMessage::getAttachment).collect(Collectors.toList());
-        UUID uniqueKey = UUID.randomUUID();
-        while (groupAttachments.contains(uniqueKey.toString())) {
-            uniqueKey = UUID.randomUUID();
-        }
-        String attachmentValue = String.format("%s.%s", uniqueKey.toString(), FilenameUtils.getExtension(file.getResource().getFilename()));
-        storageService.store(file, String.format("group/%d/attachment/%s", group.getId(), attachmentValue));
-        groupMessage.setAuthor(author);
-        groupMessage.setAuthorId(author.getId());
-        groupMessage.setValue(file.getResource().getFilename());
-        groupMessage.setTimestamp(DateUtils.getCurrentDateUtc());
-        groupMessage.setGroup(group);
-        groupMessage.setGroupId(group.getId());
-        groupMessage.setRelatedGroupMessages(new ArrayList<>());
-        groupMessage.setAttachment(attachmentValue);
-        groupMessage = groupMessageRepository.save(groupMessage);
-        for (User user : groupMessage.getGroup().getUsers()) {
-            UserGroupMessage userGroupMessage = new UserGroupMessage();
-            userGroupMessage.setUser(user);
-            if (user.getUsername().equals(author.getUsername())) {
-                userGroupMessage.setReadTimestamp(DateUtils.getCurrentDateUtc());
-            }
-            userGroupMessage.setGroupMessage(groupMessage);
-
-            groupMessage.getRelatedGroupMessages().add(userGroupMessage);
-        }
-
-
-        return ResponseEntity.ok().body(groupMessageRepository.save(groupMessage));
+        Group group = groupService.getGroup(author, groupName);
+        return ResponseEntity.ok().body(groupService.createGroupMessageAttachment(author,group,file));
     }
 }
 

@@ -22,29 +22,8 @@ public class GroupWebsocket extends AbstractSocket {
     @SendTo("/group/{groupName}/chat")
     public GroupMessage readAndWriteMessage(Principal principal, @DestinationVariable String groupName, @RequestBody String message) throws Exception {
         User author = (User) principal;
-        Group group = groupRepository.findPomodoroGroupByName(groupName).get(0);
-        GroupMessage groupMessage = new GroupMessage();
-        groupMessage.setAuthor(author);
-        groupMessage.setAuthorId(author.getId());
-        groupMessage.setValue(message);
-        groupMessage.setTimestamp(DateUtils.getCurrentDateUtc());
-        groupMessage.setGroup(group);
-        groupMessage.setGroupId(group.getId());
-        groupMessage.setRelatedGroupMessages(new ArrayList<>());
-        groupMessage = groupMessageRepository.save(groupMessage);
-        for (User user : groupMessage.getGroup().getUsers()) {
-            UserGroupMessage userGroupMessage = new UserGroupMessage();
-            userGroupMessage.setUser(user);
-            if (user.getUsername().equals(author.getUsername())) {
-                userGroupMessage.setReadTimestamp(DateUtils.getCurrentDateUtc());
-            }
-
-            userGroupMessage.setGroupMessage(groupMessage);
-
-            groupMessage.getRelatedGroupMessages().add(userGroupMessage);
-        }
-        groupMessage = groupMessageRepository.save(groupMessage);
-        return groupMessage;
+        Group group = groupService.getGroup(author, groupName);
+        return groupService.createGroupMessage(author,group,message);
     }
 
     @MessageMapping("/group/{groupName}/chat/resend")
