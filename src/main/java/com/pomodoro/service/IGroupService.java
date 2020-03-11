@@ -6,11 +6,13 @@ import com.pomodoro.model.GroupToDo;
 import com.pomodoro.model.User;
 import com.pomodoro.utils.RequestDataNotValidException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Service
+@Transactional
 public interface IGroupService {
 
 

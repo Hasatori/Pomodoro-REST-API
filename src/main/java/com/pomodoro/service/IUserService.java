@@ -4,10 +4,12 @@ import com.pomodoro.model.*;
 import com.pomodoro.model.request.UpdateUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 
 @Service
+@Transactional
 public interface IUserService {
 
 
