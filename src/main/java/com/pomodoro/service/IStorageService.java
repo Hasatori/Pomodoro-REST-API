@@ -1,6 +1,6 @@
 package com.pomodoro.service;
 
-import com.pomodoro.model.Group;
+import com.pomodoro.model.group.Group;
 import com.pomodoro.utils.SizeUnit;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;

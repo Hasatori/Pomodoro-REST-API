@@ -1,6 +1,12 @@
 package com.pomodoro.service.serviceimplementation;
 
 import com.pomodoro.model.*;
+import com.pomodoro.model.group.Group;
+import com.pomodoro.model.group.GroupInvitation;
+import com.pomodoro.model.message.GroupMessage;
+import com.pomodoro.model.reaction.DirectMessageReaction;
+import com.pomodoro.model.reaction.GroupMessageReaction;
+import com.pomodoro.model.todo.GroupToDo;
 import com.pomodoro.service.IGroupService;
 import com.pomodoro.service.IStorageService;
 import com.pomodoro.service.repository.GroupInvitationRepository;
@@ -9,6 +15,7 @@ import com.pomodoro.service.repository.GroupRepository;
 import com.pomodoro.service.repository.GroupTodoRepository;
 import com.pomodoro.utils.DateUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,7 +31,7 @@ class GroupService implements IGroupService {
     private final GroupMessageRepository groupMessageRepository;
     private final IStorageService storageService;
 
-    GroupService(GroupRepository groupRepository, GroupInvitationRepository groupInvitationRepository, GroupTodoRepository groupTodoRepository, GroupMessageRepository groupMessageRepository, IStorageService storageService) {
+    GroupService(GroupRepository groupRepository, GroupInvitationRepository groupInvitationRepository, GroupTodoRepository groupTodoRepository, GroupMessageRepository groupMessageRepository, @Qualifier("IStorageService") IStorageService storageService) {
         this.groupRepository = groupRepository;
         this.groupInvitationRepository = groupInvitationRepository;
         this.groupTodoRepository = groupTodoRepository;
@@ -100,22 +107,23 @@ class GroupService implements IGroupService {
         groupMessage.setRelatedGroupMessages(new ArrayList<>());
         groupMessage = groupMessageRepository.save(groupMessage);
         for (User user : groupMessage.getGroup().getUsers()) {
-            UserGroupMessage userGroupMessage = new UserGroupMessage();
-            userGroupMessage.setUser(user);
+            GroupMessageReaction groupMessageReaction = new GroupMessageReaction();
+            groupMessageReaction.setAuthor(user);
             if (user.getUsername().equals(author.getUsername())) {
-                userGroupMessage.setReadTimestamp(DateUtils.getCurrentDateUtc());
+                groupMessageReaction.setReadTimestamp(DateUtils.getCurrentDateUtc());
             }
 
-            userGroupMessage.setGroupMessage(groupMessage);
+            groupMessageReaction.setGroupMessage(groupMessage);
 
-            groupMessage.getRelatedGroupMessages().add(userGroupMessage);
+            groupMessage.getRelatedGroupMessages().add(groupMessageReaction);
         }
        return groupMessageRepository.save(groupMessage);
     }
 
     @Override
     public GroupMessage createGroupMessageAttachment(User author, Group group, MultipartFile file) {
-        List<String> groupAttachments = group.getGroupMessages().stream().map(GroupMessage::getAttachment).collect(Collectors.toList());
+      //  List<String> groupAttachments = group.getGroupMessages().stream().map(GroupMessage::getAttachment).collect(Collectors.toList());
+        List<String> groupAttachments=new ArrayList<>();
         UUID uniqueKey = UUID.randomUUID();
         while (groupAttachments.contains(uniqueKey.toString())) {
             uniqueKey = UUID.randomUUID();
@@ -123,7 +131,6 @@ class GroupService implements IGroupService {
         String attachmentValue = String.format("%s.%s", uniqueKey.toString(), FilenameUtils.getExtension(file.getResource().getFilename()));
         storageService.store(file, String.format("group/%d/attachment/%s", group.getId(), attachmentValue));
         GroupMessage groupMessage=createGroupMessage(author,group,file.getResource().getFilename());
-        groupMessage.setAttachment(attachmentValue);
         return groupMessageRepository.save(groupMessage);
     }
 

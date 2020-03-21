@@ -1,6 +1,6 @@
 package com.pomodoro.service.repository;
 
-import com.pomodoro.model.GroupChange;
+import com.pomodoro.model.change.GroupChange;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

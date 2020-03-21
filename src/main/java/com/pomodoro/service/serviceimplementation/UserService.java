@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.model.*;
+import com.pomodoro.model.group.Group;
 import com.pomodoro.model.o2auth.SecretStore;
 import com.pomodoro.model.request.UpdateUserDetails;
 import com.pomodoro.service.repository.GroupRepository;

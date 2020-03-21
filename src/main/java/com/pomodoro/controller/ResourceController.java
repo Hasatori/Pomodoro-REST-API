@@ -1,12 +1,9 @@
 package com.pomodoro.controller;
 
-import com.pomodoro.model.Group;
-import com.pomodoro.model.GroupMessage;
+import com.pomodoro.model.group.Group;
+import com.pomodoro.model.message.GroupMessage;
 import com.pomodoro.model.User;
-import com.pomodoro.model.UserGroupMessage;
-import com.pomodoro.utils.DateUtils;
 import com.pomodoro.utils.RequestDataNotValidException;
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -20,10 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")

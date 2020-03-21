@@ -1,11 +1,8 @@
 package com.pomodoro.service.serviceimplementation;
 
-import com.pomodoro.model.Group;
 import com.pomodoro.model.Pomodoro;
 import com.pomodoro.model.User;
 import com.pomodoro.service.IPomodoroService;
-
-import java.util.Set;
 
 class LimitedPomodoroService implements IPomodoroService {
 

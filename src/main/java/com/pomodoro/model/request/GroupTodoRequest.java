@@ -1,11 +1,10 @@
 package com.pomodoro.model.request;
 
-import com.pomodoro.model.Group;
-import com.pomodoro.model.GroupToDo;
+import com.pomodoro.model.group.Group;
+import com.pomodoro.model.todo.GroupToDo;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 

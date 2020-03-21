@@ -1,8 +1,8 @@
 package com.pomodoro.service.serviceimplementation;
 
-import com.pomodoro.model.Group;
-import com.pomodoro.model.GroupMessage;
-import com.pomodoro.model.GroupToDo;
+import com.pomodoro.model.group.Group;
+import com.pomodoro.model.message.GroupMessage;
+import com.pomodoro.model.todo.GroupToDo;
 import com.pomodoro.model.User;
 import com.pomodoro.service.IGroupService;
 import com.pomodoro.service.IStorageService;

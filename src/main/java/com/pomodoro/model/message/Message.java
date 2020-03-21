@@ -1,10 +1,14 @@
-package com.pomodoro.model;
+package com.pomodoro.model.message;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.pomodoro.model.User;
+import com.pomodoro.model.change.MessageChange;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,16 +23,14 @@ import static javax.persistence.GenerationType.IDENTITY;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
 @Setter
-public class GroupMessage {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public class Message {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Integer id;
 
     @Lob
     private String value;
-
-    @Nullable
-    private String attachment;
 
     private Date timestamp;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -40,20 +42,17 @@ public class GroupMessage {
     private Integer authorId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "GROUP_ID", insertable = false, updatable = false)
-    private Group group;
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "ANSWERED_MESSAGE", insertable = false, updatable = false)
+    private Message answeredMessage;
 
-    @JsonIgnore
-    @Column(name = "GROUP_ID")
-    private Integer groupId;
-
-    @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY, mappedBy = "groupMessage")
-    private List<UserGroupMessage> relatedGroupMessages;
+    @Nullable
+    @Column(name = "ANSWERED_MESSAGE")
+    private Integer answeredMessageId;
 
     @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY, mappedBy = "groupMessage")
-    private List<GroupMessageChange> changes;
+            fetch = FetchType.LAZY, mappedBy = "messageObject")
+    private List<MessageChange> changes;
 
 
 }

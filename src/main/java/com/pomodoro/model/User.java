@@ -4,6 +4,13 @@ package com.pomodoro.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.pomodoro.model.change.GroupChange;
+import com.pomodoro.model.group.Group;
+import com.pomodoro.model.group.GroupInvitation;
+import com.pomodoro.model.message.GroupMessage;
+import com.pomodoro.model.reaction.DirectMessageReaction;
+import com.pomodoro.model.todo.GroupToDo;
+import com.pomodoro.model.todo.UserToDo;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -95,7 +102,7 @@ public class User implements UserDetails, Principal {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, mappedBy = "user")
-    private List<UserGroupMessage> relatedGroupMessages;
+    private List<DirectMessageReaction> relatedGroupMessages;
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,
@@ -298,11 +305,11 @@ public class User implements UserDetails, Principal {
         return false;
     }
 
-    public List<UserGroupMessage> getRelatedGroupMessages() {
+    public List<DirectMessageReaction> getRelatedGroupMessages() {
         return relatedGroupMessages;
     }
 
-    public void setRelatedGroupMessages(List<UserGroupMessage> relatedGroupMessages) {
+    public void setRelatedGroupMessages(List<DirectMessageReaction> relatedGroupMessages) {
         this.relatedGroupMessages = relatedGroupMessages;
     }
 

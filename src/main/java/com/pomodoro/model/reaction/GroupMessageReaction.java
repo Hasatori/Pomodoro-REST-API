@@ -1,45 +1,37 @@
-package com.pomodoro.model;
+package com.pomodoro.model.reaction;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.pomodoro.model.UserGroupId;
 import com.pomodoro.model.message.GroupMessage;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
-import java.util.Date;
 
-import static javax.persistence.GenerationType.IDENTITY;
-
-@Entity(name = "GROUP_MESSAGE_CHANGE")
+@Entity(name = "USER_GROUP_MESSAGE")
+@Table(uniqueConstraints={
+        @UniqueConstraint(columnNames = {"GROUP_MESSAGE_ID", "AUTHOR"})
+})
 @Transactional
+@IdClass(UserGroupId.class)
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
 @Setter
-public class GroupMessageChange {
+public class GroupMessageReaction extends UserReaction implements Serializable {
 
-    @Id
-    @JsonIgnore
-    @GeneratedValue(strategy = IDENTITY)
-    private Integer id;
+
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    @JoinColumn(name = "GROUP_MESSAGE_ID", insertable = false, updatable = false)
+    @JoinColumn(name = "GROUP_MESSAGE",insertable = false,updatable = false)
     private GroupMessage groupMessage;
 
     @JsonIgnore
     @Column(name = "GROUP_MESSAGE_ID")
     private Integer groupMessageId;
-
-    @CreationTimestamp
-    private Date creationTimestamp;
-
-    private String oldValue;
-    private String newValue;
 
 }

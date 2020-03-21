@@ -1,41 +1,26 @@
-package com.pomodoro.model;
+package com.pomodoro.model.change;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.pomodoro.model.ChangeType;
+import com.pomodoro.model.User;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.*;
 import java.util.Date;
-
 import static javax.persistence.GenerationType.IDENTITY;
 
-@Entity(name = "GROUP_CHANGE")
-@Transactional
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Entity(name = "CHANGE")
 @Getter
 @Setter
-public class GroupChange {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public class Change {
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Integer id;
-
-    private String changeDescription;
-
     @Enumerated(EnumType.STRING)
     private ChangeType changeType;
-
     private Date changeTimestamp;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "GROUP_ID", insertable = false, updatable = false)
-    private Group group;
-
-    @JsonIgnore
-    @Column(name = "GROUP_ID")
-    private Integer groupId;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CHANGE_AUTHOR",insertable = false,updatable = false)
     private User changeAuthor;
@@ -43,6 +28,5 @@ public class GroupChange {
     @JsonIgnore
     @Column(name = "CHANGE_AUTHOR")
     private Integer changeAuthorId;
-
 
 }

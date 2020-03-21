@@ -1,13 +1,14 @@
-package com.pomodoro.model;
+package com.pomodoro.model.group;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.pomodoro.model.User;
+import com.pomodoro.model.group.Group;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
-import java.util.Date;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -40,6 +41,6 @@ public class GroupInvitation {
 
     private Boolean accepted;
 
-
+    private Boolean refused;
 
 }

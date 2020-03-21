@@ -1,7 +1,7 @@
 package com.pomodoro.service.serviceimplementation;
 
 
-import com.pomodoro.model.Group;
+import com.pomodoro.model.group.Group;
 import com.pomodoro.service.IStorageService;
 import com.pomodoro.service.StorageException;
 import com.pomodoro.service.StorageProperties;

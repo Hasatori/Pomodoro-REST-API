@@ -1,6 +1,6 @@
 package com.pomodoro.service.repository;
 
-import com.pomodoro.model.UserToDo;
+import com.pomodoro.model.todo.UserToDo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

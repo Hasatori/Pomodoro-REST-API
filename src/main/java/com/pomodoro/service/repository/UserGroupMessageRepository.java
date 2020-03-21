@@ -1,6 +1,6 @@
 package com.pomodoro.service.repository;
 
-import com.pomodoro.model.UserGroupMessage;
+import com.pomodoro.model.reaction.DirectMessageReaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -13,9 +13,9 @@ import java.util.List;
 
 @Repository
 @Transactional
-public interface UserGroupMessageRepository extends JpaRepository<UserGroupMessage, Integer> {
+public interface UserGroupMessageRepository extends JpaRepository<DirectMessageReaction, Integer> {
 
-    List<UserGroupMessage> findUserGroupMessagesByUserId(Integer userId);
+    List<DirectMessageReaction> findUserGroupMessagesByUserId(Integer userId);
 
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE USER_GROUP_MESSAGE SET READ_TIMESTAMP=:readTimestamp WHERE USER_ID=:userId AND GROUP_MESSAGE_ID IN (:groupMessageIds) ", nativeQuery = true)

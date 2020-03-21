@@ -13,7 +13,7 @@ public class GroupMessageReaction {
 
     @NotNull(message = "Group message id must be filled")
     private Integer groupMessageId;
-    @NotBlank(message = "Reaction must be filled")
+    @NotBlank(message = "UserReaction must be filled")
     private String reaction;
 
 }

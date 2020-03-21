@@ -1,6 +1,6 @@
 package com.pomodoro.utils;
 
-import com.pomodoro.model.Group;
+import com.pomodoro.model.group.Group;
 import com.pomodoro.model.User;
 
 import java.util.Map;

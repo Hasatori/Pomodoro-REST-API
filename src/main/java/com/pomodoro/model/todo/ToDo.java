@@ -1,29 +1,35 @@
-package com.pomodoro.model;
+package com.pomodoro.model.todo;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.pomodoro.model.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.lang.Nullable;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.Set;
+
+import java.time.LocalDateTime;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-@Entity(name = "USER_TO_DO")
-@Transactional
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Entity(name = "TO_DO")
 @Getter
 @Setter
-public class UserToDo {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public class ToDo {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Integer id;
+
+    private String name;
+    private String description;
+
+    @Enumerated(EnumType.STRING)
+    private ToDoStatus status;
+
+    private LocalDateTime deadline;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -35,15 +41,9 @@ public class UserToDo {
     private Integer parentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "AUTHOR_ID",insertable = false,updatable = false)
+    @JoinColumn(name = "AUTHOR_ID", insertable = false, updatable = false)
     private User author;
 
     @Column(name = "AUTHOR_ID")
     private Integer authorId;
-
-    private String status;
-
-    private Date deadline;
-
-    private String description;
 }

@@ -1,6 +1,10 @@
-package com.pomodoro.model;
+package com.pomodoro.model.group;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pomodoro.model.todo.GroupToDo;
+import com.pomodoro.model.User;
+import com.pomodoro.model.change.GroupChange;
+import com.pomodoro.model.message.GroupMessage;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.lang.Nullable;
