@@ -1,6 +1,8 @@
 package com.pomodoro.model.reaction;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pomodoro.model.message.DirectMessage;
+import com.pomodoro.model.message.Message;
 import com.pomodoro.model.user.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,29 +17,37 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity(name = "REACTION")
 @Getter
 @Setter
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@IdClass(UserMessageId.class)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class UserReaction implements Serializable {
 
+    @JsonIgnore
     @Id
-    @GeneratedValue(strategy = IDENTITY)
-    protected Integer id;
+    @Column(name = "AUTHOR")
+   private Integer authorId;
 
-    protected Date readTimestamp;
-
-    @Nullable
-    protected String reaction;
-
-    @Nullable
-    protected String getReaction() {
-        return reaction;
-    }
+    @JsonIgnore
+    @Id
+    @Column(name = "MESSAGE")
+    private Integer messageId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AUTHOR",insertable = false,updatable = false)
-    protected User author;
+    private User author;
 
     @JsonIgnore
-    @Column(name = "AUTHOR")
-    protected Integer authorId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "MESSAGE", nullable = false, insertable = false, updatable = false)
+    private Message message;
+
+    private Date readTimestamp;
+
+    @Nullable
+    private String reaction;
+
+    @Nullable
+    public String getReaction() {
+        return reaction;
+    }
 
 }

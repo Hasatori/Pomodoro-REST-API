@@ -13,15 +13,13 @@ import javax.persistence.*;
 @Setter
 public class ToDoChange extends Change {
 
-    private String oldName;
-
-    private String newName;
-
     private String oldDescription;
 
     private String newDescription;
+
     @Enumerated(EnumType.STRING)
     private ToDoStatus oldStatus;
+
     @Enumerated(EnumType.STRING)
     private ToDoStatus newStatus;
 
@@ -29,6 +27,8 @@ public class ToDoChange extends Change {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TO_DO", nullable = false, insertable = false, updatable = false)
     private ToDo todoObject;
+
     @JsonIgnore
+    @Column(name = "TO_DO")
     private Integer todo;
 }

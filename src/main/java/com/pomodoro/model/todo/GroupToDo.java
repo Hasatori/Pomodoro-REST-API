@@ -6,6 +6,9 @@ import com.pomodoro.model.group.Group;
 import com.pomodoro.model.user.User;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
@@ -31,4 +34,13 @@ public class GroupToDo extends ToDo {
     @JsonIgnore
     @Column(name = "GROUP_ID")
     private Integer groupId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "PARENT_ID", insertable = false, updatable = false)
+    protected GroupToDo parent;
+
+    @Nullable
+    @Column(name = "PARENT_ID")
+    protected Integer parentId;
 }

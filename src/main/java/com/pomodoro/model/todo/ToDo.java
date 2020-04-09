@@ -1,6 +1,8 @@
 package com.pomodoro.model.todo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pomodoro.model.change.ToDoChange;
+import com.pomodoro.model.message.GroupMessage;
 import com.pomodoro.model.user.Pomodoro;
 import com.pomodoro.model.user.User;
 import lombok.Getter;
@@ -12,6 +14,7 @@ import org.springframework.lang.Nullable;
 import javax.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -19,36 +22,29 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity(name = "TO_DO")
 @Getter
 @Setter
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class ToDo {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    protected Integer id;
 
-    private String name;
-    private String description;
+    protected String name;
+    protected String description;
 
     @Enumerated(EnumType.STRING)
-    private ToDoStatus status;
+    protected ToDoStatus status;
 
-    private LocalDateTime deadline;
+    protected LocalDateTime deadline;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "PARENT_ID", insertable = false, updatable = false)
-    private UserToDo parent;
 
-    @Nullable
-    @Column(name = "PARENT_ID")
-    private Integer parentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AUTHOR_ID", insertable = false, updatable = false)
-    private User author;
+    protected User author;
 
     @Column(name = "AUTHOR_ID")
-    private Integer authorId;
+    protected Integer authorId;
 
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
@@ -57,4 +53,9 @@ public class ToDo {
             joinColumns = @JoinColumn(name = "TO_DO_ID"),
             inverseJoinColumns = @JoinColumn(name = "POMODORO_ID"))
     Set<Pomodoro> pomodoros;
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "todoObject")
+    private List<ToDoChange> toDoChanges;
 }

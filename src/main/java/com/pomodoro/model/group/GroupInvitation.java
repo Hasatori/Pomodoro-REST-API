@@ -19,7 +19,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class GroupInvitation {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -27,9 +27,11 @@ public class GroupChange extends Change {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "GROUP", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "POMODORO_GROUP", nullable = false, insertable = false, updatable = false)
     private Group group;
+
     @JsonIgnore
+    @Column(name = "POMODORO_GROUP")
     private Integer groupId;
 
 }

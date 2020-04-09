@@ -4,17 +4,13 @@ package com.pomodoro.model.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.pomodoro.model.change.GroupChange;
-import com.pomodoro.model.change.MessageChange;
-import com.pomodoro.model.change.ToDoChange;
+import com.pomodoro.model.change.Change;
 import com.pomodoro.model.group.Group;
 import com.pomodoro.model.group.GroupInvitation;
 import com.pomodoro.model.message.DirectMessage;
 import com.pomodoro.model.message.GroupMessage;
-import com.pomodoro.model.reaction.DirectMessageReaction;
-import com.pomodoro.model.reaction.GroupMessageReaction;
+import com.pomodoro.model.reaction.UserReaction;
 import com.pomodoro.model.todo.GroupToDo;
-import com.pomodoro.model.todo.ToDo;
 import com.pomodoro.model.todo.UserToDo;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,14 +21,11 @@ import javax.persistence.*;
 import javax.security.auth.Subject;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-
-import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity(name = "USER")
 @Transactional
@@ -40,7 +33,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class User implements UserDetails, Principal {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
 
     @NotBlank(message = "Name is mandatory")
@@ -113,27 +106,12 @@ public class User implements UserDetails, Principal {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, mappedBy = "author")
-    private List<DirectMessageReaction> directMessageReactions;
-
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY, mappedBy = "author")
-    private List<GroupMessageReaction> groupMessageReactions;
+    private List<UserReaction> reactions;
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, mappedBy = "changeAuthor")
-    private List<ToDoChange> toDoChange;
-
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY, mappedBy = "changeAuthor")
-    private List<GroupChange> groupChanges;
-
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY, mappedBy = "changeAuthor")
-    private List<MessageChange> messageChange;
+    private List<Change> changes;
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,
@@ -336,14 +314,6 @@ public class User implements UserDetails, Principal {
         return false;
     }
 
-    public List<DirectMessageReaction> getDirectMessageReactions() {
-        return directMessageReactions;
-    }
-
-    public void setDirectMessageReactions(List<DirectMessageReaction> directMessageReactions) {
-        this.directMessageReactions = directMessageReactions;
-    }
-
     public List<UserToDo> getTodos() {
         return todos;
     }
@@ -376,27 +346,20 @@ public class User implements UserDetails, Principal {
         this.createdGroupMessages = createdGroupMessages;
     }
 
-    public List<GroupMessageReaction> getGroupMessageReactions() {
-        return groupMessageReactions;
+
+    public List<Change> getChanges() {
+        return changes;
     }
 
-    public void setGroupMessageReactions(List<GroupMessageReaction> groupMessageReactions) {
-        this.groupMessageReactions = groupMessageReactions;
+    public void setChanges(List<Change> changes) {
+        this.changes = changes;
     }
 
-    public List<GroupChange> getGroupChanges() {
-        return groupChanges;
+    public List<UserReaction> getReactions() {
+        return reactions;
     }
 
-    public void setGroupChanges(List<GroupChange> groupChanges) {
-        this.groupChanges = groupChanges;
-    }
-
-    public List<ToDoChange> getToDoChange() {
-        return toDoChange;
-    }
-
-    public void setToDoChange(List<ToDoChange> toDoChange) {
-        this.toDoChange = toDoChange;
+    public void setReactions(List<UserReaction> reactions) {
+        this.reactions = reactions;
     }
 }

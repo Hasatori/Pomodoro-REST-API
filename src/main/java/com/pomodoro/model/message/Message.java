@@ -3,6 +3,7 @@ package com.pomodoro.model.message;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.pomodoro.model.reaction.UserReaction;
 import com.pomodoro.model.user.User;
 import com.pomodoro.model.change.MessageChange;
 import lombok.Getter;
@@ -24,10 +25,10 @@ import static javax.persistence.GenerationType.IDENTITY;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
 @Setter
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Message {
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     protected Integer id;
 
     @Lob
@@ -57,5 +58,8 @@ public class Message {
             fetch = FetchType.LAZY, mappedBy = "messageObject")
     protected List<MessageChange> changes;
 
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "message")
+    private List<UserReaction> reactions;
 
 }

@@ -19,7 +19,7 @@ public interface GroupMessageRepository extends JpaRepository<GroupMessage, Inte
     GroupMessage findGroupMessageById(Integer id);
 
     @Modifying
-    @Query(value = "INSERT INTO GROUP_MESSAGE( VALUE, TIMESTAMP, AUTHOR_ID, GROUP_ID) VALUES (:value,:timestamp ,:authorId, :groupId)", nativeQuery = true)
+    @Query(value = "INSERT INTO GROUP_MESSAGE( VALUE, TIMESTAMP, AUTHOR_ID, GROUP_ID) VALUES (:value,:creationTimestamp ,:authorId, :groupId)", nativeQuery = true)
     void insertGroupMessage(@Param("value") String value, @Param("creationTimestamp") Date timestamp, @Param("authorId") Integer authorId, @Param("groupId") Integer groupId);
 
 
@@ -29,7 +29,7 @@ public interface GroupMessageRepository extends JpaRepository<GroupMessage, Inte
 
 
     @Modifying
-    @Query(value = "SELECT * FROM GROUP_MESSAGE gm LEFT JOIN USER_GROUP_MESSAGE ugm ON (gm.ID=ugm.GROUP_MESSAGE_ID ) WHERE USER_ID=:userId and GROUP_ID=:groupId and READ_TIMESTAMP IS NULL", nativeQuery = true)
+    @Query(value = "SELECT * FROM GROUP_MESSAGE gm LEFT JOIN REACTION r ON (gm.ID=r.MESSAGE ) WHERE USER_ID=:userId and GROUP_ID=:groupId and READ_TIMESTAMP IS NULL", nativeQuery = true)
     List<GroupMessage> findAllUnreadMessages(@Param("userId") Integer userId, @Param("groupId")Integer groupId);
 
 

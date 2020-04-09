@@ -1,10 +1,10 @@
 package com.pomodoro.websocket;
 
-import com.pomodoro.model.change.Change;
+
 import com.pomodoro.model.change.GroupChange;
 import com.pomodoro.model.group.Group;
 import com.pomodoro.model.message.GroupMessage;
-import com.pomodoro.model.GroupMessageReaction;
+import com.pomodoro.model.reaction.UserReaction;
 import com.pomodoro.model.request.GroupUserRequest;
 import com.pomodoro.model.todo.GroupToDo;
 import com.pomodoro.model.user.User;
@@ -14,11 +14,14 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -29,7 +32,7 @@ public class GroupWebsocket extends AbstractSocket {
     public GroupMessage readAndWriteMessage(Principal principal, @DestinationVariable String groupName, @RequestBody String message) throws Exception {
         User author = (User) principal;
         Group group = groupService.getGroup(author, groupName);
-        return groupService.createGroupMessage(author,group,message);
+        return groupService.createGroupMessage(author, group, message);
     }
 
     @MessageMapping("/group/{groupName}/chat/resend")
@@ -40,7 +43,7 @@ public class GroupWebsocket extends AbstractSocket {
 
     @MessageMapping("/group/{groupName}/change")
     @SendTo("/group/{groupName}/change")
-    public Change readAndWriteChange(Principal principal, @DestinationVariable String groupName, @RequestBody GroupChange groupChange) throws Exception {
+    public GroupChange readAndWriteChange(Principal principal, @DestinationVariable String groupName, @RequestBody GroupChange groupChange) throws Exception {
         User author = (User) principal;
         Group group = groupRepository.findPomodoroGroupByName(groupName).get(0);
         groupChange.setChangeAuthor(author);
@@ -53,13 +56,13 @@ public class GroupWebsocket extends AbstractSocket {
 
     @MessageMapping("/group/{groupName}/chat/reaction")
     @SendTo("/group/{groupName}/chat/reaction")
-    public GroupMessage reactToGroupMessage(Principal principal, @DestinationVariable String groupName, @RequestBody GroupMessageReaction groupMessageReaction) {
+    public GroupMessage reactToGroupMessage(Principal principal, @DestinationVariable String groupName, @RequestBody UserReaction userReaction) {
         User user = (User) principal;
-        userGroupMessageRepository.setReaction(groupMessageReaction.getReaction(), user.getId(), groupMessageReaction.getGroupMessageId());
-        GroupMessage groupMessage = groupMessageRepository.findGroupMessageById(groupMessageReaction.getGroupMessageId());
-        Optional<com.pomodoro.model.reaction.GroupMessageReaction> optionalUserGroupMessage = groupMessage.getReactions().stream().filter(userGroupMessage -> userGroupMessage.getAuthor().getUsername().equals(principal.getName())).findFirst();
-        com.pomodoro.model.reaction.GroupMessageReaction groupMessageReaction1 = optionalUserGroupMessage.orElse(null);
-        if (groupMessageReaction1 == null) {
+        userReactionRepository.setReaction(userReaction.getReaction(), user.getId(), userReaction.getMessageId());
+        GroupMessage groupMessage = groupMessageRepository.findGroupMessageById(userReaction.getMessageId());
+        Optional<UserReaction> optionalUserGroupMessage = groupMessage.getReactions().stream().filter(userGroupMessage -> userGroupMessage.getAuthor().getUsername().equals(principal.getName())).findFirst();
+        userReaction = optionalUserGroupMessage.orElse(null);
+        if (userReaction == null) {
             throw new IllegalStateException("User group message doest not exist");
         }
         return groupMessage;

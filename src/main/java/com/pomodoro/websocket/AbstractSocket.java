@@ -23,7 +23,7 @@ public class AbstractSocket   extends AbstractAccessPoint {
     @Autowired
     protected GroupRepository groupRepository;
     @Autowired
-    protected UserGroupMessageRepository userGroupMessageRepository;
+    protected UserReactionRepository userReactionRepository;
 
     @Autowired
     protected GroupChangeRepository groupChangeRepository;

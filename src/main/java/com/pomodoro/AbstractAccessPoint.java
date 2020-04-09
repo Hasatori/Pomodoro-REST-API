@@ -39,7 +39,7 @@ public class AbstractAccessPoint {
     @Autowired
     protected GroupMessageRepository groupMessageRepository;
     @Autowired
-    protected UserGroupMessageRepository userGroupMessageRepository;
+    protected UserReactionRepository userReactionRepository;
     @Autowired
     protected GroupChangeRepository groupChangeRepository;
     @Autowired

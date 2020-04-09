@@ -9,16 +9,15 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.Date;
 
-import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity(name = "CHANGE")
 @Getter
 @Setter
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Change {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     protected Integer id;
 
     @Enumerated(EnumType.STRING)

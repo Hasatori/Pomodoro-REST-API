@@ -1,9 +1,10 @@
 package com.pomodoro.service.serviceimplementation;
 
+
 import com.pomodoro.model.group.Group;
 import com.pomodoro.model.group.GroupInvitation;
 import com.pomodoro.model.message.GroupMessage;
-import com.pomodoro.model.reaction.GroupMessageReaction;
+import com.pomodoro.model.reaction.UserReaction;
 import com.pomodoro.model.todo.GroupToDo;
 import com.pomodoro.model.user.User;
 import com.pomodoro.service.IGroupService;
@@ -30,7 +31,7 @@ class GroupService implements IGroupService {
     private final GroupMessageRepository groupMessageRepository;
     private final IStorageService storageService;
 
-    GroupService(GroupRepository groupRepository, GroupInvitationRepository groupInvitationRepository, GroupTodoRepository groupTodoRepository, GroupMessageRepository groupMessageRepository, @Qualifier("IStorageService") IStorageService storageService) {
+    GroupService(GroupRepository groupRepository, GroupInvitationRepository groupInvitationRepository, GroupTodoRepository groupTodoRepository, GroupMessageRepository groupMessageRepository, @Qualifier("basicStorageService") IStorageService storageService) {
         this.groupRepository = groupRepository;
         this.groupInvitationRepository = groupInvitationRepository;
         this.groupTodoRepository = groupTodoRepository;
@@ -106,13 +107,13 @@ class GroupService implements IGroupService {
         groupMessage.setReactions(new ArrayList<>());
         groupMessage = groupMessageRepository.save(groupMessage);
         for (User user : groupMessage.getGroup().getUsers()) {
-            GroupMessageReaction groupMessageReaction = new GroupMessageReaction();
+            UserReaction groupMessageReaction = new UserReaction();
             groupMessageReaction.setAuthor(user);
             if (user.getUsername().equals(author.getUsername())) {
                 groupMessageReaction.setReadTimestamp(DateUtils.getCurrentDateUtc());
             }
 
-            groupMessageReaction.setGroupMessage(groupMessage);
+            groupMessageReaction.setMessage(groupMessage);
 
             groupMessage.getReactions().add(groupMessageReaction);
         }
