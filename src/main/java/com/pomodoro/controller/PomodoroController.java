@@ -1,7 +1,7 @@
 package com.pomodoro.controller;
 
-import com.pomodoro.model.Pomodoro;
-import com.pomodoro.model.User;
+import com.pomodoro.model.user.Pomodoro;
+import com.pomodoro.model.user.User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;

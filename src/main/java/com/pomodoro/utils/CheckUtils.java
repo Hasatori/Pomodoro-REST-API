@@ -1,7 +1,7 @@
 package com.pomodoro.utils;
 
 import com.pomodoro.model.group.Group;
-import com.pomodoro.model.User;
+import com.pomodoro.model.user.User;
 
 import java.util.Map;
 

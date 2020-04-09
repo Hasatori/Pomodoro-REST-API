@@ -3,7 +3,7 @@ package com.pomodoro.service;
 import com.pomodoro.model.group.Group;
 import com.pomodoro.model.message.GroupMessage;
 import com.pomodoro.model.todo.GroupToDo;
-import com.pomodoro.model.User;
+import com.pomodoro.model.user.User;
 import com.pomodoro.utils.RequestDataNotValidException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

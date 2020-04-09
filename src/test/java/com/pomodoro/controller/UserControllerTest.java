@@ -3,7 +3,7 @@ package com.pomodoro.controller;
 import com.google.gson.Gson;
 import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.model.request.UpdateUserDetails;
-import com.pomodoro.model.User;
+import com.pomodoro.model.user.User;
 import com.pomodoro.model.o2auth.FacebookUser;
 import com.pomodoro.service.repository.UserRepository;
 import com.pomodoro.service.serviceimplementation.UserService;

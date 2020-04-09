@@ -2,8 +2,7 @@ package com.pomodoro.model.group;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.pomodoro.model.User;
-import com.pomodoro.model.group.Group;
+import com.pomodoro.model.user.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.transaction.annotation.Transactional;

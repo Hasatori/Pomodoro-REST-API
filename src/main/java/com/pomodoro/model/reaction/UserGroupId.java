@@ -1,6 +1,7 @@
-package com.pomodoro.model;
+package com.pomodoro.model.reaction;
 
 import com.pomodoro.model.message.GroupMessage;
+import com.pomodoro.model.user.User;
 import lombok.Getter;
 import lombok.Setter;
 

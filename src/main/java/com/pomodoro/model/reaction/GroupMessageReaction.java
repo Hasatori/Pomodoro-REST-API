@@ -2,7 +2,6 @@ package com.pomodoro.model.reaction;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.pomodoro.model.UserGroupId;
 import com.pomodoro.model.message.GroupMessage;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +11,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 
-@Entity(name = "USER_GROUP_MESSAGE")
+@Entity(name = "GROUP_MESSAGE_REACTION")
 @Table(uniqueConstraints={
         @UniqueConstraint(columnNames = {"GROUP_MESSAGE_ID", "AUTHOR"})
 })
@@ -22,9 +21,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class GroupMessageReaction extends UserReaction implements Serializable {
-
-
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GROUP_MESSAGE",insertable = false,updatable = false)

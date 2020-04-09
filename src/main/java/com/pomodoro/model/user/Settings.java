@@ -1,4 +1,4 @@
-package com.pomodoro.model;
+package com.pomodoro.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -7,7 +7,6 @@ import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 
-import static javax.persistence.GenerationType.IDENTITY;
 @Entity(name = "SETTINGS")
 @Getter
 @Setter

@@ -10,16 +10,20 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-@Entity(name = "TO_DO_CHANGE")
+@Entity(name = "MESSAGE_CHANGE")
 @Getter
 @Setter
 public class MessageChange extends Change {
+
     private String oldValue;
+
     private String newValue;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MESSAGE", nullable = false, insertable = false, updatable = false)
     private Message messageObject;
+
     @JsonIgnore
     private Integer message;
 }

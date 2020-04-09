@@ -1,12 +1,15 @@
 package com.pomodoro.controller;
 
-import com.pomodoro.model.*;
+import com.pomodoro.model.dto.*;
 import com.pomodoro.model.group.Group;
 import com.pomodoro.model.group.GroupInvitation;
 import com.pomodoro.model.o2auth.FacebookUser;
 import com.pomodoro.model.request.UpdateUserDetails;
 import com.pomodoro.model.todo.GroupToDo;
 import com.pomodoro.model.todo.UserToDo;
+import com.pomodoro.model.user.Pomodoro;
+import com.pomodoro.model.user.Settings;
+import com.pomodoro.model.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,8 @@
 package com.pomodoro.model.todo;
 
-import com.pomodoro.model.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pomodoro.model.user.Pomodoro;
+import com.pomodoro.model.user.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
@@ -10,6 +12,7 @@ import org.springframework.lang.Nullable;
 import javax.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -46,4 +49,12 @@ public class ToDo {
 
     @Column(name = "AUTHOR_ID")
     private Integer authorId;
+
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "TO_DO_FINISHED_POMODOROS",
+            joinColumns = @JoinColumn(name = "TO_DO_ID"),
+            inverseJoinColumns = @JoinColumn(name = "POMODORO_ID"))
+    Set<Pomodoro> pomodoros;
 }

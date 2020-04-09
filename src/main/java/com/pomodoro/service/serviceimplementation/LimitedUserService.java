@@ -1,9 +1,9 @@
 package com.pomodoro.service.serviceimplementation;
 
-import com.pomodoro.model.RegisterUser;
-import com.pomodoro.model.Settings;
+import com.pomodoro.model.dto.RegisterUser;
+import com.pomodoro.model.user.Settings;
 import com.pomodoro.model.request.UpdateUserDetails;
-import com.pomodoro.model.User;
+import com.pomodoro.model.user.User;
 import com.pomodoro.service.IUserService;
 import org.springframework.security.core.userdetails.UserDetails;
 

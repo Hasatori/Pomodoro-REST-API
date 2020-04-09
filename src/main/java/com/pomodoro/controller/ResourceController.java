@@ -2,7 +2,7 @@ package com.pomodoro.controller;
 
 import com.pomodoro.model.group.Group;
 import com.pomodoro.model.message.GroupMessage;
-import com.pomodoro.model.User;
+import com.pomodoro.model.user.User;
 import com.pomodoro.utils.RequestDataNotValidException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,7 +1,7 @@
 package com.pomodoro.service.serviceimplementation;
 
-import com.pomodoro.model.Pomodoro;
-import com.pomodoro.model.User;
+import com.pomodoro.model.user.Pomodoro;
+import com.pomodoro.model.user.User;
 import com.pomodoro.service.IPomodoroService;
 import org.springframework.stereotype.Service;
 

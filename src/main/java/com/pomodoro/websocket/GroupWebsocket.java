@@ -1,14 +1,13 @@
 package com.pomodoro.websocket;
 
-import com.pomodoro.model.*;
 import com.pomodoro.model.change.Change;
 import com.pomodoro.model.change.GroupChange;
 import com.pomodoro.model.group.Group;
 import com.pomodoro.model.message.GroupMessage;
 import com.pomodoro.model.GroupMessageReaction;
-import com.pomodoro.model.reaction.DirectMessageReaction;
 import com.pomodoro.model.request.GroupUserRequest;
 import com.pomodoro.model.todo.GroupToDo;
+import com.pomodoro.model.user.User;
 import com.pomodoro.utils.CheckUtils;
 import com.pomodoro.utils.DateUtils;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -58,7 +57,7 @@ public class GroupWebsocket extends AbstractSocket {
         User user = (User) principal;
         userGroupMessageRepository.setReaction(groupMessageReaction.getReaction(), user.getId(), groupMessageReaction.getGroupMessageId());
         GroupMessage groupMessage = groupMessageRepository.findGroupMessageById(groupMessageReaction.getGroupMessageId());
-        Optional<com.pomodoro.model.reaction.GroupMessageReaction> optionalUserGroupMessage = groupMessage.getRelatedGroupMessages().stream().filter(userGroupMessage -> userGroupMessage.getAuthor().getUsername().equals(principal.getName())).findFirst();
+        Optional<com.pomodoro.model.reaction.GroupMessageReaction> optionalUserGroupMessage = groupMessage.getReactions().stream().filter(userGroupMessage -> userGroupMessage.getAuthor().getUsername().equals(principal.getName())).findFirst();
         com.pomodoro.model.reaction.GroupMessageReaction groupMessageReaction1 = optionalUserGroupMessage.orElse(null);
         if (groupMessageReaction1 == null) {
             throw new IllegalStateException("User group message doest not exist");

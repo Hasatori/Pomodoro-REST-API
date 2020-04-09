@@ -1,15 +1,20 @@
-package com.pomodoro.model;
+package com.pomodoro.model.user;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pomodoro.model.change.GroupChange;
+import com.pomodoro.model.change.MessageChange;
+import com.pomodoro.model.change.ToDoChange;
 import com.pomodoro.model.group.Group;
 import com.pomodoro.model.group.GroupInvitation;
+import com.pomodoro.model.message.DirectMessage;
 import com.pomodoro.model.message.GroupMessage;
 import com.pomodoro.model.reaction.DirectMessageReaction;
+import com.pomodoro.model.reaction.GroupMessageReaction;
 import com.pomodoro.model.todo.GroupToDo;
+import com.pomodoro.model.todo.ToDo;
 import com.pomodoro.model.todo.UserToDo;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
@@ -37,11 +42,6 @@ public class User implements UserDetails, Principal {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Integer id;
-
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY, mappedBy = "userObject")
-    private List<Pomodoro> pomodoros;
 
     @NotBlank(message = "Name is mandatory")
     @Column(unique = true)
@@ -74,10 +74,11 @@ public class User implements UserDetails, Principal {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Settings settings;
+
     @JsonIgnore
     @ManyToMany(mappedBy = "users")
     private
-    Set<Group> groups;
+    Set<Group> memberOfGroups;
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,
@@ -86,8 +87,8 @@ public class User implements UserDetails, Principal {
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY, mappedBy = "author")
-    private List<GroupMessage> createdGroupMessages;
+            fetch = FetchType.LAZY, mappedBy = "userObject")
+    private List<Pomodoro> pomodoros;
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,
@@ -96,13 +97,43 @@ public class User implements UserDetails, Principal {
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "recipient")
+    private List<DirectMessage> directMessages;
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "author")
+    private List<GroupMessage> createdGroupMessages;
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "author")
+    private List<DirectMessage> createdDirectMessages;
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "author")
+    private List<DirectMessageReaction> directMessageReactions;
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "author")
+    private List<GroupMessageReaction> groupMessageReactions;
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "changeAuthor")
+    private List<ToDoChange> toDoChange;
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, mappedBy = "changeAuthor")
     private List<GroupChange> groupChanges;
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY, mappedBy = "user")
-    private List<DirectMessageReaction> relatedGroupMessages;
+            fetch = FetchType.LAZY, mappedBy = "changeAuthor")
+    private List<MessageChange> messageChange;
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,
@@ -243,12 +274,12 @@ public class User implements UserDetails, Principal {
         this.pomodoros = pomodoros;
     }
 
-    public Set<Group> getGroups() {
-        return groups;
+    public Set<Group> getMemberOfGroups() {
+        return memberOfGroups;
     }
 
-    public void setGroups(Set<Group> groups) {
-        this.groups = groups;
+    public void setMemberOfGroups(Set<Group> memberOfGroups) {
+        this.memberOfGroups = memberOfGroups;
     }
 
     public List<Group> getOwnedGroups() {
@@ -279,12 +310,12 @@ public class User implements UserDetails, Principal {
         this.facebookId = facebookId;
     }
 
-    public List<GroupMessage> getCreatedGroupMessages() {
-        return createdGroupMessages;
+    public List<DirectMessage> getCreatedDirectMessages() {
+        return createdDirectMessages;
     }
 
-    public void setCreatedGroupMessages(List<GroupMessage> createdGroupMessages) {
-        this.createdGroupMessages = createdGroupMessages;
+    public void setCreatedDirectMessages(List<DirectMessage> createdDirectMessages) {
+        this.createdDirectMessages = createdDirectMessages;
     }
 
     public List<GroupInvitation> getGroupInvitations() {
@@ -305,12 +336,12 @@ public class User implements UserDetails, Principal {
         return false;
     }
 
-    public List<DirectMessageReaction> getRelatedGroupMessages() {
-        return relatedGroupMessages;
+    public List<DirectMessageReaction> getDirectMessageReactions() {
+        return directMessageReactions;
     }
 
-    public void setRelatedGroupMessages(List<DirectMessageReaction> relatedGroupMessages) {
-        this.relatedGroupMessages = relatedGroupMessages;
+    public void setDirectMessageReactions(List<DirectMessageReaction> directMessageReactions) {
+        this.directMessageReactions = directMessageReactions;
     }
 
     public List<UserToDo> getTodos() {
@@ -327,5 +358,45 @@ public class User implements UserDetails, Principal {
 
     public void setGroupToDos(Set<GroupToDo> groupToDos) {
         this.groupToDos = groupToDos;
+    }
+
+    public List<DirectMessage> getDirectMessages() {
+        return directMessages;
+    }
+
+    public void setDirectMessages(List<DirectMessage> directMessages) {
+        this.directMessages = directMessages;
+    }
+
+    public List<GroupMessage> getCreatedGroupMessages() {
+        return createdGroupMessages;
+    }
+
+    public void setCreatedGroupMessages(List<GroupMessage> createdGroupMessages) {
+        this.createdGroupMessages = createdGroupMessages;
+    }
+
+    public List<GroupMessageReaction> getGroupMessageReactions() {
+        return groupMessageReactions;
+    }
+
+    public void setGroupMessageReactions(List<GroupMessageReaction> groupMessageReactions) {
+        this.groupMessageReactions = groupMessageReactions;
+    }
+
+    public List<GroupChange> getGroupChanges() {
+        return groupChanges;
+    }
+
+    public void setGroupChanges(List<GroupChange> groupChanges) {
+        this.groupChanges = groupChanges;
+    }
+
+    public List<ToDoChange> getToDoChange() {
+        return toDoChange;
+    }
+
+    public void setToDoChange(List<ToDoChange> toDoChange) {
+        this.toDoChange = toDoChange;
     }
 }

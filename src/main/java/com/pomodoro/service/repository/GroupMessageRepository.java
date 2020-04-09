@@ -20,7 +20,7 @@ public interface GroupMessageRepository extends JpaRepository<GroupMessage, Inte
 
     @Modifying
     @Query(value = "INSERT INTO GROUP_MESSAGE( VALUE, TIMESTAMP, AUTHOR_ID, GROUP_ID) VALUES (:value,:timestamp ,:authorId, :groupId)", nativeQuery = true)
-    void insertGroupMessage(@Param("value") String value, @Param("timestamp") Date timestamp, @Param("authorId") Integer authorId, @Param("groupId") Integer groupId);
+    void insertGroupMessage(@Param("value") String value, @Param("creationTimestamp") Date timestamp, @Param("authorId") Integer authorId, @Param("groupId") Integer groupId);
 
 
     @Query(value = "select * from GROUP_MESSAGE  where GROUP_ID=:groupId ORDER BY TIMESTAMP DESC limit :limit OFFSET :offset", nativeQuery = true)

@@ -3,7 +3,7 @@ package com.pomodoro.service.serviceimplementation;
 import com.pomodoro.model.group.Group;
 import com.pomodoro.model.message.GroupMessage;
 import com.pomodoro.model.todo.GroupToDo;
-import com.pomodoro.model.User;
+import com.pomodoro.model.user.User;
 import com.pomodoro.service.IGroupService;
 import com.pomodoro.service.IStorageService;
 import com.pomodoro.utils.RequestDataNotValidException;
@@ -38,7 +38,7 @@ class LimitedGroupService implements IGroupService {
 
     @Override
     public Group getGroup(User user, String groupName) {
-        return user.getGroups()
+        return user.getMemberOfGroups()
                 .stream()
                 .filter(group -> groupName.equals(group.getName()))
                 .findFirst()
@@ -48,7 +48,7 @@ class LimitedGroupService implements IGroupService {
     @Override
     public Group createGroup(User author, String layoutImage, String name, boolean isPublic, String description) throws RequestDataNotValidException {
         List<RequestError> errors = new ArrayList<>();
-        Set<Group> groups = author.getGroups();
+        Set<Group> groups = author.getMemberOfGroups();
         if (groups.size() >= GROUP_LIMIT) {
             errors.add(new RequestError("groupCountLimit", String.format("Group count limit exceeded. Maximum number of groups per user is :[%s]", GROUP_LIMIT)));
         } else if (groups.stream().anyMatch(group -> name.equals(group.getName()))) {
@@ -95,7 +95,7 @@ class LimitedGroupService implements IGroupService {
     @Override
     public void addToDo(User author, Group group, GroupToDo newGroupToDo) throws RequestDataNotValidException {
         List<RequestError> errors = new ArrayList<>();
-        List<GroupToDo> groupToDos = group.getGroupGroupToDos();
+        List<GroupToDo> groupToDos = group.getGroupTodos();
         if (groupToDos.size() >= GROUP_TO_DO_LIMIT) {
             errors.add(new RequestError("groupTodoCountLimit", String.format("Group to do count limit for group [%s] exceeded. Maximum number of to dos per group is :[%s]", group.getName(), GROUP_TO_DO_LIMIT)));
         } else if (groupToDos.stream().anyMatch(groupToDo -> newGroupToDo.getDescription().trim().equals(groupToDo.getDescription()))) {
@@ -110,7 +110,7 @@ class LimitedGroupService implements IGroupService {
     @Override
     public void removeToDo(User author, Group group, List<GroupToDo> toDos) throws RequestDataNotValidException {
         List<RequestError> errors = new ArrayList<>();
-        List<Integer> groupToDosIds = group.getGroupGroupToDos().stream().map(GroupToDo::getId).collect(Collectors.toList());
+        List<Integer> groupToDosIds = group.getGroupTodos().stream().map(GroupToDo::getId).collect(Collectors.toList());
         if (toDos.stream().anyMatch(todo -> !todo.getAuthor().getId().equals(author.getId()))) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         } else if (toDos.stream().anyMatch(toDo -> !groupToDosIds.contains(toDo.getId()))) {

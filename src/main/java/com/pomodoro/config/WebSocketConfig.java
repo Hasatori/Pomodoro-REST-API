@@ -1,6 +1,6 @@
 package com.pomodoro.config;
 
-import com.pomodoro.model.User;
+import com.pomodoro.model.user.User;
 import com.pomodoro.service.serviceimplementation.UserService;
 import org.springframework.context.annotation.Configuration;
 

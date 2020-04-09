@@ -1,7 +1,7 @@
 package com.pomodoro.model.reaction;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.pomodoro.model.User;
+import com.pomodoro.model.user.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.lang.Nullable;
@@ -12,7 +12,7 @@ import java.util.Date;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-@Entity(name = "USER_REACTION")
+@Entity(name = "REACTION")
 @Getter
 @Setter
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -20,24 +20,24 @@ public class UserReaction implements Serializable {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private Integer id;
+    protected Integer id;
 
-    private Date readTimestamp;
-
-    @Nullable
-    private String reaction;
+    protected Date readTimestamp;
 
     @Nullable
-    public String getReaction() {
+    protected String reaction;
+
+    @Nullable
+    protected String getReaction() {
         return reaction;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AUTHOR",insertable = false,updatable = false)
-    private User author;
+    protected User author;
 
     @JsonIgnore
     @Column(name = "AUTHOR")
-    private Integer authorId;
+    protected Integer authorId;
 
 }

@@ -29,7 +29,7 @@ public class GroupMessage  extends Message{
 
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, mappedBy = "groupMessage")
-    private List<GroupMessageReaction> relatedGroupMessages;
+    private List<GroupMessageReaction> reactions;
 
 
 

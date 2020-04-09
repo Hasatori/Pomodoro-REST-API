@@ -1,6 +1,8 @@
-package com.pomodoro.model;
+package com.pomodoro.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pomodoro.model.group.Group;
+import com.pomodoro.model.todo.ToDo;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -9,8 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 
-import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Set;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -36,5 +38,10 @@ public class Pomodoro {
     private Integer workTime;
     private Integer breakTime;
     private boolean interrupted;
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "pomodoros")
+    private
+    Set<ToDo> finishedToDos;
 
 }

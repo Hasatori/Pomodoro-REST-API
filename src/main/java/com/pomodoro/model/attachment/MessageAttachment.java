@@ -9,7 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-@Entity(name = "ATTACHMENT")
+@Entity(name = "MESSAGE_ATTACHMENT")
 @Getter
 @Setter
 public class MessageAttachment extends Attachment {

@@ -1,12 +1,12 @@
 package com.pomodoro.controller;
 
-import com.pomodoro.model.*;
 import com.pomodoro.model.change.GroupChange;
 import com.pomodoro.model.group.Group;
 import com.pomodoro.model.group.GroupInvitation;
 import com.pomodoro.model.message.GroupMessage;
 import com.pomodoro.model.request.*;
 import com.pomodoro.model.todo.GroupToDo;
+import com.pomodoro.model.user.User;
 import com.pomodoro.utils.DateUtils;
 import com.pomodoro.utils.RequestDataNotValidException;
 import org.slf4j.Logger;
@@ -26,7 +26,7 @@ public class GroupController extends AbstractController {
     @RequestMapping(value = "/groups", method = RequestMethod.POST)
     public Set<Group> getGroups(HttpServletRequest req) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
-        return user.getGroups();
+        return user.getMemberOfGroups();
     }
 
     @RequestMapping(value = "/groups/{groupName}", method = RequestMethod.GET)
@@ -70,7 +70,7 @@ public class GroupController extends AbstractController {
     public List<GroupToDo> fetchGroupTodos(HttpServletRequest req, @PathVariable(required = true) String groupName) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
         Group group = groupService.getGroup(user, groupName);
-        return group.getGroupGroupToDos();
+        return group.getGroupTodos();
     }
 
     @RequestMapping(value = "/group/create", method = RequestMethod.POST)

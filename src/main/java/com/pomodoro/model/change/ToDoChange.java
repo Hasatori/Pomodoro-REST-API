@@ -12,9 +12,13 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class ToDoChange extends Change {
+
     private String oldName;
+
     private String newName;
+
     private String oldDescription;
+
     private String newDescription;
     @Enumerated(EnumType.STRING)
     private ToDoStatus oldStatus;

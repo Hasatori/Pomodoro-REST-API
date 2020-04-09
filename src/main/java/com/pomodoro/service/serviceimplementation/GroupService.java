@@ -1,12 +1,11 @@
 package com.pomodoro.service.serviceimplementation;
 
-import com.pomodoro.model.*;
 import com.pomodoro.model.group.Group;
 import com.pomodoro.model.group.GroupInvitation;
 import com.pomodoro.model.message.GroupMessage;
-import com.pomodoro.model.reaction.DirectMessageReaction;
 import com.pomodoro.model.reaction.GroupMessageReaction;
 import com.pomodoro.model.todo.GroupToDo;
+import com.pomodoro.model.user.User;
 import com.pomodoro.service.IGroupService;
 import com.pomodoro.service.IStorageService;
 import com.pomodoro.service.repository.GroupInvitationRepository;
@@ -42,7 +41,7 @@ class GroupService implements IGroupService {
 
     @Override
     public Group getGroup(User author, String groupName) {
-        return author.getGroups()
+        return author.getMemberOfGroups()
                 .stream()
                 .filter(group -> groupName.equals(group.getName()))
                 .findFirst().get();
@@ -101,10 +100,10 @@ class GroupService implements IGroupService {
         groupMessage.setAuthor(author);
         groupMessage.setAuthorId(author.getId());
         groupMessage.setValue(value);
-        groupMessage.setTimestamp(DateUtils.getCurrentDateUtc());
+        groupMessage.setCreationTimestamp(DateUtils.getCurrentDateUtc());
         groupMessage.setGroup(group);
         groupMessage.setGroupId(group.getId());
-        groupMessage.setRelatedGroupMessages(new ArrayList<>());
+        groupMessage.setReactions(new ArrayList<>());
         groupMessage = groupMessageRepository.save(groupMessage);
         for (User user : groupMessage.getGroup().getUsers()) {
             GroupMessageReaction groupMessageReaction = new GroupMessageReaction();
@@ -115,7 +114,7 @@ class GroupService implements IGroupService {
 
             groupMessageReaction.setGroupMessage(groupMessage);
 
-            groupMessage.getRelatedGroupMessages().add(groupMessageReaction);
+            groupMessage.getReactions().add(groupMessageReaction);
         }
        return groupMessageRepository.save(groupMessage);
     }

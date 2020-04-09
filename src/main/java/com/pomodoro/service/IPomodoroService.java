@@ -1,7 +1,7 @@
 package com.pomodoro.service;
 
-import com.pomodoro.model.Pomodoro;
-import com.pomodoro.model.User;
+import com.pomodoro.model.user.Pomodoro;
+import com.pomodoro.model.user.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

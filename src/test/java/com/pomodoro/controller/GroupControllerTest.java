@@ -2,7 +2,7 @@ package com.pomodoro.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.pomodoro.model.User;
+import com.pomodoro.model.user.User;
 import com.pomodoro.model.o2auth.FacebookUser;
 import com.pomodoro.model.request.GroupCreationRequest;
 import com.pomodoro.service.IGroupService;

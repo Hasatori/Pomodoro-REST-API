@@ -1,7 +1,7 @@
 package com.pomodoro.websocket;
 
-import com.pomodoro.model.Pomodoro;
-import com.pomodoro.model.User;
+import com.pomodoro.model.user.Pomodoro;
+import com.pomodoro.model.user.User;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
