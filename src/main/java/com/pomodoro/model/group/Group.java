@@ -26,7 +26,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Setter
 public class Group {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "group_generator")
+    @SequenceGenerator(name="group_generator", sequenceName = "group_seq")
     private Integer id;
 
     @NotBlank(message = "Name is mandatory")

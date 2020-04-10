@@ -20,7 +20,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class UserRegistration {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "userRegistration_generator")
+    @SequenceGenerator(name="userRegistration_generator", sequenceName = "userRegistration_seq")
     private Integer id;
 
 

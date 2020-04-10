@@ -30,7 +30,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Message {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "message_generator")
+    @SequenceGenerator(name="message_generator", sequenceName = "message_seq")
     protected Integer id;
 
     @Lob

@@ -23,7 +23,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class Pomodoro {
     @Id
     @JsonIgnore
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "pomodoro_generator")
+    @SequenceGenerator(name="pomodoro_generator", sequenceName = "pomodoro_seq")
     private Integer id;
 
     @JsonIgnore

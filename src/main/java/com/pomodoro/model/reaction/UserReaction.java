@@ -36,7 +36,7 @@ public class UserReaction implements Serializable {
     private User author;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MESSAGE", nullable = false, insertable = false, updatable = false)
     private Message message;
 

@@ -28,7 +28,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class ToDo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "todo_generator")
+    @SequenceGenerator(name="todo_generator", sequenceName = "todo_seq")
     protected Integer id;
 
     protected String name;

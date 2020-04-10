@@ -17,7 +17,8 @@ import java.util.Date;
 public class Change {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "change_generator")
+    @SequenceGenerator(name="change_generator", sequenceName = "change_seq")
     protected Integer id;
 
     @Enumerated(EnumType.STRING)
