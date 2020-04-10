@@ -7,17 +7,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.model.dto.RegisterUser;
 import com.pomodoro.model.group.Group;
+import com.pomodoro.model.message.DirectMessage;
 import com.pomodoro.model.o2auth.SecretStore;
 import com.pomodoro.model.request.UpdateUserDetails;
 import com.pomodoro.model.user.Pomodoro;
 import com.pomodoro.model.user.Settings;
 import com.pomodoro.model.user.User;
-import com.pomodoro.service.repository.GroupRepository;
-import com.pomodoro.service.repository.PomodoroRepository;
-import com.pomodoro.service.repository.SettingsRepository;
-import com.pomodoro.service.repository.UserRepository;
+import com.pomodoro.service.repository.*;
 import com.pomodoro.service.IUserService;
 import com.pomodoro.utils.DateUtils;
+import com.pomodoro.utils.RequestDataNotValidException;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +32,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -46,28 +46,35 @@ public class UserService implements UserDetailsService, IUserService {
     private final SettingsRepository settingsRepository;
     private final PomodoroRepository pomodoroRepository;
     private final GroupRepository groupRepository;
+    private final DirectMessageRepository directMessageRepository;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
     private final JwtTokenUtil jwtTokenUtil;
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
-    public UserService(UserRepository userRepository, SettingsRepository settingsRepository, PomodoroRepository pomodoroRepository, GroupRepository groupRepository, JwtTokenUtil jwtTokenUtil) {
+    public UserService(UserRepository userRepository, SettingsRepository settingsRepository, PomodoroRepository pomodoroRepository, GroupRepository groupRepository, DirectMessageRepository directMessageRepository, JwtTokenUtil jwtTokenUtil) {
         this.userRepository = userRepository;
         this.settingsRepository = settingsRepository;
         this.pomodoroRepository = pomodoroRepository;
         this.groupRepository = groupRepository;
+        this.directMessageRepository = directMessageRepository;
         this.jwtTokenUtil = jwtTokenUtil;
 
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserDetailsByUsername(String username) throws UsernameNotFoundException {
         User foundUser = userRepository.findUserByUsername(username);
         if (foundUser != null) {
             return foundUser;
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    @Override
+    public User loadUserByUsername(String username) {
+        return this.userRepository.findUserByUsername(username);
     }
 
     @Override
@@ -238,5 +245,20 @@ public class UserService implements UserDetailsService, IUserService {
         } catch (Exception ignored) {
         }
         return false;
+    }
+
+    @Override
+    public DirectMessage createDirectMessage(User author, User recipient, String value) throws RequestDataNotValidException {
+        DirectMessage directMessage = new DirectMessage();
+        directMessage.setAuthorId(author.getId());
+        directMessage.setRecipientId(recipient.getId());
+        directMessage.setCreationTimestamp(DateUtils.getCurrentDateUtc());
+        directMessage.setValue(value);
+        return directMessageRepository.save(directMessage);
+    }
+
+    @Override
+    public DirectMessage createDirectMessageAttachment(User author, User recipient, MultipartFile file) throws RequestDataNotValidException {
+        return null;
     }
 }

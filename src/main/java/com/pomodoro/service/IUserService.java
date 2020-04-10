@@ -1,12 +1,17 @@
 package com.pomodoro.service;
 
 import com.pomodoro.model.dto.RegisterUser;
+import com.pomodoro.model.group.Group;
+import com.pomodoro.model.message.DirectMessage;
+import com.pomodoro.model.message.GroupMessage;
 import com.pomodoro.model.request.UpdateUserDetails;
 import com.pomodoro.model.user.Settings;
 import com.pomodoro.model.user.User;
+import com.pomodoro.utils.RequestDataNotValidException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,7 +20,9 @@ import javax.servlet.http.HttpServletRequest;
 public interface IUserService {
 
 
-    UserDetails loadUserByUsername(String username);
+    UserDetails loadUserDetailsByUsername(String username);
+
+    User loadUserByUsername(String username);
 
     String getTokenFromRequest(HttpServletRequest req);
 
@@ -30,6 +37,9 @@ public interface IUserService {
 
     void registerNewUser(RegisterUser newUser);
 
-
     boolean facebookAccessTokenValid(String inputToken, String userId) ;
+
+    DirectMessage createDirectMessage(User author, User recipient, String value) throws RequestDataNotValidException;
+
+    DirectMessage createDirectMessageAttachment(User author, User recipient, MultipartFile file) throws RequestDataNotValidException;
 }

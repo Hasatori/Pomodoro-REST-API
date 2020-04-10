@@ -35,7 +35,7 @@ public class UserController extends AbstractController {
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
         UserDetails userDetails = userService
-                .loadUserByUsername(authenticationRequest.getUsername());
+                .loadUserDetailsByUsername(authenticationRequest.getUsername());
 
         String token = jwtTokenUtil.generateToken(userDetails);
 

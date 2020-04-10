@@ -1,5 +1,7 @@
 package com.pomodoro.websocket;
 
+import com.pomodoro.model.message.DirectMessage;
+import com.pomodoro.model.message.GroupMessage;
 import com.pomodoro.model.todo.UserToDo;
 import com.pomodoro.model.user.User;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -22,5 +24,19 @@ public class UserWebsocket extends AbstractSocket {
         userToDo = userTodoRepository.save(userToDo);
         userToDo = userTodoRepository.findUserToDoById(userToDo.getId());
         return userToDo;
+    }
+
+    @MessageMapping("/user/{username}/chat")
+    @SendTo("/user/{username}/chat")
+    public DirectMessage readAndWriteMessage(Principal principal, @DestinationVariable String username, @RequestBody String message) throws Exception {
+        User author = (User) principal;
+        User recipient=userService.loadUserByUsername(username);
+        return userService.createDirectMessage(author,recipient,message);
+    }
+
+    @MessageMapping("/user/{username}/resend")
+    @SendTo("/user/{username}/resend")
+    public DirectMessage resendMessage(DirectMessage directMessage) throws Exception {
+        return directMessage;
     }
 }
