@@ -3,6 +3,8 @@ package com.pomodoro.model.message;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.pomodoro.model.attachment.MessageAttachment;
+import com.pomodoro.model.attachment.ToDoAttachment;
 import com.pomodoro.model.reaction.UserReaction;
 import com.pomodoro.model.user.User;
 import com.pomodoro.model.change.MessageChange;
@@ -62,4 +64,8 @@ public class Message {
             fetch = FetchType.LAZY, mappedBy = "message")
     private List<UserReaction> reactions;
 
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "message")
+    private List<MessageAttachment> attachments;
 }

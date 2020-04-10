@@ -21,9 +21,9 @@ public class Attachment {
             strategy = "org.hibernate.id.UUIDGenerator"
     )
     @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
+    protected UUID id;
 
-    private String name;
+    protected String name;
 
-    private String format;
+    protected String format;
 }

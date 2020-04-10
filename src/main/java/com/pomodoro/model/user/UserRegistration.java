@@ -6,10 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import java.time.LocalDateTime;
 
@@ -32,4 +29,12 @@ public class UserRegistration {
     private LocalDateTime maturityDate;
 
     private String token;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER", insertable = false, updatable = false)
+    protected User user;
+
+    @Column(name = "USER")
+    protected Integer userId;
 }

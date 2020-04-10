@@ -1,6 +1,8 @@
 package com.pomodoro.model.todo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pomodoro.model.attachment.Attachment;
+import com.pomodoro.model.attachment.ToDoAttachment;
 import com.pomodoro.model.change.ToDoChange;
 import com.pomodoro.model.message.GroupMessage;
 import com.pomodoro.model.user.Pomodoro;
@@ -58,4 +60,10 @@ public class ToDo {
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, mappedBy = "todoObject")
     private List<ToDoChange> toDoChanges;
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "todoObject")
+    private List<ToDoAttachment> attachments;
+
 }

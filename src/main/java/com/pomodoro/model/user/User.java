@@ -75,6 +75,12 @@ public class User implements UserDetails, Principal {
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY, mappedBy = "user")
+    private List<UserRegistration> registrations;
+
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, mappedBy = "owner")
     private List<Group> ownedGroups;
 
@@ -361,5 +367,13 @@ public class User implements UserDetails, Principal {
 
     public void setReactions(List<UserReaction> reactions) {
         this.reactions = reactions;
+    }
+
+    public List<UserRegistration> getRegistrations() {
+        return registrations;
+    }
+
+    public void setRegistrations(List<UserRegistration> registrations) {
+        this.registrations = registrations;
     }
 }
