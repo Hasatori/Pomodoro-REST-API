@@ -17,6 +17,6 @@ public class GroupCreationRequest {
 
     private String description;
 
-    @NotNull(message = "Is group public must be filled")
+    @NotNull(message = "Is group img must be filled")
     private Boolean isPublic;
 }

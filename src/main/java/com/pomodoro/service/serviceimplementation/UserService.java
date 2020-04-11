@@ -134,7 +134,7 @@ public class UserService implements UserDetailsService, IUserService {
     public Pomodoro createPomodoroAndReturn(User user) {
         Pomodoro pomodoro = new Pomodoro();
         pomodoro.setUser(user.getId());
-        pomodoro.setCreationTimestamp(DateUtils.getCurrentDateUtc());
+        pomodoro.setCreationTimestamp(DateUtils.getCurrentLocalDateTimeUtc());
         pomodoro.setWorkTime(user.getSettings().getWorkTime());
         pomodoro.setBreakTime(user.getSettings().getPauseTime());
         pomodoro.setInterrupted(false);
@@ -252,7 +252,7 @@ public class UserService implements UserDetailsService, IUserService {
         DirectMessage directMessage = new DirectMessage();
         directMessage.setAuthorId(author.getId());
         directMessage.setRecipientId(recipient.getId());
-        directMessage.setCreationTimestamp(DateUtils.getCurrentDateUtc());
+        directMessage.setCreationTimestamp(DateUtils.getCurrentLocalDateTimeUtc());
         directMessage.setValue(value);
         return directMessageRepository.save(directMessage);
     }

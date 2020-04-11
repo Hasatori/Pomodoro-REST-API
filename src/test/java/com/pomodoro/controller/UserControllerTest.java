@@ -97,7 +97,7 @@ public class UserControllerTest {
     }
 
  /*   @Test
-    public void facebookLogin_validAuthToken_ShouldReturnJwtAccessToken() throws Exception {
+    img void facebookLogin_validAuthToken_ShouldReturnJwtAccessToken() throws Exception {
         String jwtToken = "test";
         testFacebookUser.setEmail("test");
         testFacebookUser.setId("123");

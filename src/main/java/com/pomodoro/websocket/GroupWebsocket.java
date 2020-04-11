@@ -50,7 +50,7 @@ public class GroupWebsocket extends AbstractSocket {
         groupChange.setChangeAuthorId(author.getId());
         groupChange.setGroup(group);
         groupChange.setGroupId(group.getId());
-        groupChange.setChangeTimestamp(DateUtils.getCurrentDateUtc());
+        groupChange.setChangeTimestamp(DateUtils.getCurrentLocalDateTimeUtc());
         return groupChangeRepository.save(groupChange);
     }
 

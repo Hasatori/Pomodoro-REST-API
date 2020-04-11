@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 
@@ -24,7 +25,7 @@ public class Change {
     @Enumerated(EnumType.STRING)
     protected ChangeType changeType;
 
-    protected Date changeTimestamp;
+    protected LocalDateTime changeTimestamp;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CHANGE_AUTHOR", insertable = false, updatable = false)

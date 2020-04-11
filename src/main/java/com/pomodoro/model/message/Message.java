@@ -17,6 +17,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -37,8 +38,8 @@ public class Message {
     @Lob
     protected String value;
 
-    @CreationTimestamp
-    protected Date creationTimestamp;
+
+    protected LocalDateTime creationTimestamp;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "AUTHOR_ID", insertable = false, updatable = false)

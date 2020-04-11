@@ -10,6 +10,7 @@ import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -40,7 +41,7 @@ public class UserReaction implements Serializable {
     @JoinColumn(name = "MESSAGE", nullable = false, insertable = false, updatable = false)
     private Message message;
 
-    private Date readTimestamp;
+    private LocalDateTime readTimestamp;
 
     @Nullable
     private String reaction;

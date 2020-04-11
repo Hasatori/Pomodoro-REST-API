@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public interface UserReactionRepository extends JpaRepository<UserReaction, Inte
 
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE REACTION SET READ_TIMESTAMP=:readTimestamp WHERE AUTHOR=:userId AND MESSAGE IN (:messageIds) ", nativeQuery = true)
-    void markAllUserMessagesFromGroupAsRead(@Param("readTimestamp")Date readTimestamp,@Param("userId") Integer userId, @Param("messageIds") List<Integer> messageIds);
+    void markAllUserMessagesFromGroupAsRead(@Param("readTimestamp") LocalDateTime readTimestamp, @Param("userId") Integer userId, @Param("messageIds") List<Integer> messageIds);
 
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE REACTION SET READ_TIMESTAMP=:reaction WHERE AUTHOR=:userId AND MESSAGE =:messageId", nativeQuery = true)

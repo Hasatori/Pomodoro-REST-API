@@ -14,6 +14,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -33,11 +34,11 @@ public class Group {
     @NotBlank(message = "Name is mandatory")
     private String name;
 
-    @NotNull(message = "Boolean indicating if group is public must be filled")
+    @NotNull(message = "Boolean indicating if group is img must be filled")
     private Boolean isPublic;
 
     @NotNull(message = "Group created date must be filled")
-    private Date created;
+    private LocalDateTime created;
 
     @NotBlank(message = "Layout image must be filled")
     private String layoutImage;

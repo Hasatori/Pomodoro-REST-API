@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -57,7 +58,7 @@ class GroupService implements IGroupService {
         group.setOwnerId(author.getId());
         group.setIsPublic(isPublic);
         group.setDescription(description);
-        group.setCreated(DateUtils.getCurrentDateUtc());
+        group.setCreated(DateUtils.getCurrentLocalDateTimeUtc());
         group.setUsers(new HashSet<User>() {{
             add(author);
         }});
@@ -101,7 +102,7 @@ class GroupService implements IGroupService {
         groupMessage.setAuthor(author);
         groupMessage.setAuthorId(author.getId());
         groupMessage.setValue(value);
-        groupMessage.setCreationTimestamp(DateUtils.getCurrentDateUtc());
+        groupMessage.setCreationTimestamp(LocalDateTime.now());
         groupMessage.setGroup(group);
         groupMessage.setGroupId(group.getId());
         groupMessage.setReactions(new ArrayList<>());
@@ -110,7 +111,7 @@ class GroupService implements IGroupService {
             UserReaction groupMessageReaction = new UserReaction();
             groupMessageReaction.setAuthor(user);
             if (user.getUsername().equals(author.getUsername())) {
-                groupMessageReaction.setReadTimestamp(DateUtils.getCurrentDateUtc());
+                groupMessageReaction.setReadTimestamp(DateUtils.getCurrentLocalDateTimeUtc());
             }
 
             groupMessageReaction.setMessage(groupMessage);

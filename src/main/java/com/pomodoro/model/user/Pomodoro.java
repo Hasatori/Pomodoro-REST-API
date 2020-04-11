@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -35,7 +36,7 @@ public class Pomodoro {
     private Integer user;
 
     @CreationTimestamp
-    private Date creationTimestamp;
+    private LocalDateTime creationTimestamp;
     private Integer workTime;
     private Integer breakTime;
     private boolean interrupted;
