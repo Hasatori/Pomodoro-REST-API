@@ -1,7 +1,6 @@
 package com.pomodoro.model.reaction;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.pomodoro.model.message.DirectMessage;
 import com.pomodoro.model.message.Message;
 import com.pomodoro.model.user.User;
 import lombok.Getter;
@@ -11,9 +10,6 @@ import org.springframework.lang.Nullable;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
-
-import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity(name = "REACTION")
 @Getter
@@ -44,11 +40,11 @@ public class UserReaction implements Serializable {
     private LocalDateTime readTimestamp;
 
     @Nullable
-    private String reaction;
+    private String emoji;
 
     @Nullable
-    public String getReaction() {
-        return reaction;
+    public String getEmoji() {
+        return emoji;
     }
 
 }

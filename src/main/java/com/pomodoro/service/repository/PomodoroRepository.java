@@ -15,9 +15,6 @@ import java.util.Date;
 @Transactional
 public interface PomodoroRepository  extends JpaRepository<Pomodoro, Integer> {
 
-    @Modifying
-    @Query(value = "INSERT INTO POMODORO(USER,CREATION_TIMESTAMP,  WORK_TIME, BREAK_TIME, INTERRUPTED) VALUES (:userId,:creationTimestamp,:workTime,:breakTime,:interrupted)",nativeQuery = true)
-    void insertNewPomodoro(@Param("userId") Integer userId, @Param("creationTimestamp") LocalDateTime creationTimestamp, @Param("workTime") int workTime, @Param("breakTime") int breakTime, @Param("interrupted") boolean interrupted);
 
     @Modifying
     @Query(value = "UPDATE POMODORO SET INTERRUPTED=TRUE where USER=?1 and CREATION_TIMESTAMP =?2",nativeQuery = true)

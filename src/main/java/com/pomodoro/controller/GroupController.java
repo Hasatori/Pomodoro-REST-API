@@ -99,7 +99,7 @@ public class GroupController extends AbstractController {
         return group.getGroupInvitations();
     }
 
-    @RequestMapping(value = "/group/remove-todo", method = RequestMethod.POST)
+    @RequestMapping(value = "/group/remove-toDoId", method = RequestMethod.POST)
     public void deleteToDoFromTheGroup(HttpServletRequest req, @Valid @RequestBody GroupTodoRequest groupTodoRequest) throws RequestDataNotValidException {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
         Group group=groupService.getGroup(user,groupTodoRequest.getGroup().getName());

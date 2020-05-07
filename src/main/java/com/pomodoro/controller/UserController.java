@@ -140,7 +140,7 @@ public class UserController extends AbstractController {
     @RequestMapping(value = "/userTodos", method = RequestMethod.POST)
     public List<UserToDo> getUserTodos(HttpServletRequest req) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
-        return user.getTodos();
+        return user.getUserToDos();
     }
 
     @RequestMapping(value = "/groupTodos", method = RequestMethod.POST)
@@ -209,7 +209,7 @@ public class UserController extends AbstractController {
         return users;
     }
 
-    @RequestMapping(value = "/remove-todo", method = RequestMethod.POST)
+    @RequestMapping(value = "/remove-toDoId", method = RequestMethod.POST)
     public ResponseEntity<?> deleteToDoFromTheGroup(HttpServletRequest req, @RequestBody List<Integer> todoIds) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
         Map<String, String> responseEntity = new HashMap<>();

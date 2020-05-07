@@ -37,10 +37,10 @@ public class GroupToDo extends ToDo {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "PARENT_ID", insertable = false, updatable = false)
-    protected GroupToDo parent;
+    @JoinColumn(name = "PARENT_TASK_ID", insertable = false, updatable = false)
+    protected GroupToDo parentTask;
 
     @Nullable
-    @Column(name = "PARENT_ID")
-    protected Integer parentId;
+    @Column(name = "PARENT_TASK_ID")
+    protected Integer parentTaskId;
 }

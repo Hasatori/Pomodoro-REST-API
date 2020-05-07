@@ -54,16 +54,16 @@ public class GroupWebsocket extends AbstractSocket {
         return groupChangeRepository.save(groupChange);
     }
 
-    @MessageMapping("/group/{groupName}/chat/reaction")
-    @SendTo("/group/{groupName}/chat/reaction")
+    @MessageMapping("/group/{groupName}/chat/emoji")
+    @SendTo("/group/{groupName}/chat/emoji")
     public GroupMessage reactToGroupMessage(Principal principal, @DestinationVariable String groupName, @RequestBody UserReaction userReaction) {
         User user = (User) principal;
-        userReactionRepository.setReaction(userReaction.getReaction(), user.getId(), userReaction.getMessageId());
+        userReactionRepository.setReaction(userReaction.getEmoji(), user.getId(), userReaction.getMessageId());
         GroupMessage groupMessage = groupMessageRepository.findGroupMessageById(userReaction.getMessageId());
         Optional<UserReaction> optionalUserGroupMessage = groupMessage.getReactions().stream().filter(userGroupMessage -> userGroupMessage.getAuthor().getUsername().equals(principal.getName())).findFirst();
         userReaction = optionalUserGroupMessage.orElse(null);
         if (userReaction == null) {
-            throw new IllegalStateException("User group message doest not exist");
+            throw new IllegalStateException("User group messageId doest not exist");
         }
         return groupMessage;
     }

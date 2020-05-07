@@ -19,10 +19,10 @@ public class UserToDo extends ToDo {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "PARENT_ID", insertable = false, updatable = false)
-    protected UserToDo parent;
+    @JoinColumn(name = "PARENT_TASK_ID", insertable = false, updatable = false)
+    protected UserToDo parentTask;
 
     @Nullable
-    @Column(name = "PARENT_ID")
-    protected Integer parentId;
+    @Column(name = "PARENT_TASK_ID")
+    protected Integer parentTaskId;
 }

@@ -7,6 +7,7 @@ import com.pomodoro.model.change.GroupChange;
 import com.pomodoro.model.message.GroupMessage;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,8 +38,9 @@ public class Group {
     @NotNull(message = "Boolean indicating if group is img must be filled")
     private Boolean isPublic;
 
-    @NotNull(message = "Group created date must be filled")
-    private LocalDateTime created;
+    @NotNull(message = "Group creationTimestamp date must be filled")
+    @CreationTimestamp
+    private LocalDateTime creationTimestamp;
 
     @NotBlank(message = "Layout image must be filled")
     private String layoutImage;

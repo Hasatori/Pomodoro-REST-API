@@ -19,7 +19,7 @@ import javax.persistence.*;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
 @Setter
-public class GroupMessage  extends Message{
+public class GroupMessage extends Message {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GROUP_ID", insertable = false, updatable = false)
@@ -31,11 +31,11 @@ public class GroupMessage  extends Message{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "PARENT_ID", insertable = false, updatable = false)
-    protected GroupMessage parent;
+    @JoinColumn(name = "REPLIED_MESSAGE_ID", insertable = false, updatable = false)
+    protected GroupMessage repliedMessage;
 
     @Nullable
-    @Column(name = "PARENT_ID")
-    protected Integer parentId;
+    @Column(name = "REPLIED_MESSAGE_ID")
+    protected Integer repliedMessageId;
 
 }

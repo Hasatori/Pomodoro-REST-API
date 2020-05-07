@@ -55,16 +55,16 @@ public class ToDo {
             name = "TO_DO_FINISHED_POMODOROS",
             joinColumns = @JoinColumn(name = "TO_DO_ID"),
             inverseJoinColumns = @JoinColumn(name = "POMODORO_ID"))
-    Set<Pomodoro> pomodoros;
+    Set<Pomodoro> finishedPomodoros;
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY, mappedBy = "todoObject")
+            fetch = FetchType.LAZY, mappedBy = "toDo")
     private List<ToDoChange> toDoChanges;
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY, mappedBy = "todoObject")
+            fetch = FetchType.LAZY, mappedBy = "toDo")
     private List<ToDoAttachment> attachments;
 
 }

@@ -19,9 +19,9 @@ public class MessageChange extends Change {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MESSAGE", nullable = false, insertable = false, updatable = false)
-    private Message messageObject;
+    private Message message;
 
     @JsonIgnore
     @Column(name = "MESSAGE")
-    private Integer message;
+    private Integer messageId;
 }

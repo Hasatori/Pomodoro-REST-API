@@ -26,9 +26,9 @@ public class ToDoChange extends Change {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TO_DO", nullable = false, insertable = false, updatable = false)
-    private ToDo todoObject;
+    private ToDo toDo;
 
     @JsonIgnore
     @Column(name = "TO_DO")
-    private Integer todo;
+    private Integer toDoId;
 }

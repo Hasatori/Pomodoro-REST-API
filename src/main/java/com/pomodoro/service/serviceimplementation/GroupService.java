@@ -58,7 +58,7 @@ class GroupService implements IGroupService {
         group.setOwnerId(author.getId());
         group.setIsPublic(isPublic);
         group.setDescription(description);
-        group.setCreated(DateUtils.getCurrentLocalDateTimeUtc());
+        group.setCreationTimestamp(DateUtils.getCurrentLocalDateTimeUtc());
         group.setUsers(new HashSet<User>() {{
             add(author);
         }});

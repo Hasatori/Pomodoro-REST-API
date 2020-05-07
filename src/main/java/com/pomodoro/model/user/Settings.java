@@ -19,8 +19,8 @@ public class Settings {
     @OneToOne
     @MapsId
     private User user;
-    private Integer workTime;
-    private Integer pauseTime;
+    private Integer workDurationInSeconds;
+    private Integer pauseDurationInSeconds;
     @Nullable
     private String phaseChangedSound;
     @Nullable

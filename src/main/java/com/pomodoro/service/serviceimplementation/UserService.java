@@ -114,7 +114,8 @@ public class UserService implements UserDetailsService, IUserService {
     }
 
     public void updateUserSettings(User currentUser, Settings updatedSettings) {
-        settingsRepository.updateUserSettings(currentUser.getId(), updatedSettings.getWorkTime(), updatedSettings.getPauseTime(), updatedSettings.getPhaseChangedSound(), updatedSettings.getWorkSound(), updatedSettings.getPauseSound());
+        updatedSettings.setId(currentUser.getId());
+        settingsRepository.save(updatedSettings);
     }
 
     public boolean passwordBelongsToTheUser(User user, String password) {
@@ -135,8 +136,8 @@ public class UserService implements UserDetailsService, IUserService {
         Pomodoro pomodoro = new Pomodoro();
         pomodoro.setUser(user.getId());
         pomodoro.setCreationTimestamp(DateUtils.getCurrentLocalDateTimeUtc());
-        pomodoro.setWorkTime(user.getSettings().getWorkTime());
-        pomodoro.setBreakTime(user.getSettings().getPauseTime());
+        pomodoro.setWorkDurationInSeconds(user.getSettings().getWorkDurationInSeconds());
+        pomodoro.setPauseDurationInSeconds(user.getSettings().getPauseDurationInSeconds());
         pomodoro.setInterrupted(false);
         return pomodoroRepository.save(pomodoro);
     }

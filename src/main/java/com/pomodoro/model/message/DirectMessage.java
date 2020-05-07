@@ -21,20 +21,21 @@ import javax.persistence.*;
 @Setter
 public class DirectMessage extends Message{
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch =  FetchType.EAGER)
     @JoinColumn(name = "RECIPIENT", insertable = false, updatable = false)
     private User recipient;
 
     @JsonIgnore
     @Column(name = "RECIPIENT")
     private Integer recipientId;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "PARENT_ID", insertable = false, updatable = false)
-    protected DirectMessage parent;
 
-    @Nullable
-    @Column(name = "PARENT_ID")
-    protected Integer parentId;
+    @ManyToOne(fetch =  FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "REPLIED_MESSAGE_ID", insertable = false, updatable = false)
+    protected DirectMessage repliedMessage;
+
+    @JsonIgnore
+    @Column(name = "REPLIED_MESSAGE_ID")
+    protected Integer repliedMessageId;
 
 }

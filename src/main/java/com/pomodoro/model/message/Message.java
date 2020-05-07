@@ -41,7 +41,7 @@ public class Message {
 
     protected LocalDateTime creationTimestamp;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch =  FetchType.EAGER)
     @JoinColumn(name = "AUTHOR_ID", insertable = false, updatable = false)
     protected User author;
 
@@ -49,25 +49,24 @@ public class Message {
     @Column(name = "AUTHOR_ID")
     protected Integer authorId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "ANSWERED_MESSAGE", insertable = false, updatable = false)
     protected Message answeredMessage;
 
-    @Nullable
+    @JsonIgnore
     @Column(name = "ANSWERED_MESSAGE")
     protected Integer answeredMessageId;
 
     @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY, mappedBy = "messageObject")
+            fetch =  FetchType.LAZY, mappedBy = "message")
     protected List<MessageChange> changes;
 
     @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY, mappedBy = "message")
+            fetch =  FetchType.LAZY, mappedBy = "messageId")
     private List<UserReaction> reactions;
 
-    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY, mappedBy = "message")
+            fetch =  FetchType.LAZY, mappedBy = "messageId")
     private List<MessageAttachment> attachments;
 }

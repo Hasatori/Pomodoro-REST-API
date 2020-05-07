@@ -15,7 +15,7 @@ public class ToDoAttachment extends Attachment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TO_DO",insertable = false,updatable = false)
-    private ToDo todoObject;
+    private ToDo toDo;
 
     @JsonIgnore
     @Column(name = "TO_DO")

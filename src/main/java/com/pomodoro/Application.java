@@ -1,8 +1,5 @@
 package com.pomodoro;
 
-import com.pomodoro.model.ChangeType;
-import com.pomodoro.model.change.MessageChange;
-import com.pomodoro.model.change.ToDoChange;
 import com.pomodoro.model.group.Group;
 import com.pomodoro.model.group.GroupInvitation;
 import com.pomodoro.model.message.GroupMessage;
@@ -13,7 +10,6 @@ import com.pomodoro.model.user.Settings;
 import com.pomodoro.model.user.User;
 import com.pomodoro.service.StorageProperties;
 import com.pomodoro.service.repository.*;
-import com.pomodoro.utils.DateUtils;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -39,7 +35,6 @@ public class Application {
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(Application.class);
         app.run(args);
-
     }
 
     @Bean
@@ -118,8 +113,8 @@ public class Application {
 
     private static Settings getDefaultSettings(User user) {
         Settings settings = new Settings();
-        settings.setWorkTime(1500);
-        settings.setPauseTime(300);
+        settings.setWorkDurationInSeconds(1500);
+        settings.setPauseDurationInSeconds(300);
         settings.setUser(user);
         settings.setId(user.getId());
         return settings;
@@ -128,7 +123,7 @@ public class Application {
     private static Group getGroup(User owner, String name, Set<User> users) {
         Group group = new Group();
         group.setName(name);
-        group.setCreated(getRandomDate());
+        group.setCreationTimestamp(getRandomDate());
         group.setDescription("Group description");
         group.setLayoutImage(getRandomLayoutImage());
         group.setIsPublic(false);
@@ -153,8 +148,8 @@ public class Application {
         groupMessage.setAuthor(author);
         groupMessage.setAuthorId(author.getId());
         if (parent != null) {
-            groupMessage.setParentId(parent.getId());
-            groupMessage.setParent(parent);
+            groupMessage.setRepliedMessageId(parent.getId());
+            groupMessage.setRepliedMessage(parent);
         }
         groupMessage.setCreationTimestamp(getRandomDate());
         return groupMessage;
@@ -186,7 +181,7 @@ public class Application {
         reaction.setMessageId(groupMessage.getId());
         reaction.setAuthorId(author.getId());
         reaction.setReadTimestamp(null);
-        reaction.setReaction(reactions[random.nextInt(reactions.length)]);
+        reaction.setEmoji(reactions[random.nextInt(reactions.length)]);
         return reaction;
     }
 
@@ -230,10 +225,10 @@ public class Application {
         for (int i = 0; i < numberOfTasks; i++) {
             int depth = random.nextInt(5);
             int currentDepth = 0;
-            String currentDepthToDoName="Test" + i;
+            String currentDepthToDoName = "Test" + i;
             GroupToDo currentDepthToDo = groupTodoRepository.save(getGroupToDo(group.getOwner(), group, currentDepthToDoName, null));
             while (currentDepth != depth) {
-                currentDepthToDoName+=".1";
+                currentDepthToDoName += ".1";
                 currentDepthToDo = groupTodoRepository.save(getGroupToDo(group.getOwner(), group, currentDepthToDoName, currentDepthToDo));
                 currentDepth++;
             }
@@ -245,10 +240,10 @@ public class Application {
         for (int i = 0; i < numberOfTasks; i++) {
             int depth = random.nextInt(5);
             int currentDepth = 0;
-            String currentDepthToDoName="Test" + i;
+            String currentDepthToDoName = "Test" + i;
             UserToDo currentDepthToDo = userTodoRepository.save(getUserToDo(user, currentDepthToDoName, null));
             while (currentDepth != depth) {
-                currentDepthToDoName+=".1";
+                currentDepthToDoName += ".1";
                 currentDepthToDo = userTodoRepository.save(getUserToDo(user, currentDepthToDoName, currentDepthToDo));
                 currentDepth++;
             }
@@ -263,8 +258,8 @@ public class Application {
         userToDo.setDescription("Task testing description");
         userToDo.setDeadline(getRandomDate());
         if (parent != null) {
-            userToDo.setParent(parent);
-            userToDo.setParentId(parent.getId());
+            userToDo.setParentTask(parent);
+            userToDo.setParentTaskId(parent.getId());
         }
         return userToDo;
     }
@@ -276,8 +271,8 @@ public class Application {
         groupToDo.setAuthor(author);
         groupToDo.setAuthorId(author.getId());
         if (parent != null) {
-            groupToDo.setParent(parent);
-            groupToDo.setParentId(parent.getId());
+            groupToDo.setParentTask(parent);
+            groupToDo.setParentTaskId(parent.getId());
         }
         groupToDo.setName(name);
         groupToDo.setDescription("Task testing description");

@@ -52,8 +52,6 @@ public class User implements UserDetails, Principal {
     private String password;
 
     @JsonIgnore
-    private String token;
-    @JsonIgnore
     private Boolean accountExpired;
     @JsonIgnore
     private Boolean locked;
@@ -123,14 +121,13 @@ public class User implements UserDetails, Principal {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, mappedBy = "author")
-    private List<UserToDo> todos;
+    private List<UserToDo> userToDos;
 
     public void setUsername(String userName) {
         this.username = userName;
     }
     @JsonIgnore
     @ManyToMany(mappedBy = "assignedUsers",cascade = CascadeType.REMOVE)
-
     private
     Set<GroupToDo> groupToDos;
 
@@ -243,13 +240,6 @@ public class User implements UserDetails, Principal {
         this.email = email;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
 
     public List<Pomodoro> getPomodoros() {
         return pomodoros;
@@ -321,12 +311,12 @@ public class User implements UserDetails, Principal {
         return false;
     }
 
-    public List<UserToDo> getTodos() {
-        return todos;
+    public List<UserToDo> getUserToDos() {
+        return userToDos;
     }
 
-    public void setTodos(List<UserToDo> todos) {
-        this.todos = todos;
+    public void setUserToDos(List<UserToDo> userToDos) {
+        this.userToDos = userToDos;
     }
 
     public Set<GroupToDo> getGroupToDos() {

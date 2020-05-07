@@ -37,12 +37,16 @@ public class Pomodoro {
 
     @CreationTimestamp
     private LocalDateTime creationTimestamp;
-    private Integer workTime;
-    private Integer breakTime;
+    private Integer workDurationInSeconds;
+    private Integer pauseDurationInSeconds;
     private boolean interrupted;
 
+    private String pauseSound;
+    private String workSound;
+    private String phaseChangedSound;
+
     @JsonIgnore
-    @ManyToMany(mappedBy = "pomodoros")
+    @ManyToMany(mappedBy = "finishedPomodoros")
     private
     Set<ToDo> finishedToDos;
 
