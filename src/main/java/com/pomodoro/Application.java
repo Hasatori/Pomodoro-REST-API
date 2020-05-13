@@ -2,6 +2,7 @@ package com.pomodoro;
 
 import com.pomodoro.model.group.Group;
 import com.pomodoro.model.group.GroupInvitation;
+import com.pomodoro.model.message.DirectMessage;
 import com.pomodoro.model.message.GroupMessage;
 import com.pomodoro.model.reaction.UserReaction;
 import com.pomodoro.model.todo.GroupToDo;
@@ -47,7 +48,8 @@ public class Application {
                     UserReactionRepository userReactionRepository,
                     GroupInvitationRepository groupInvitationRepository,
                     GroupTodoRepository groupTodoRepository,
-                    UserTodoRepository userTodoRepository
+                    UserTodoRepository userTodoRepository,
+                    DirectMessageRepository directMessageRepository
             ) {
         return args -> {
             User hasatori = userRepository.save(getBasicUser("Hasatori", "hradil.o@email.cz"));
@@ -60,6 +62,7 @@ public class Application {
             allUsers.forEach(user -> {
                 settingsRepository.save(getDefaultSettings(user));
                 addSomeTodosToUser(user, userTodoRepository);
+                addSomeDirectMessagesToUser(user, allUsers, directMessageRepository);
             });
             Group rodina = groupRepository.save(getGroup(hasatori, "Rodina", new HashSet<>(allUsers)));
             addMessagesToGroup(rodina, groupMessageRepository, userReactionRepository);
@@ -81,6 +84,28 @@ public class Application {
         };
     }
 
+    private void addSomeDirectMessagesToUser(User user, List<User> users, DirectMessageRepository directMessageRepository) {
+
+        users.forEach(user1 -> {
+            for (int i = 0; i < 50; i++) {
+                DirectMessage directMessage = new DirectMessage();
+                directMessage.setRecipient(user1);
+                directMessage.setRecipientId(user1.getId());
+                directMessage.setAuthor(user);
+                directMessage.setAuthorId(user.getId());
+                directMessage.setValue("test");
+                directMessage.setCreationTimestamp(getRandomDate());
+                directMessage = directMessageRepository.save(directMessage);
+                int id = directMessage.getId();
+                directMessage.setReactions(new ArrayList<UserReaction>() {{
+                    add(getMessageReaction(user1, id));
+                }});
+                directMessageRepository.save(directMessage);
+            }
+        });
+
+    }
+
     private static void addMessagesToGroup(Group group, GroupMessageRepository groupMessageRepository, UserReactionRepository userReactionRepository) {
         List<User> groupMembers = new ArrayList<>(group.getUsers());
         for (int j = 0; j < 1000; j++) {
@@ -88,7 +113,7 @@ public class Application {
             List<User> usersForReaction = getNumberOfRandomUsers(groupMembers, messageAuthor, random.nextInt(groupMembers.size()));
             GroupMessage groupMessage = groupMessageRepository.save(getRandomGroupMessage(messageAuthor, group, null));
             usersForReaction.forEach(user -> {
-                userReactionRepository.save(getGroupMessageReaction(user, groupMessage));
+                userReactionRepository.save(getMessageReaction(user, groupMessage.getId()));
                 if (random.nextBoolean()) {
                     groupMessageRepository.save(getRandomGroupMessage(user, group, groupMessage));
                 }
@@ -175,10 +200,10 @@ public class Application {
         return collection.stream().anyMatch(user -> user.getUsername().equals(userToVerify.getUsername()));
     }
 
-    private static UserReaction getGroupMessageReaction(User author, GroupMessage groupMessage) {
+    private static UserReaction getMessageReaction(User author, Integer messageId) {
         UserReaction reaction = new UserReaction();
         String[] reactions = {"happy", "crying", "angry"};
-        reaction.setMessageId(groupMessage.getId());
+        reaction.setMessageId(messageId);
         reaction.setAuthorId(author.getId());
         reaction.setReadTimestamp(null);
         reaction.setEmoji(reactions[random.nextInt(reactions.length)]);

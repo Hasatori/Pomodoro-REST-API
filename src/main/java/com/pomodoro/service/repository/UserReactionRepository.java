@@ -19,11 +19,14 @@ public interface UserReactionRepository extends JpaRepository<UserReaction, Inte
 
     List<UserReaction> findUserReactionByAuthor(Integer author);
 
+    UserReaction findUserReactionByAuthorIdAndMessageId(Integer authorId,Integer messageId);
+
+
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE REACTION SET READ_TIMESTAMP=:readTimestamp WHERE AUTHOR=:userId AND MESSAGE IN (:messageIds) ", nativeQuery = true)
     void markAllUserMessagesFromGroupAsRead(@Param("readTimestamp") LocalDateTime readTimestamp, @Param("userId") Integer userId, @Param("messageIds") List<Integer> messageIds);
 
     @Modifying(clearAutomatically = true)
-    @Query(value = "UPDATE REACTION SET EMOJI=:emojiWHERE AUTHOR=:userId AND MESSAGE =:messageId", nativeQuery = true)
+    @Query(value = "UPDATE REACTION SET EMOJI=:emoji WHERE AUTHOR=:userId AND MESSAGE =:messageId", nativeQuery = true)
     void setReaction(@Param("emoji")String reaction,@Param("userId") Integer userId, @Param("messageId") Integer messageId);
 }

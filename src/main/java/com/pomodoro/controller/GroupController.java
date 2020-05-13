@@ -37,11 +37,11 @@ public class GroupController extends AbstractController {
 
     @RequestMapping(value = "/groups/fetch-chat-messages", method = RequestMethod.POST)
     public List<GroupMessage> fetchChatMessages(HttpServletRequest req,
-                                                @RequestBody GroupDataRequest groupDataRequest) {
+                                                @RequestBody MessagesDataRequest messagesDataRequest) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
-        Group group = groupService.getGroup(user, groupDataRequest.getGroupName());
-        Integer limit = groupDataRequest.getStop() - groupDataRequest.getStart();
-        return groupMessageRepository.findLastMessagesByGroupIdWithinLimitAndOffset(group.getId(), limit, groupDataRequest.getStart());
+        Group group = groupService.getGroup(user, messagesDataRequest.getName());
+        Integer limit = messagesDataRequest.getStop() - messagesDataRequest.getStart();
+        return groupMessageRepository.findLastMessagesByGroupIdWithinLimitAndOffset(group.getId(), limit, messagesDataRequest.getStart());
     }
 
     @RequestMapping(value = "/groups/{groupName}/fetch-unread-messages", method = RequestMethod.GET)
@@ -59,11 +59,11 @@ public class GroupController extends AbstractController {
     }
 
     @RequestMapping(value = "/groups/fetch-changes", method = RequestMethod.POST)
-    public List<GroupChange> fetchGroupChanges(HttpServletRequest req, @RequestBody GroupDataRequest groupDataRequest) {
+    public List<GroupChange> fetchGroupChanges(HttpServletRequest req, @RequestBody MessagesDataRequest messagesDataRequest) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
-        Group group = groupService.getGroup(user, groupDataRequest.getGroupName());
-        Integer limit = groupDataRequest.getStop() - groupDataRequest.getStart();
-        return groupChangeRepository.findLastChangesByGroupIdWithinLimitAndOffset(group.getId(), limit, groupDataRequest.getStart());
+        Group group = groupService.getGroup(user, messagesDataRequest.getName());
+        Integer limit = messagesDataRequest.getStop() - messagesDataRequest.getStart();
+        return groupChangeRepository.findLastChangesByGroupIdWithinLimitAndOffset(group.getId(), limit, messagesDataRequest.getStart());
     }
 
     @RequestMapping(value = "/groups/{groupName}/fetch-todos", method = RequestMethod.GET)

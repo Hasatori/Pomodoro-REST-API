@@ -20,6 +20,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import java.util.Map;
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final UserService userService;
     private final JwtTokenUtil tokenUtil;
+    public static final HashMap<String,String> USER_TOKENS=new HashMap<>();
 
     public WebSocketConfig(UserService userService, JwtTokenUtil tokenUtil) {
         this.userService = userService;
@@ -39,6 +41,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.setApplicationDestinationPrefixes("/app")
                 .enableSimpleBroker("/pomodoro", "/group","/user");
+        config.setUserDestinationPrefix("/user");
 
 
     }
@@ -68,6 +71,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         if (tokenUtil.validateToken(token, user) && accessor != null) {
                             authorized = true;
                             accessor.setUser(user);
+                            USER_TOKENS.put(user.getUsername(),token);
                         }
                     }
                 }

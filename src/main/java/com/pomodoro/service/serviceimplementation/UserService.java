@@ -251,8 +251,11 @@ public class UserService implements UserDetailsService, IUserService {
     @Override
     public DirectMessage createDirectMessage(User author, User recipient, String value) throws RequestDataNotValidException {
         DirectMessage directMessage = new DirectMessage();
+        directMessage.setAuthor(author);
         directMessage.setAuthorId(author.getId());
+        directMessage.setRecipient(recipient);
         directMessage.setRecipientId(recipient.getId());
+
         directMessage.setCreationTimestamp(DateUtils.getCurrentLocalDateTimeUtc());
         directMessage.setValue(value);
         return directMessageRepository.save(directMessage);

@@ -18,12 +18,12 @@ import java.time.LocalDateTime;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class UserReaction implements Serializable {
 
-    @JsonIgnore
+
     @Id
     @Column(name = "AUTHOR")
    private Integer authorId;
 
-    @JsonIgnore
+
     @Id
     @Column(name = "MESSAGE")
     private Integer messageId;

@@ -8,11 +8,11 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
-public class GroupDataRequest {
+public class MessagesDataRequest {
 
 
     @NotBlank(message = "Group name must be filled")
-    private String groupName;
+    private String name;
     @NotNull(message = "From must be filled")
     private Integer start;
     @NotNull(message = "To must be filled")

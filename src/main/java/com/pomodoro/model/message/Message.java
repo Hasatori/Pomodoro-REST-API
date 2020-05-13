@@ -45,25 +45,15 @@ public class Message {
     @JoinColumn(name = "AUTHOR_ID", insertable = false, updatable = false)
     protected User author;
 
-    @JsonIgnore
     @Column(name = "AUTHOR_ID")
     protected Integer authorId;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "ANSWERED_MESSAGE", insertable = false, updatable = false)
-    protected Message answeredMessage;
-
-    @JsonIgnore
-    @Column(name = "ANSWERED_MESSAGE")
-    protected Integer answeredMessageId;
 
     @OneToMany(cascade = CascadeType.ALL,
             fetch =  FetchType.LAZY, mappedBy = "message")
     protected List<MessageChange> changes;
 
     @OneToMany(cascade = CascadeType.ALL,
-            fetch =  FetchType.LAZY, mappedBy = "messageId")
+            fetch =  FetchType.EAGER, mappedBy = "messageId")
     private List<UserReaction> reactions;
 
     @OneToMany(cascade = CascadeType.ALL,

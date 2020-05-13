@@ -52,7 +52,7 @@ class LimitedGroupService implements IGroupService {
         if (groups.size() >= GROUP_LIMIT) {
             errors.add(new RequestError("groupCountLimit", String.format("Group count limit exceeded. Maximum number of groups per user is :[%s]", GROUP_LIMIT)));
         } else if (groups.stream().anyMatch(group -> name.equals(group.getName()))) {
-            errors.add(new RequestError("groupName", "Group with this name already exists"));
+            errors.add(new RequestError("name", "Group with this name already exists"));
         }
         if (errors.size() > 0) {
             throw new RequestDataNotValidException(errors);

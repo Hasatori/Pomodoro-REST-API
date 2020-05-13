@@ -3,7 +3,9 @@ package com.pomodoro.controller;
 import com.pomodoro.model.dto.*;
 import com.pomodoro.model.group.Group;
 import com.pomodoro.model.group.GroupInvitation;
+import com.pomodoro.model.message.DirectMessage;
 import com.pomodoro.model.o2auth.FacebookUser;
+import com.pomodoro.model.request.MessagesDataRequest;
 import com.pomodoro.model.request.UpdateUserDetails;
 import com.pomodoro.model.todo.GroupToDo;
 import com.pomodoro.model.todo.UserToDo;
@@ -217,5 +219,20 @@ public class UserController extends AbstractController {
         userTodoRepository.deleteUserTodos(todoIds);
         return ResponseEntity.ok().body(responseEntity);
     }
+
+    @RequestMapping(value = "/fetch-unread-messages", method = RequestMethod.GET)
+    public List<DirectMessage> fetchUnreadMessages(HttpServletRequest req) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        return directMessageRepository.findAllUnreadMessages(user.getId());
+    }
+    @RequestMapping(value = "/fetch-chat-messages", method = RequestMethod.POST)
+    public List<DirectMessage> fetchChatMessages(HttpServletRequest req,
+                                                @RequestBody MessagesDataRequest messagesDataRequest) {
+        User user1 = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        User user2 = userRepository.findUserByUsername(messagesDataRequest.getName());
+        Integer limit = messagesDataRequest.getStop() - messagesDataRequest.getStart();
+        return directMessageRepository.findLastMessagesByUserIdWithinLimitAndOffset(user1.getId(),user2.getId(),limit,messagesDataRequest.getStart());
+    }
+
 }
 

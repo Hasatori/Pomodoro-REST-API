@@ -10,9 +10,11 @@ import com.pomodoro.model.todo.GroupToDo;
 import com.pomodoro.model.user.User;
 import com.pomodoro.utils.CheckUtils;
 import com.pomodoro.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,22 +29,22 @@ import java.util.Optional;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class GroupWebsocket extends AbstractSocket {
 
-    @MessageMapping("/group/{groupName}/chat")
-    @SendTo("/group/{groupName}/chat")
+    @MessageMapping("/group/{name}/chat")
+    @SendTo("/group/{name}/chat")
     public GroupMessage readAndWriteMessage(Principal principal, @DestinationVariable String groupName, @RequestBody String message) throws Exception {
         User author = (User) principal;
         Group group = groupService.getGroup(author, groupName);
         return groupService.createGroupMessage(author, group, message);
     }
 
-    @MessageMapping("/group/{groupName}/chat/resend")
-    @SendTo("/group/{groupName}/chat/resend")
+    @MessageMapping("/group/{name}/chat/resend")
+    @SendTo("/group/{name}/chat/resend")
     public GroupMessage resendMessage(GroupMessage groupMessage) throws Exception {
         return groupMessage;
     }
 
-    @MessageMapping("/group/{groupName}/change")
-    @SendTo("/group/{groupName}/change")
+    @MessageMapping("/group/{name}/change")
+    @SendTo("/group/{name}/change")
     public GroupChange readAndWriteChange(Principal principal, @DestinationVariable String groupName, @RequestBody GroupChange groupChange) throws Exception {
         User author = (User) principal;
         Group group = groupRepository.findPomodoroGroupByName(groupName).get(0);
@@ -54,10 +56,10 @@ public class GroupWebsocket extends AbstractSocket {
         return groupChangeRepository.save(groupChange);
     }
 
-    @MessageMapping("/group/{groupName}/chat/emoji")
-    @SendTo("/group/{groupName}/chat/emoji")
+    @MessageMapping("/group/{name}/chat/emoji")
+    @SendTo("/group/{name}/chat/emoji")
     public GroupMessage reactToGroupMessage(Principal principal, @DestinationVariable String groupName, @RequestBody UserReaction userReaction) {
-        User user = (User) principal;
+            User user = (User) principal;
         userReactionRepository.setReaction(userReaction.getEmoji(), user.getId(), userReaction.getMessageId());
         GroupMessage groupMessage = groupMessageRepository.findGroupMessageById(userReaction.getMessageId());
         Optional<UserReaction> optionalUserGroupMessage = groupMessage.getReactions().stream().filter(userGroupMessage -> userGroupMessage.getAuthor().getUsername().equals(principal.getName())).findFirst();
@@ -68,8 +70,8 @@ public class GroupWebsocket extends AbstractSocket {
         return groupMessage;
     }
 
-    @MessageMapping("/group/{groupName}/group-members")
-    @SendTo("/group/{groupName}/group-members")
+    @MessageMapping("/group/{name}/group-members")
+    @SendTo("/group/{name}/group-members")
     public Object groupMembers(Principal principal, @DestinationVariable String groupName, @Valid @RequestBody GroupUserRequest groupUserRequest) throws Exception {
         User user = (User) principal;
         Map<String, String> responseEntity = new HashMap<>();
@@ -86,8 +88,8 @@ public class GroupWebsocket extends AbstractSocket {
         return responseEntity;
     }
 
-    @MessageMapping("/group/{groupName}/todos")
-    @SendTo("/group/{groupName}/todos")
+    @MessageMapping("/group/{name}/todos")
+    @SendTo("/group/{name}/todos")
     public Object readAndWriteTodos(Principal principal, @DestinationVariable String groupName, @RequestBody GroupToDo groupToDo) throws Exception {
         User user = (User) principal;
         groupToDo = groupTodoRepository.save(groupToDo);

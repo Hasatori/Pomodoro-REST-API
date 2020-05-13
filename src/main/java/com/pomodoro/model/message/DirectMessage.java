@@ -25,7 +25,7 @@ public class DirectMessage extends Message{
     @JoinColumn(name = "RECIPIENT", insertable = false, updatable = false)
     private User recipient;
 
-    @JsonIgnore
+
     @Column(name = "RECIPIENT")
     private Integer recipientId;
 

@@ -72,7 +72,7 @@ public class GroupControllerTest {
         String layoutImage = "test";
         Date created = new Date();
         Boolean isPublic = false;
-        String fieldName1 = "groupName";
+        String fieldName1 = "name";
         String expectedMessage1 = "Group with this name already exists";
         String fieldName2 = "groupLimit";
         String expectedMessage2 = "Group count limit exceeded";
