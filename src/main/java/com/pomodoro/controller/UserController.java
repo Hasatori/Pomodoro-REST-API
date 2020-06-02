@@ -4,6 +4,8 @@ import com.pomodoro.model.dto.*;
 import com.pomodoro.model.group.Group;
 import com.pomodoro.model.group.GroupInvitation;
 import com.pomodoro.model.message.DirectMessage;
+import com.pomodoro.model.message.GroupMessage;
+import com.pomodoro.model.message.Message;
 import com.pomodoro.model.o2auth.FacebookUser;
 import com.pomodoro.model.request.MessagesDataRequest;
 import com.pomodoro.model.request.UpdateUserDetails;
@@ -12,6 +14,7 @@ import com.pomodoro.model.todo.UserToDo;
 import com.pomodoro.model.user.Pomodoro;
 import com.pomodoro.model.user.Settings;
 import com.pomodoro.model.user.User;
+import com.pomodoro.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -174,7 +178,7 @@ public class UserController extends AbstractController {
     @RequestMapping(value = "/not-accepted-group-invitations", method = RequestMethod.POST)
     public ResponseEntity<?> getGroupInitations(HttpServletRequest req) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
-        List<GroupInvitation>invitations=user.getGroupInvitations();
+        List<GroupInvitation> invitations = user.getGroupInvitations();
         return ResponseEntity.ok(user.getGroupInvitations().stream().filter(groupInvitation -> !groupInvitation.getAccepted()));
     }
 
@@ -225,14 +229,22 @@ public class UserController extends AbstractController {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
         return directMessageRepository.findAllUnreadMessages(user.getId());
     }
+
     @RequestMapping(value = "/fetch-chat-messages", method = RequestMethod.POST)
     public List<DirectMessage> fetchChatMessages(HttpServletRequest req,
-                                                @RequestBody MessagesDataRequest messagesDataRequest) {
+                                                 @RequestBody MessagesDataRequest messagesDataRequest) {
         User user1 = userService.getUserFromToken(userService.getTokenFromRequest(req));
         User user2 = userRepository.findUserByUsername(messagesDataRequest.getName());
         Integer limit = messagesDataRequest.getStop() - messagesDataRequest.getStart();
-        return directMessageRepository.findLastMessagesByUserIdWithinLimitAndOffset(user1.getId(),user2.getId(),limit,messagesDataRequest.getStart());
+        return directMessageRepository.findLastMessagesByUserIdWithinLimitAndOffset(user1.getId(), user2.getId(), limit, messagesDataRequest.getStart());
     }
 
+    @RequestMapping(value = "/mark-all-as-read/{username}", method = RequestMethod.POST)
+    public void markAllAsRead(HttpServletRequest req, @PathVariable(required = true) String username) {
+        User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
+        User messagesAuthor = userService.loadUserByUsername(username);
+        List<Integer> directMessages = directMessageRepository.findAllUnreadMessagesFromUser(messagesAuthor.getId(), user.getId()).stream().map(Message::getId).collect(Collectors.toList());
+        userReactionRepository.markAllMessagesAsRead(DateUtils.getCurrentLocalDateTimeUtc(), user.getId(), directMessages);
+    }
 }
 

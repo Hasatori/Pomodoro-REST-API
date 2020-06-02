@@ -165,9 +165,7 @@ public class Application {
 
     private static GroupMessage getRandomGroupMessage(User author, Group group, GroupMessage parent) {
         GroupMessage groupMessage = new GroupMessage();
-        byte[] array = new byte[7]; // length is bounded by 7
-        random.nextBytes(array);
-        groupMessage.setValue(new String(array, Charset.forName("UTF-8")));
+        groupMessage.setValue("test");
         groupMessage.setGroup(group);
         groupMessage.setGroupId(group.getId());
         groupMessage.setAuthor(author);

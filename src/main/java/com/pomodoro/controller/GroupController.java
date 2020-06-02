@@ -55,7 +55,7 @@ public class GroupController extends AbstractController {
     public void markAllAsRead(HttpServletRequest req, @PathVariable(required = true) String groupName) {
         User user = userService.getUserFromToken(userService.getTokenFromRequest(req));
         Group group = groupService.getGroup(user, groupName);
-        userReactionRepository.markAllUserMessagesFromGroupAsRead(DateUtils.getCurrentLocalDateTimeUtc(), user.getId(), group.getGroupMessages().stream().map(GroupMessage::getId).collect(Collectors.toList()));
+        userReactionRepository.markAllMessagesAsRead(DateUtils.getCurrentLocalDateTimeUtc(), user.getId(), group.getGroupMessages().stream().map(GroupMessage::getId).collect(Collectors.toList()));
     }
 
     @RequestMapping(value = "/groups/fetch-changes", method = RequestMethod.POST)

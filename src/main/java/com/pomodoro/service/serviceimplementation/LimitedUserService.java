@@ -74,4 +74,9 @@ import javax.servlet.http.HttpServletRequest;
      public DirectMessage createDirectMessageAttachment(User author, User recipient, MultipartFile file) throws RequestDataNotValidException {
          return null;
      }
+
+     @Override
+     public DirectMessage createAnswerForMessage(User author, User recipient, String value, DirectMessage answeredMessage) throws RequestDataNotValidException {
+         return null;
+     }
  }

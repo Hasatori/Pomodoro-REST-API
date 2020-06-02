@@ -14,6 +14,7 @@ import com.pomodoro.service.repository.GroupMessageRepository;
 import com.pomodoro.service.repository.GroupRepository;
 import com.pomodoro.service.repository.GroupTodoRepository;
 import com.pomodoro.utils.DateUtils;
+import com.pomodoro.utils.RequestDataNotValidException;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -62,7 +63,7 @@ class GroupService implements IGroupService {
         group.setUsers(new HashSet<User>() {{
             add(author);
         }});
-       return groupRepository.save(group);
+        return groupRepository.save(group);
     }
 
     @Override
@@ -98,40 +99,28 @@ class GroupService implements IGroupService {
 
     @Override
     public GroupMessage createGroupMessage(User author, Group group, String value) {
-        GroupMessage groupMessage = new GroupMessage();
-        groupMessage.setAuthor(author);
-        groupMessage.setAuthorId(author.getId());
-        groupMessage.setValue(value);
-        groupMessage.setCreationTimestamp(LocalDateTime.now());
-        groupMessage.setGroup(group);
-        groupMessage.setGroupId(group.getId());
-        groupMessage.setReactions(new ArrayList<>());
-        groupMessage = groupMessageRepository.save(groupMessage);
-        for (User user : groupMessage.getGroup().getUsers()) {
-            UserReaction groupMessageReaction = new UserReaction();
-            groupMessageReaction.setAuthor(user);
-            if (user.getUsername().equals(author.getUsername())) {
-                groupMessageReaction.setReadTimestamp(DateUtils.getCurrentLocalDateTimeUtc());
-            }
-
-            groupMessageReaction.setMessage(groupMessage);
-
-            groupMessage.getReactions().add(groupMessageReaction);
-        }
-       return groupMessageRepository.save(groupMessage);
+        return groupMessageRepository.save(createBasicGroupMessage(author, group, value));
     }
 
     @Override
     public GroupMessage createGroupMessageAttachment(User author, Group group, MultipartFile file) {
-      //  List<String> groupAttachments = group.getGroupMessages().stream().map(GroupMessage::getAttachment).collect(Collectors.toList());
-        List<String> groupAttachments=new ArrayList<>();
+        //  List<String> groupAttachments = group.getGroupMessages().stream().map(GroupMessage::getAttachment).collect(Collectors.toList());
+        List<String> groupAttachments = new ArrayList<>();
         UUID uniqueKey = UUID.randomUUID();
         while (groupAttachments.contains(uniqueKey.toString())) {
             uniqueKey = UUID.randomUUID();
         }
         String attachmentValue = String.format("%s.%s", uniqueKey.toString(), FilenameUtils.getExtension(file.getResource().getFilename()));
         storageService.store(file, String.format("group/%d/attachment/%s", group.getId(), attachmentValue));
-        GroupMessage groupMessage=createGroupMessage(author,group,file.getResource().getFilename());
+        GroupMessage groupMessage = createGroupMessage(author, group, file.getResource().getFilename());
+        return groupMessageRepository.save(groupMessage);
+    }
+
+    @Override
+    public GroupMessage createAnswerForMessage(User author, Group group, String value, GroupMessage answeredMessage) throws RequestDataNotValidException {
+        GroupMessage groupMessage = createBasicGroupMessage(author, group, value);
+        groupMessage.setRepliedMessage(answeredMessage);
+        groupMessage.setRepliedMessageId(answeredMessage.getId());
         return groupMessageRepository.save(groupMessage);
     }
 
@@ -143,5 +132,17 @@ class GroupService implements IGroupService {
     @Override
     public void updateGroupMessage(User author, GroupMessage groupMessage, GroupMessage updatedMessage) {
 
+    }
+
+    private GroupMessage createBasicGroupMessage(User author, Group group, String value) {
+        GroupMessage groupMessage = new GroupMessage();
+        groupMessage.setAuthor(author);
+        groupMessage.setAuthorId(author.getId());
+        groupMessage.setValue(value);
+        groupMessage.setCreationTimestamp(LocalDateTime.now());
+        groupMessage.setGroup(group);
+        groupMessage.setGroupId(group.getId());
+        groupMessage.setReactions(new ArrayList<>());
+        return groupMessage;
     }
 }

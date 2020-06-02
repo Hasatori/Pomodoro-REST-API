@@ -8,6 +8,7 @@ import com.pomodoro.config.JwtTokenUtil;
 import com.pomodoro.model.dto.RegisterUser;
 import com.pomodoro.model.group.Group;
 import com.pomodoro.model.message.DirectMessage;
+import com.pomodoro.model.message.GroupMessage;
 import com.pomodoro.model.o2auth.SecretStore;
 import com.pomodoro.model.request.UpdateUserDetails;
 import com.pomodoro.model.user.Pomodoro;
@@ -37,6 +38,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service("basicUserService")
@@ -250,6 +252,23 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Override
     public DirectMessage createDirectMessage(User author, User recipient, String value) throws RequestDataNotValidException {
+        return directMessageRepository.save(createBasicDirectMessage(author, recipient, value));
+    }
+
+    @Override
+    public DirectMessage createDirectMessageAttachment(User author, User recipient, MultipartFile file) throws RequestDataNotValidException {
+        return null;
+    }
+
+    @Override
+    public DirectMessage createAnswerForMessage(User author, User recipient, String value, DirectMessage answeredMessage) throws RequestDataNotValidException {
+        DirectMessage directMessage = createBasicDirectMessage(author, recipient, value);
+        directMessage.setRepliedMessage(answeredMessage);
+        directMessage.setRepliedMessageId(answeredMessage.getId());
+        return directMessage;
+    }
+
+    private DirectMessage createBasicDirectMessage(User author, User recipient, String value) {
         DirectMessage directMessage = new DirectMessage();
         directMessage.setAuthor(author);
         directMessage.setAuthorId(author.getId());
@@ -258,11 +277,6 @@ public class UserService implements UserDetailsService, IUserService {
 
         directMessage.setCreationTimestamp(DateUtils.getCurrentLocalDateTimeUtc());
         directMessage.setValue(value);
-        return directMessageRepository.save(directMessage);
-    }
-
-    @Override
-    public DirectMessage createDirectMessageAttachment(User author, User recipient, MultipartFile file) throws RequestDataNotValidException {
-        return null;
+        return directMessage;
     }
 }

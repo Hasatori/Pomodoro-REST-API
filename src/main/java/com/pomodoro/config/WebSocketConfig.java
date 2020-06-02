@@ -20,9 +20,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Configuration
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
@@ -30,7 +28,8 @@ import java.util.Map;
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final UserService userService;
     private final JwtTokenUtil tokenUtil;
-    public static final HashMap<String,String> USER_TOKENS=new HashMap<>();
+    public static final HashMap<String, List<SessionIdTokenPair>> SESSIONID_USER = new HashMap<>();
+
 
     public WebSocketConfig(UserService userService, JwtTokenUtil tokenUtil) {
         this.userService = userService;
@@ -40,7 +39,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.setApplicationDestinationPrefixes("/app")
-                .enableSimpleBroker("/pomodoro", "/group","/user");
+                .enableSimpleBroker("/pomodoro", "/group", "/user");
         config.setUserDestinationPrefix("/user");
 
 
@@ -59,27 +58,61 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 StompHeaderAccessor accessor =
                         MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-                List<String> authorization = ((Map<String, List<String>>) message.getHeaders().get("nativeHeaders")).get("Authorization");
                 String messageType = ((SimpMessageType) message.getHeaders().get("simpMessageType")).name();
-
                 boolean authorized = false;
-                if (authorization != null) {
-                    String token = authorization.get(0);
+                if ("CONNECT".equals(messageType)) {
+                    String token = getTokenFromMessage(message);
                     if (token != null) {
                         User user = userService.getUserFromToken(token);
+                        String sessionId = getSessionIdFromMessage(message);
                         // if token is valid configure Spring Security to manually set authentication
                         if (tokenUtil.validateToken(token, user) && accessor != null) {
                             authorized = true;
                             accessor.setUser(user);
-                            USER_TOKENS.put(user.getUsername(),token);
+                            SessionIdTokenPair sessionIdTokenPair = new SessionIdTokenPair(sessionId, token);
+                            List<SessionIdTokenPair> sessionIdTokenPairs = Optional.ofNullable(SESSIONID_USER.get(user.getUsername())).orElse(new ArrayList<>());
+                            sessionIdTokenPairs.add(sessionIdTokenPair);
+                            SESSIONID_USER.put(user.getUsername(), sessionIdTokenPairs);
                         }
                     }
                 }
-                if (!authorized && !"UNSUBSCRIBE".equals(messageType) && !"DISCONNECT".equals(messageType)) {
-                    throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+                if ("DISCONNECT".equals(messageType)) {
+                    String sessionId = getSessionIdFromMessage(message);
+                    for (Map.Entry<String, List<SessionIdTokenPair>> pair : SESSIONID_USER.entrySet()) {
+                        Optional<SessionIdTokenPair> optionalSessionIdTokenPair = pair
+                                .getValue()
+                                .stream()
+                                .filter(sessionIdTokenPair -> sessionIdTokenPair.getSessionId().equals(sessionId))
+                                .findFirst();
+                        if (optionalSessionIdTokenPair.isPresent()) {
+                            pair.getValue().remove(optionalSessionIdTokenPair.get());
+                            break;
+                        }
+                    }
+                    SESSIONID_USER.forEach((username, sessionIdTokenPair) -> {
+
+                    });
+
+                    SESSIONID_USER.remove(sessionId);
                 }
+             /*   if (!authorized && !"CONNECT".equals(messageType) &&  !"UNSUBSCRIBE".equals(messageType) && !"DISCONNECT".equals(messageType)) {
+                    throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+                }*/
                 return message;
             }
         });
+    }
+
+    private String getSessionIdFromMessage(Message<?> message) {
+        return (String) message.getHeaders().get("simpSessionId");
+    }
+
+    private String getTokenFromMessage(Message<?> message) {
+        return Optional.of(message.getHeaders())
+                .flatMap(messageHeaders -> Optional.ofNullable(((Map<String, List<String>>) messageHeaders.get("nativeHeaders"))))
+                .flatMap(nativeHeaders -> Optional.ofNullable(nativeHeaders.get("Authorization")))
+                .filter(nativeHeader -> !nativeHeader.isEmpty())
+                .map(nativeHeader -> nativeHeader.get(0))
+                .orElse(null);
     }
 }

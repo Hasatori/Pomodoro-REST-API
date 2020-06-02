@@ -1,9 +1,7 @@
 package com.pomodoro.service;
 
 import com.pomodoro.model.dto.RegisterUser;
-import com.pomodoro.model.group.Group;
 import com.pomodoro.model.message.DirectMessage;
-import com.pomodoro.model.message.GroupMessage;
 import com.pomodoro.model.request.UpdateUserDetails;
 import com.pomodoro.model.user.Settings;
 import com.pomodoro.model.user.User;
@@ -42,4 +40,7 @@ public interface IUserService {
     DirectMessage createDirectMessage(User author, User recipient, String value) throws RequestDataNotValidException;
 
     DirectMessage createDirectMessageAttachment(User author, User recipient, MultipartFile file) throws RequestDataNotValidException;
+
+    DirectMessage createAnswerForMessage(User author, User recipient, String value, DirectMessage answeredMessage) throws RequestDataNotValidException;
+
 }

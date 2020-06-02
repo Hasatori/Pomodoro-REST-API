@@ -35,6 +35,8 @@ public interface IGroupService {
 
     GroupMessage createGroupMessageAttachment(User author, Group group, MultipartFile file) throws RequestDataNotValidException;
 
+    GroupMessage createAnswerForMessage(User author, Group group, String value,GroupMessage answeredMessage) throws RequestDataNotValidException;
+
     void setGroupReaction(User author, Group group, String reaction) throws RequestDataNotValidException;
 
     void updateGroupMessage(User author, GroupMessage groupMessage,GroupMessage updatedMessage) throws RequestDataNotValidException;

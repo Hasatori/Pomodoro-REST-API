@@ -139,17 +139,7 @@ class LimitedGroupService implements IGroupService {
 
     @Override
     public GroupMessage createGroupMessage(User author, Group group, String value) throws RequestDataNotValidException {
-        List<RequestError> errors = new ArrayList<>();
-        Set<User> users = group.getUsers();
-        List<GroupMessage> groupMessages = group.getGroupMessages();
-        if (groupMessages.size() >= GROUP_MESSAGE_LIMIT) {
-            errors.add(new RequestError("group", String.format("Group messages count limit for group [%s] exceeded. Maximum number of messages per group is :[%s]", group.getName(), GROUP_MESSAGE_LIMIT)));
-        } else if (users.stream().noneMatch(user -> user.getId().equals(author.getId()))) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }
-        if (errors.size() > 0) {
-            throw new RequestDataNotValidException(errors);
-        }
+        groupMessageCreationCheck(author, group, value);
         return groupService.createGroupMessage(author, group, value);
     }
 
@@ -158,7 +148,7 @@ class LimitedGroupService implements IGroupService {
         List<RequestError> errors = new ArrayList<>();
         SizeUnit unit = SizeUnit.MB;
         long size = storageService.getGroupAttachmentsSize(group, unit);
-        size+=(file.getSize()/unit.getInByte());
+        size += (file.getSize() / unit.getInByte());
         System.out.println(String.format("%s attachments size is %s %s", group.getName(), String.valueOf(size), unit.toString()));
         ;
         if (size > GROUP_ATTACHMENTS_LIMIT_MG) {
@@ -168,6 +158,12 @@ class LimitedGroupService implements IGroupService {
             throw new RequestDataNotValidException(errors);
         }
         return groupService.createGroupMessageAttachment(author, group, file);
+    }
+
+    @Override
+    public GroupMessage createAnswerForMessage(User author, Group group, String value, GroupMessage answeredMessage) throws RequestDataNotValidException {
+        groupMessageCreationCheck(author, group, value);
+        return groupService.createAnswerForMessage(author, group, value, answeredMessage);
     }
 
     @Override
@@ -187,5 +183,17 @@ class LimitedGroupService implements IGroupService {
         groupService.updateGroupMessage(author, groupMessage, updatedMessage);
     }
 
-
+    private void groupMessageCreationCheck(User author, Group group, String value) throws RequestDataNotValidException {
+        List<RequestError> errors = new ArrayList<>();
+        Set<User> users = group.getUsers();
+        List<GroupMessage> groupMessages = group.getGroupMessages();
+        if (groupMessages.size() >= GROUP_MESSAGE_LIMIT) {
+            errors.add(new RequestError("group", String.format("Group messages count limit for group [%s] exceeded. Maximum number of messages per group is :[%s]", group.getName(), GROUP_MESSAGE_LIMIT)));
+        } else if (users.stream().noneMatch(user -> user.getId().equals(author.getId()))) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+        if (errors.size() > 0) {
+            throw new RequestDataNotValidException(errors);
+        }
+    }
 }
